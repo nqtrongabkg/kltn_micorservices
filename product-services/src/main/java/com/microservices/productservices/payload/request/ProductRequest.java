@@ -31,4 +31,5 @@ public class ProductRequest {
 
     private List<UUID> categoryIds;
 
+    private List<UUID> tagIds;
 }
