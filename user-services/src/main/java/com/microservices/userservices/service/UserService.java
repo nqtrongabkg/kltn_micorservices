@@ -20,4 +20,8 @@ public interface UserService {
     UserResponse delete(UUID id);
 
     UserToBrandResponse getUserForBrand(UUID id);
+
+    String generateToken(String username);
+
+    void validateToken(String token);
 }

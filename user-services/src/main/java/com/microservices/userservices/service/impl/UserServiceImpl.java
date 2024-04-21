@@ -6,6 +6,7 @@ import com.microservices.userservices.payload.request.UserRequest;
 import com.microservices.userservices.payload.response.UserResponse;
 import com.microservices.userservices.payload.response.UserToBrandResponse;
 import com.microservices.userservices.repository.UserRepository;
+import com.microservices.userservices.service.JwtService;
 import com.microservices.userservices.service.UserService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.beans.BeanUtils;
@@ -19,12 +20,17 @@ import java.util.stream.Collectors;
 @Service
 public class UserServiceImpl implements UserService {
 
+
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
 
-    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserServiceImpl(UserRepository userRepository, 
+    JwtService jwtService,
+    PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.jwtService =jwtService;
     }
 
     @Override
@@ -96,5 +102,13 @@ public class UserServiceImpl implements UserService {
         UserToBrandResponse userToBrandResponse = new UserToBrandResponse();
         BeanUtils.copyProperties(user, userToBrandResponse);
         return userToBrandResponse;
+    }
+
+    public String generateToken(String username) {
+        return jwtService.generateToken(username);
+    }
+
+    public void validateToken(String token) {
+        jwtService.validateToken(token);
     }
 }

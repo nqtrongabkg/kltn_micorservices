@@ -1,13 +1,17 @@
 package com.microservices.userservices.controller;
 
+import com.microservices.userservices.payload.request.AuthRequest;
 import com.microservices.userservices.payload.request.UserRequest;
 import com.microservices.userservices.payload.response.UserResponse;
 import com.microservices.userservices.payload.response.UserToBrandResponse;
 import com.microservices.userservices.service.UserService;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.web.bind.annotation.*;
-
+import org.springframework.security.core.Authentication;
 
 
 import java.util.List;
@@ -19,6 +23,9 @@ public class UserController {
 
     private final UserService userService;
 
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
 
     public UserController(UserService userService) {
         this.userService = userService;
@@ -29,6 +36,7 @@ public class UserController {
         UserResponse createdUser = userService.create(userRequest);
         return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
     }
+
 
     @GetMapping("/get-by-id/{id}")
     public ResponseEntity<UserResponse> getUserById(@PathVariable UUID id) {
@@ -58,5 +66,21 @@ public class UserController {
     public ResponseEntity<UserToBrandResponse> getUserForBrand(@PathVariable UUID id) {
         UserToBrandResponse userForBrand = userService.getUserForBrand(id);
         return ResponseEntity.ok(userForBrand);
+    }
+
+    @PostMapping("/token")
+    public String getToken(@RequestBody AuthRequest authRequest) {
+        Authentication authenticate = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword()));
+        if (authenticate.isAuthenticated()) {
+            return userService.generateToken(authRequest.getUsername());
+        } else {
+            throw new RuntimeException("invalid access");
+        }
+    }
+
+    @GetMapping("/validate")
+    public String validateToken(@RequestParam("token") String token) {
+        userService.validateToken(token);
+        return "Token is valid";
     }
 }

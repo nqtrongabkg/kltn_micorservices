@@ -8,7 +8,6 @@ import com.microservices.productservices.payload.response.UserResponse;
 import com.microservices.productservices.repository.BrandRepository;
 import com.microservices.productservices.service.BrandService;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -21,7 +20,6 @@ public class BrandServiceImpl implements BrandService {
 
     private final BrandRepository brandRepository;
 
-    @Autowired
     private UserClient userClient;
 
     public BrandServiceImpl(BrandRepository brandRepository) {
