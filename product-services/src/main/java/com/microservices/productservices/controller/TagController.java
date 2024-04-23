@@ -12,6 +12,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/product-services/api/tags")
+@CrossOrigin(origins = { "http://localhost:3000" })
 public class TagController {
 
     private final TagService tagService;

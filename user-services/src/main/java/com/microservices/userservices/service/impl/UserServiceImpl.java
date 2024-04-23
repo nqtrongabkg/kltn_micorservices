@@ -3,8 +3,9 @@ package com.microservices.userservices.service.impl;
 import com.microservices.userservices.entity.User;
 import com.microservices.userservices.exception.CustomException;
 import com.microservices.userservices.payload.request.UserRequest;
+import com.microservices.userservices.payload.response.AuthenticationResponse;
 import com.microservices.userservices.payload.response.UserResponse;
-import com.microservices.userservices.payload.response.UserToBrandResponse;
+import com.microservices.userservices.payload.response.UserToOrthersResponse;
 import com.microservices.userservices.repository.UserRepository;
 import com.microservices.userservices.service.JwtService;
 import com.microservices.userservices.service.UserService;
@@ -47,6 +48,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public UserResponse getByUsername(String userName){
+        User user = userRepository.findByUserName(userName)
+                    .orElseThrow(() -> new CustomException("User not found", "NOT_FOUND"));
+        return mapEntityToResponse(user);
+    }
+
+    @Override
     public UserResponse getById(UUID id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new CustomException("User not found", "NOT_FOUND"));
@@ -80,7 +88,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserToBrandResponse getUserForBrand(UUID id) {
+    public UserToOrthersResponse getUserForBrand(UUID id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new CustomException("User not found", "NOT_FOUND"));
         return mapUserToBrandResponse(user);
@@ -98,15 +106,26 @@ public class UserServiceImpl implements UserService {
         return userResponse;
     }
 
-    private UserToBrandResponse mapUserToBrandResponse(User user) {
-        UserToBrandResponse userToBrandResponse = new UserToBrandResponse();
+    private UserToOrthersResponse mapUserToBrandResponse(User user) {
+        UserToOrthersResponse userToBrandResponse = new UserToOrthersResponse();
         BeanUtils.copyProperties(user, userToBrandResponse);
         return userToBrandResponse;
     }
 
-    public String generateToken(String username) {
-        return jwtService.generateToken(username);
+    public AuthenticationResponse generateToken(String username) {
+        String token = jwtService.generateToken(username);
+        if (!token.isEmpty()) { 
+            User user = userRepository.findByUserName(username)
+                                      .orElseThrow(() -> new RuntimeException("User not found"));
+            AuthenticationResponse response = new AuthenticationResponse();
+            response.setUserId(user.getId());
+            response.setToken(token);
+            return response;
+        } else {
+            throw new RuntimeException("Failed to generate token");
+        }
     }
+    
 
     public void validateToken(String token) {
         jwtService.validateToken(token);

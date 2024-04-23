@@ -3,6 +3,7 @@ package com.microservices.productservices.controller;
 import com.microservices.productservices.payload.request.BrandRequest;
 import com.microservices.productservices.payload.response.BrandResponse;
 import com.microservices.productservices.service.BrandService;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,6 +13,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("product-services/api/brands")
+@CrossOrigin(origins = { "http://localhost:3000" })
 public class BrandController {
 
     private final BrandService brandService;

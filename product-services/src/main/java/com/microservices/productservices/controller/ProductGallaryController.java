@@ -12,6 +12,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("product-services/api/product-galleries")
+@CrossOrigin(origins = { "http://localhost:3000" })
 public class ProductGallaryController {
 
     private final ProductGallaryService productGallaryService;

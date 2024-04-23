@@ -12,8 +12,8 @@ import com.microservices.userservices.repository.UserRepository;
 import java.util.Optional;
 
 @Component
-
 public class CustomUserDetailsService implements UserDetailsService{
+    
     @Autowired
     private UserRepository repository;
 

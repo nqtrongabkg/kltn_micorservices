@@ -12,6 +12,7 @@ public class RouteValidator {
     public static final List<String> openApiEndpoints = List.of(
         "/user-services/api/users/create", 
         "/user-services/api/users/token",
+        "/user-services/api/**",
             "/eureka"
     );
 
@@ -19,5 +20,4 @@ public class RouteValidator {
             request -> openApiEndpoints
                     .stream()
                     .noneMatch(uri -> request.getURI().getPath().contains(uri));
-
 }

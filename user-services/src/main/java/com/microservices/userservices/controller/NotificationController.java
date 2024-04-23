@@ -3,6 +3,8 @@ package com.microservices.userservices.controller;
 import com.microservices.userservices.payload.request.NotificationRequest;
 import com.microservices.userservices.payload.response.NotificationResponse;
 import com.microservices.userservices.service.NotificationService;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,8 +14,10 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("user-services/api/notifications")
+@CrossOrigin(origins = { "http://localhost:3000" })
 public class NotificationController {
 
+    @Autowired
     private final NotificationService notificationService;
 
     public NotificationController(NotificationService notificationService) {

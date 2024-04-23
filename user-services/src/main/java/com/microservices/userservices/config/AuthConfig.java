@@ -22,15 +22,15 @@ public class AuthConfig {
         return new CustomUserDetailsService();
     }
 
-
     @SuppressWarnings("removal")
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        return http.csrf().disable()
+        return http.cors().and().csrf().disable()
                 .authorizeHttpRequests()
                 .requestMatchers("/user-services/api/users/create", 
                 "/user-services/api/users/token", 
-                "/user-services/api/users/validate").permitAll()
+                "/user-services/api/users/validate",
+                "/user-services/api/**").permitAll()
                 .and()
                 .build();
     }

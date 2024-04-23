@@ -12,6 +12,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("product-services/api/product-feedbacks")
+@CrossOrigin(origins = { "http://localhost:3000" })
 public class ProductFeedbackController {
 
     private final ProductFeedbackService productFeedbackService;

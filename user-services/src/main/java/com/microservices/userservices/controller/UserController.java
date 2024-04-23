@@ -2,8 +2,9 @@ package com.microservices.userservices.controller;
 
 import com.microservices.userservices.payload.request.AuthRequest;
 import com.microservices.userservices.payload.request.UserRequest;
+import com.microservices.userservices.payload.response.AuthenticationResponse;
 import com.microservices.userservices.payload.response.UserResponse;
-import com.microservices.userservices.payload.response.UserToBrandResponse;
+import com.microservices.userservices.payload.response.UserToOrthersResponse;
 import com.microservices.userservices.service.UserService;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("user-services/api/users")
+@CrossOrigin(origins = { "http://localhost:3000" })
 public class UserController {
 
     private final UserService userService;
@@ -63,13 +65,13 @@ public class UserController {
     }
 
     @GetMapping("/get-user-for-brand/{id}")
-    public ResponseEntity<UserToBrandResponse> getUserForBrand(@PathVariable UUID id) {
-        UserToBrandResponse userForBrand = userService.getUserForBrand(id);
+    public ResponseEntity<UserToOrthersResponse> getUserForBrand(@PathVariable UUID id) {
+        UserToOrthersResponse userForBrand = userService.getUserForBrand(id);
         return ResponseEntity.ok(userForBrand);
     }
 
     @PostMapping("/token")
-    public String getToken(@RequestBody AuthRequest authRequest) {
+    public AuthenticationResponse getToken(@RequestBody AuthRequest authRequest) {
         Authentication authenticate = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword()));
         if (authenticate.isAuthenticated()) {
             return userService.generateToken(authRequest.getUsername());

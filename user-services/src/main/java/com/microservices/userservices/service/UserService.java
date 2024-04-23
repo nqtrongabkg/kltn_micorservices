@@ -4,8 +4,9 @@ import java.util.List;
 import java.util.UUID;
 
 import com.microservices.userservices.payload.request.UserRequest;
+import com.microservices.userservices.payload.response.AuthenticationResponse;
 import com.microservices.userservices.payload.response.UserResponse;
-import com.microservices.userservices.payload.response.UserToBrandResponse;
+import com.microservices.userservices.payload.response.UserToOrthersResponse;
 
 public interface UserService {
 
@@ -13,15 +14,17 @@ public interface UserService {
 
     UserResponse getById(UUID id);
 
+    UserResponse getByUsername(String userName);
+
     List<UserResponse> getAll();
     
     UserResponse update(UUID id, UserRequest roleRequest);
 
     UserResponse delete(UUID id);
 
-    UserToBrandResponse getUserForBrand(UUID id);
+    UserToOrthersResponse getUserForBrand(UUID id);
 
-    String generateToken(String username);
+    AuthenticationResponse generateToken(String username);
 
     void validateToken(String token);
 }
