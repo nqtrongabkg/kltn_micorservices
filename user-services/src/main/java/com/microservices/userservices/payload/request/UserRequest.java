@@ -23,16 +23,10 @@ public class UserRequest {
     private String password;
 
     private String phone;
-
-    private byte[] avarta;
     
     private String address;
 
     private LocalDateTime birthday;
-
-    private LocalDateTime createdAt;
-
-    private LocalDateTime updatedAt;
 
     private UUID createdBy;
 

@@ -17,4 +17,8 @@ public interface RoleService {
     RoleResponse update(UUID id, RoleRequest roleRequest);
 
     RoleResponse delete(UUID id);
+
+    void switchStatus(UUID id);
+
+    void trash(UUID id);
 }

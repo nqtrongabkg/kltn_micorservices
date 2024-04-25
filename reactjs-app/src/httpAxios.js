@@ -3,7 +3,10 @@ import { urlAPI } from "./config";
 
 const httpAxios = axios.create({
   baseURL: urlAPI,
-  headers: { "X-Custom-Header": "foobar" },
+  headers: {
+    // 'Accept': 'application/json',
+    "X-Custom-Header": "foobar"
+  },
 });
 
 // Tự động thêm mã token vào headers của mỗi yêu cầu

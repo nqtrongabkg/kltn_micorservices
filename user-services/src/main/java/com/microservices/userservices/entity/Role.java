@@ -22,4 +22,6 @@ public class Role {
     private String description;
 
     private int role;
+
+    private int status;
 }

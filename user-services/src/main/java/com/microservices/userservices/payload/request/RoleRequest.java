@@ -12,4 +12,6 @@ public class RoleRequest {
     private String description;
 
     private int role;
+
+    private int status;
 }

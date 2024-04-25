@@ -12,9 +12,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.security.core.Authentication;
-
-
 import java.util.List;
 import java.util.UUID;
 
@@ -28,17 +27,26 @@ public class UserController {
     @Autowired
     private AuthenticationManager authenticationManager;
 
-
     public UserController(UserService userService) {
         this.userService = userService;
     }
 
     @PostMapping("/create")
-    public ResponseEntity<UserResponse> createUser(@RequestBody UserRequest userRequest) {
-        UserResponse createdUser = userService.create(userRequest);
+    public ResponseEntity<UserResponse> createUser(
+            @RequestPart("userRequest") UserRequest userRequest,
+            @RequestPart("avatar") MultipartFile imageFile) {
+        UserResponse createdUser = userService.create(userRequest, imageFile);
         return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
     }
 
+    @PutMapping("/update/{id}")
+    public ResponseEntity<UserResponse> updateUser(
+            @PathVariable UUID id,
+            @RequestPart("userRequest") UserRequest userRequest,
+            @RequestPart(value = "avatar", required = false) MultipartFile newAvatar) {
+        UserResponse updatedUser = userService.update(id, userRequest, newAvatar);
+        return ResponseEntity.ok(updatedUser);
+    }
 
     @GetMapping("/get-by-id/{id}")
     public ResponseEntity<UserResponse> getUserById(@PathVariable UUID id) {
@@ -52,10 +60,10 @@ public class UserController {
         return ResponseEntity.ok(users);
     }
 
-    @PutMapping("/update/{id}")
-    public ResponseEntity<UserResponse> updateUser(@RequestBody UserRequest userRequest, @PathVariable UUID id) {
-        UserResponse updatedUser = userService.update(id, userRequest);
-        return ResponseEntity.ok(updatedUser);
+    @GetMapping("/get-customers")
+    public ResponseEntity<List<UserResponse>> getCustomers() {
+        List<UserResponse> users = userService.getCustomers();
+        return ResponseEntity.ok(users);
     }
 
     @DeleteMapping("/delete/{id}")
@@ -72,7 +80,8 @@ public class UserController {
 
     @PostMapping("/token")
     public AuthenticationResponse getToken(@RequestBody AuthRequest authRequest) {
-        Authentication authenticate = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword()));
+        Authentication authenticate = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword()));
         if (authenticate.isAuthenticated()) {
             return userService.generateToken(authRequest.getUsername());
         } else {
@@ -84,5 +93,17 @@ public class UserController {
     public String validateToken(@RequestParam("token") String token) {
         userService.validateToken(token);
         return "Token is valid";
+    }
+
+    @PutMapping("/switch-status/{id}")
+    public ResponseEntity<Void> switchStatus(@PathVariable UUID id) {
+        userService.switchStatus(id);
+        return ResponseEntity.ok().build();
+    }
+
+    @PutMapping("/trash/{id}")
+    public ResponseEntity<Void> trash(@PathVariable UUID id) {
+        userService.trash(id);
+        return ResponseEntity.ok().build();
     }
 }

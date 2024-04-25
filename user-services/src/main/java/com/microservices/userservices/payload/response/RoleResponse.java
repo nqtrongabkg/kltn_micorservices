@@ -14,4 +14,6 @@ public class RoleResponse {
     private String description;
 
     private int role;
+
+    private int status;
 }

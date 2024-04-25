@@ -22,8 +22,8 @@ public class RoleController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<RoleResponse> createRole(@RequestBody RoleRequest roleRequest) {
-        RoleResponse createdRole = roleService.create(roleRequest);
+    public ResponseEntity<RoleResponse> createRole(@RequestBody RoleRequest role) {
+        RoleResponse createdRole = roleService.create(role);
         return new ResponseEntity<>(createdRole, HttpStatus.CREATED);
     }
 
@@ -44,6 +44,18 @@ public class RoleController {
         RoleResponse updatedRole = roleService.update(id, roleRequest);
         return ResponseEntity.ok(updatedRole);
     }
+
+    @PutMapping("/switch-status/{id}")
+    public ResponseEntity<Void> switchStatus(@PathVariable UUID id) {
+        roleService.switchStatus(id);
+        return ResponseEntity.ok().build();
+    }   
+    
+    @PutMapping("/trash/{id}")
+    public ResponseEntity<Void> trash(@PathVariable UUID id) {
+        roleService.trash(id);
+        return ResponseEntity.ok().build();
+    }    
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<RoleResponse> deleteRole(@PathVariable UUID id) {

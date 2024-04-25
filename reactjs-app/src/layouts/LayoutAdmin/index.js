@@ -22,30 +22,26 @@ const LayoutAdmin = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        const storedUserAdmin = sessionStorage.getItem('useradmin');
-        if (storedUserAdmin !== null) {
-            console.log("token : ", storedUserAdmin);
+        const sessionUserAdmin = sessionStorage.getItem('useradmin');
+        if (sessionUserAdmin !== null) {
+            // console.log("userId and token: ", sessionUserAdmin);
             try {
-                const parsedUser = JSON.parse(storedUserAdmin);
+                const parsedUser = JSON.parse(sessionUserAdmin);
                 if (parsedUser && typeof parsedUser === 'object') {
-                    setUser(parsedUser);
-                    // Lấy thông tin người dùng từ server bằng cách gọi hàm UserService.getUser
-                    UserService.getUser(parsedUser.userId)
-                        .then(userGet => {
-                            console.log("user : ", userGet);
-                            // Xử lý dữ liệu user ở đây (nếu cần)
-                        })
-                        .catch(error => {
-                            console.error('Error fetching user:', error);
-                        });
-                    UserService.getProduct()
-                        .then(productGet => {
-                            console.log("product : ", productGet);
-                            // Xử lý dữ liệu user ở đây (nếu cần)
-                        })
-                        .catch(error => {
-                            console.error('Error fetching user:', error);
-                        });
+                    UserService.getUserById(parsedUser.userId)
+                    .then(userGet => {
+                        if(userGet.role.role === 1){
+                            // console.log("user infor: ", userGet);
+                        setUser(userGet);
+                        }else{
+                            sessionStorage.removeItem('useradmin'); // Xóa thông tin người dùng từ Session Storage
+                            setUser(null);
+                            navigate("/admin/login");
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error fetching user:', error);
+                    });
                 } else {
                     console.error('Stored user is not a valid JSON object.');
                 }
@@ -53,7 +49,7 @@ const LayoutAdmin = () => {
                 console.error('Error parsing stored user:', error);
             }
         }
-    }, []);
+    }, [navigate]);
 
 
 
@@ -61,14 +57,24 @@ const LayoutAdmin = () => {
         try {
             const response = await UserService.loginAdmin(authRequest);
             if (response) {
-                console.log(response);
-
-                // Lưu thông tin người dùng vào Session Storage thay vì Local Storage
+                // console.log("userid and token : ", response);
                 const { userId, token } = response;
                 const userData = { userId, token };
-                sessionStorage.setItem('useradmin', JSON.stringify(userData)); // Thay đổi từ localStorage sang sessionStorage
-
-                setUser(response); // Đặt thông tin người dùng vào state
+                sessionStorage.setItem('useradmin', JSON.stringify(userData));
+                UserService.getUserById(userData.userId)
+                        .then(userGet => {
+                            if(userGet.role.role === 1){
+                                // console.log("user infor cuccess: ", userGet);
+                            setUser(userGet);
+                            }else{
+                                sessionStorage.removeItem('useradmin'); // Xóa thông tin người dùng từ Session Storage
+                                setUser(null);
+                                navigate("/admin/login");
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error fetching user:', error);
+                        });
                 toast.success('Đăng nhập thành công');
                 navigate("/admin");
             } else {
@@ -222,6 +228,9 @@ const LayoutAdmin = () => {
                                                             </li>
                                                             <li>
                                                                 <a href="/admin/config/index">Cấu hình</a>
+                                                            </li>
+                                                            <li>
+                                                                <a href="/admin/role/index">Quyền hạn</a>
                                                             </li>
                                                         </ul>
                                                     </li>

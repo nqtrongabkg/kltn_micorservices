@@ -2,9 +2,7 @@ package com.microservices.userservices.payload.response;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
-
 import com.microservices.userservices.entity.Role;
-
 import lombok.Data;
 
 @Data
@@ -24,13 +22,13 @@ public class UserResponse {
 
     private String phone;
 
-    private byte[] avarta;
+    private String avatar;
 
     private String address;
 
     private LocalDateTime birthday;
 
-    private LocalDateTime createdAt;    
+    private LocalDateTime createdAt; 
 
     private LocalDateTime updatedAt;
 

@@ -29,8 +29,7 @@ public class User {
     @Column(nullable = false)
     private String email;
 
-    @Lob
-    private byte[] avatar;
+    private String avatar;
 
     @Column(nullable = false)
     private String password;

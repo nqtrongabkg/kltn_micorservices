@@ -12,6 +12,12 @@ import com.microservices.userservices.service.UserService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.io.IOException;
+import java.nio.file.Files;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -21,21 +27,20 @@ import java.util.stream.Collectors;
 @Service
 public class UserServiceImpl implements UserService {
 
-
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
 
-    public UserServiceImpl(UserRepository userRepository, 
-    JwtService jwtService,
-    PasswordEncoder passwordEncoder) {
+    public UserServiceImpl(UserRepository userRepository,
+            JwtService jwtService,
+            PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
-        this.jwtService =jwtService;
+        this.jwtService = jwtService;
     }
 
     @Override
-    public UserResponse create(UserRequest userRequest) {
+    public UserResponse create(UserRequest userRequest, MultipartFile avatar) {
         User user = new User();
         mapRequestToEntity(userRequest, user);
         user.setCreatedAt(LocalDateTime.now());
@@ -43,14 +48,64 @@ public class UserServiceImpl implements UserService {
         // Hash password
         user.setPassword(passwordEncoder.encode(userRequest.getPassword()));
 
+        // Save avatar if provided
+        if (avatar != null) {
+            String avatarFileName = saveAvatar(avatar);
+            user.setAvatar(avatarFileName);
+        }
+
         User savedUser = userRepository.save(user);
         return mapEntityToResponse(savedUser);
     }
 
     @Override
-    public UserResponse getByUsername(String userName){
+    public UserResponse update(UUID id, UserRequest userRequest, MultipartFile newAvatar) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new CustomException("User not found", "NOT_FOUND"));
+        mapRequestToEntity(userRequest, user);
+
+        // Check if a new avatar is provided
+        if (newAvatar != null && !newAvatar.isEmpty()) {
+            // Delete old avatar if it exists
+            if (user.getAvatar() != null && !user.getAvatar().isEmpty()) {
+                deleteAvatar(user.getAvatar());
+            }
+
+            // Save new avatar
+            String avatarFileName = saveAvatar(newAvatar);
+            user.setAvatar(avatarFileName);
+        }
+
+        user.setUpdatedAt(LocalDateTime.now());
+        User savedUser = userRepository.save(user);
+        return mapEntityToResponse(savedUser);
+    }
+
+    private void deleteAvatar(String fileName) {
+        try {
+            Path filePath = Paths.get("src/main/resources/static/users/" + fileName);
+            Files.deleteIfExists(filePath);
+        } catch (IOException e) {
+            throw new CustomException("Failed to delete old avatar", "INTERNAL_SERVER_ERROR");
+        }
+    }
+
+    private String saveAvatar(MultipartFile avatar) {
+        String fileName = UUID.randomUUID().toString() + "-" + avatar.getOriginalFilename();
+        try {
+            // Lưu tệp vào thư mục tĩnh của ứng dụng
+            Path filePath = Paths.get("src/main/resources/static/users/" + fileName);
+            Files.copy(avatar.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            throw new CustomException("Failed to save avatar file", "INTERNAL_SERVER_ERROR");
+        }
+        return fileName;
+    }
+
+    @Override
+    public UserResponse getByUsername(String userName) {
         User user = userRepository.findByUserName(userName)
-                    .orElseThrow(() -> new CustomException("User not found", "NOT_FOUND"));
+                .orElseThrow(() -> new CustomException("User not found", "NOT_FOUND"));
         return mapEntityToResponse(user);
     }
 
@@ -70,14 +125,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserResponse update(UUID id, UserRequest userRequest) {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new CustomException("User not found", "NOT_FOUND"));
-        mapRequestToEntity(userRequest, user);
-        user.setUpdatedAt(LocalDateTime.now());
-        User savedUser = userRepository.save(user);
-        return mapEntityToResponse(savedUser);
+    public List<UserResponse> getCustomers() {
+        List<User> users = userRepository.findAll();
+        return users.stream()
+                .filter(user -> user.getRole().getRole() != 1)
+                .map(this::mapEntityToResponse)
+                .collect(Collectors.toList());
     }
+
+    
 
     @Override
     public UserResponse delete(UUID id) {
@@ -94,11 +150,9 @@ public class UserServiceImpl implements UserService {
         return mapUserToBrandResponse(user);
     }
 
-
     private void mapRequestToEntity(UserRequest userRequest, User user) {
         BeanUtils.copyProperties(userRequest, user);
     }
-    
 
     private UserResponse mapEntityToResponse(User user) {
         UserResponse userResponse = new UserResponse();
@@ -114,9 +168,9 @@ public class UserServiceImpl implements UserService {
 
     public AuthenticationResponse generateToken(String username) {
         String token = jwtService.generateToken(username);
-        if (!token.isEmpty()) { 
+        if (!token.isEmpty()) {
             User user = userRepository.findByUserName(username)
-                                      .orElseThrow(() -> new RuntimeException("User not found"));
+                    .orElseThrow(() -> new RuntimeException("User not found"));
             AuthenticationResponse response = new AuthenticationResponse();
             response.setUserId(user.getId());
             response.setToken(token);
@@ -125,9 +179,33 @@ public class UserServiceImpl implements UserService {
             throw new RuntimeException("Failed to generate token");
         }
     }
-    
 
     public void validateToken(String token) {
         jwtService.validateToken(token);
+    }
+
+    @Override
+    public void switchStatus(UUID id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new CustomException("user not found", "USER_NOT_FOUND"));
+
+        // Chuyển đổi giá trị của status
+        int currentStatus = user.getStatus();
+        int newStatus = (currentStatus == 1) ? 0 : 1;
+        user.setStatus(newStatus);
+        // Lưu trạng thái đã chuyển đổi
+        userRepository.save(user);
+    }
+
+    @Override
+    public void trash(UUID id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new CustomException("User not found", "USER_NOT_FOUND"));
+
+        // Đặt trạng thái thành 2
+        user.setStatus(2);
+
+        // Lưu trạng thái đã thay đổi
+        userRepository.save(user);
     }
 }

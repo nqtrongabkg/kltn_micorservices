@@ -27,6 +27,7 @@ public class RoleServiceImpl implements RoleService {
         role.setName(roleRequest.getName());
         role.setDescription(roleRequest.getDescription());
         role.setRole(roleRequest.getRole());
+        role.setStatus(roleRequest.getStatus());
 
         Role savedRole = roleRepository.save(role);
         return convertToResponse(savedRole);
@@ -55,6 +56,7 @@ public class RoleServiceImpl implements RoleService {
         role.setName(roleRequest.getName());
         role.setDescription(roleRequest.getDescription());
         role.setRole(roleRequest.getRole());
+        role.setStatus(roleRequest.getStatus());
 
         Role updatedRole = roleRepository.save(role);
         return convertToResponse(updatedRole);
@@ -68,12 +70,38 @@ public class RoleServiceImpl implements RoleService {
         return convertToResponse(role);
     }
 
+    @Override
+    public void switchStatus(UUID id) {
+        Role role = roleRepository.findById(id)
+                .orElseThrow(() -> new CustomException("Role not found", "ROLE_NOT_FOUND"));
+
+        // Chuyển đổi giá trị của status
+        int currentStatus = role.getStatus();
+        int newStatus = (currentStatus == 1) ? 0 : 1;
+        role.setStatus(newStatus);
+        // Lưu trạng thái đã chuyển đổi
+        roleRepository.save(role);
+    }
+
+    @Override
+    public void trash(UUID id) {
+        Role role = roleRepository.findById(id)
+                .orElseThrow(() -> new CustomException("Role not found", "ROLE_NOT_FOUND"));
+
+        // Đặt trạng thái thành 2
+        role.setStatus(2);
+
+        // Lưu trạng thái đã thay đổi
+        roleRepository.save(role);
+    }
+
     private RoleResponse convertToResponse(Role role) {
         RoleResponse response = new RoleResponse();
         response.setId(role.getId());
         response.setName(role.getName());
         response.setDescription(role.getDescription());
         response.setRole(role.getRole());
+        response.setStatus(role.getStatus());
         return response;
     }
 }
