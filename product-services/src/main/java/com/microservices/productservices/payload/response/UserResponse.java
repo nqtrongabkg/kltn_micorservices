@@ -13,7 +13,7 @@ public class UserResponse {
 
     private String phone;
 
-    private byte[] avarta;
+    private String avarta;
 
     private String address;
 }

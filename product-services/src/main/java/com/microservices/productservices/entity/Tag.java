@@ -27,7 +27,7 @@ public class Tag {
     private String name;
 
     @Lob
-    private byte[] icon;
+    private String icon;
 
     private LocalDateTime createdAt;
 

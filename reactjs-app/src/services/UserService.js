@@ -13,6 +13,9 @@ const UserService = {
     getCustomer: () => {
         return httpAxios.get(`user-services/api/users/get-customers`);
     },
+    getStaffs: () => {
+        return httpAxios.get(`user-services/api/users/get-staffs`);
+    },
     createCustomer: (userData, avatar) => {
         const formData = new FormData();
         formData.append('userRequest', new Blob([JSON.stringify(userData)], {

@@ -59,4 +59,16 @@ public class NotificationController {
         List<NotificationResponse> notifications = notificationService.getByUser(userId);
         return ResponseEntity.ok(notifications);
     }
+
+    @PutMapping("/switch-status/{id}")
+    public ResponseEntity<Void> switchStatus(@PathVariable UUID id) {
+        notificationService.switchStatus(id);
+        return ResponseEntity.ok().build();
+    }   
+    
+    @PutMapping("/trash/{id}")
+    public ResponseEntity<Void> trash(@PathVariable UUID id) {
+        notificationService.trash(id);
+        return ResponseEntity.ok().build();
+    }    
 }

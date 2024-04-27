@@ -73,6 +73,31 @@ public class NotificationServiceImpl implements NotificationService {
                 .collect(Collectors.toList());
     }
 
+     @Override
+    public void switchStatus(UUID id) {
+        Notification notification = notificationRepository.findById(id)
+                .orElseThrow(() -> new CustomException("Role not found", "ROLE_NOT_FOUND"));
+
+        // Chuyển đổi giá trị của status
+        int currentStatus = notification.getStatus();
+        int newStatus = (currentStatus == 1) ? 0 : 1;
+        notification.setStatus(newStatus);
+        // Lưu trạng thái đã chuyển đổi
+        notificationRepository.save(notification);
+    }
+
+    @Override
+    public void trash(UUID id) {
+        Notification notification = notificationRepository.findById(id)
+                .orElseThrow(() -> new CustomException("Role not found", "ROLE_NOT_FOUND"));
+
+        // Đặt trạng thái thành 2
+        notification.setStatus(2);
+
+        // Lưu trạng thái đã thay đổi
+        notificationRepository.save(notification);
+    }
+
     private void mapRequestToEntity(NotificationRequest notificationRequest, Notification notification) {
         BeanUtils.copyProperties(notificationRequest, notification);
     }

@@ -1,7 +1,6 @@
 package com.microservices.productservices.service.impl;
 
 import com.microservices.productservices.entity.ProductFeedback;
-import com.microservices.productservices.payload.request.FeedbackGallaryRequest;
 import com.microservices.productservices.payload.request.ProductFeedbackRequest;
 import com.microservices.productservices.payload.response.FeedbackGallaryResponse;
 import com.microservices.productservices.payload.response.ProductFeedbackResponse;
@@ -12,7 +11,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -35,26 +33,14 @@ public class ProductFeedbackServiceImpl implements ProductFeedbackService {
         mapRequestToEntity(productFeedbackRequest, productFeedback);
         productFeedback.setCreatedAt(LocalDateTime.now());
         ProductFeedback savedProductFeedback = productFeedbackRepository.save(productFeedback);
-        List<FeedbackGallaryResponse> galleries = new ArrayList<>();
-        if (productFeedbackRequest.getImages() != null) {
-            for (byte[] image : productFeedbackRequest.getImages()) {
-                FeedbackGallaryRequest galleryRequest = FeedbackGallaryRequest.builder()
-                        .feedbackId(savedProductFeedback.getId())
-                        .image(image)
-                        .build();
-                FeedbackGallaryResponse createdGallery = feedbackGallaryService.create(galleryRequest);
-                galleries.add(createdGallery);
-            }
-        }
-        return mapProductFeedbackToResponse(savedProductFeedback, galleries);
+        return mapProductFeedbackToResponse(savedProductFeedback);
     }
 
     @Override
     public ProductFeedbackResponse getById(UUID id) {
         ProductFeedback productFeedback = productFeedbackRepository.findById(id).orElse(null);
         if (productFeedback != null) {
-            List<FeedbackGallaryResponse> galleries = feedbackGallaryService.findByFeedbackId(id);
-            return mapProductFeedbackToResponse(productFeedback, galleries);
+            return mapProductFeedbackToResponse(productFeedback);
         }
         return null;
     }
@@ -63,7 +49,7 @@ public class ProductFeedbackServiceImpl implements ProductFeedbackService {
     public List<ProductFeedbackResponse> getAll() {
         List<ProductFeedback> productFeedbacks = productFeedbackRepository.findAll();
         return productFeedbacks.stream()
-                .map(pf -> mapProductFeedbackToResponse(pf, new ArrayList<>()))
+                .map(pf -> mapProductFeedbackToResponse(pf))
                 .collect(Collectors.toList());
     }
 
@@ -71,7 +57,7 @@ public class ProductFeedbackServiceImpl implements ProductFeedbackService {
     public List<ProductFeedbackResponse> findByProductId(UUID productId) {
         List<ProductFeedback> productFeedbacks = productFeedbackRepository.findByProductId(productId);
         return productFeedbacks.stream()
-                .map(pf -> mapProductFeedbackToResponse(pf, new ArrayList<>()))
+                .map(pf -> mapProductFeedbackToResponse(pf))
                 .collect(Collectors.toList());
     }
 
@@ -82,8 +68,7 @@ public class ProductFeedbackServiceImpl implements ProductFeedbackService {
             mapRequestToEntity(productFeedbackRequest, existingProductFeedback);
             existingProductFeedback.setUpdatedAt(LocalDateTime.now());
             ProductFeedback updatedProductFeedback = productFeedbackRepository.save(existingProductFeedback);
-            List<FeedbackGallaryResponse> galleries = feedbackGallaryService.findByFeedbackId(id);
-            return mapProductFeedbackToResponse(updatedProductFeedback, galleries);
+            return mapProductFeedbackToResponse(updatedProductFeedback);
         }
         return null;
     }
@@ -94,14 +79,14 @@ public class ProductFeedbackServiceImpl implements ProductFeedbackService {
         if (productFeedback != null) {
             feedbackGallaryService.deleteByFeedbackId(productFeedback.getId());
             productFeedbackRepository.delete(productFeedback);
-            return mapProductFeedbackToResponse(productFeedback, new ArrayList<>());
+            return mapProductFeedbackToResponse(productFeedback);
         }
         return null;
     }
 
     // Helper method to map entity to response object
-    private ProductFeedbackResponse mapProductFeedbackToResponse(ProductFeedback productFeedback,
-            List<FeedbackGallaryResponse> galleries) {
+    private ProductFeedbackResponse mapProductFeedbackToResponse(ProductFeedback productFeedback) {
+        List<FeedbackGallaryResponse> gallaries = feedbackGallaryService.findByFeedbackId(productFeedback.getId());
         return ProductFeedbackResponse.builder()
                 .id(productFeedback.getId())
                 .orderItemId(productFeedback.getOrderItemId())
@@ -113,7 +98,7 @@ public class ProductFeedbackServiceImpl implements ProductFeedbackService {
                 .updatedAt(productFeedback.getUpdatedAt())
                 .createdBy(productFeedback.getCreatedBy())
                 .updatedBy(productFeedback.getUpdatedBy())
-                .galleries(galleries)
+                .galleries(gallaries)
                 .build();
     }
 

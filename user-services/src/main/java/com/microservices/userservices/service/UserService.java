@@ -19,6 +19,8 @@ public interface UserService {
     List<UserResponse> getAll();
 
     List<UserResponse> getCustomers();
+
+    List<UserResponse> getStaffs();
     
     UserResponse update(UUID id, UserRequest roleRequest, MultipartFile newAvatar);
 

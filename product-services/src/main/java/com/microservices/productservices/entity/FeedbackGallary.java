@@ -23,5 +23,5 @@ public class FeedbackGallary {
     private UUID feedbackId;
 
     @Lob
-    private byte[] image;
+    private String image;
 }

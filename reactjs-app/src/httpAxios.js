@@ -21,7 +21,6 @@ httpAxios.interceptors.request.use(config => {
   return config;
 });
 
-
 httpAxios.interceptors.response.use((response) => {
   return response.data;
 });

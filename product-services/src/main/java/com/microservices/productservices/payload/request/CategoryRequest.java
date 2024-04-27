@@ -1,8 +1,6 @@
 package com.microservices.productservices.payload.request;
 
 import java.util.UUID;
-
-import jakarta.persistence.Lob;
 import lombok.Builder;
 import lombok.Data;
 
@@ -11,9 +9,6 @@ import lombok.Data;
 public class CategoryRequest {
 
     private String name;
-
-    @Lob
-    private byte[] image;
 
     private Long productQuantity;
 

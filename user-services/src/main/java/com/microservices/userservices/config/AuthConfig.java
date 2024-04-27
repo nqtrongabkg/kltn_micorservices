@@ -28,8 +28,9 @@ public class AuthConfig {
         return http.cors().and().csrf().disable()
                 .authorizeHttpRequests()
                 .requestMatchers("/user-services/api/users/create", 
-                "/user-services/api/users/token", 
+                "/user-services/api/users/token",
                 "/user-services/api/users/validate",
+                "/image-service/**",
                 "/user-services/api/**").permitAll()
                 .and()
                 .build();

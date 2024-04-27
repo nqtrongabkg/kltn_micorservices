@@ -40,4 +40,6 @@ public class Notification {
 
     @Column(nullable = false)
     private LocalDateTime createdAt;
+
+    private int status;
 }

@@ -133,7 +133,14 @@ public class UserServiceImpl implements UserService {
                 .collect(Collectors.toList());
     }
 
-    
+    @Override
+    public List<UserResponse> getStaffs() {
+        List<User> users = userRepository.findAll();
+        return users.stream()
+                .filter(user -> user.getRole().getRole() == 1)
+                .map(this::mapEntityToResponse)
+                .collect(Collectors.toList());
+    }
 
     @Override
     public UserResponse delete(UUID id) {

@@ -227,10 +227,13 @@ const LayoutAdmin = () => {
                                                                 <a href="/admin/staff/index">Thành viên</a>
                                                             </li>
                                                             <li>
+                                                                <a href="/admin/notification/index">Thông báo</a>
+                                                            </li>
+                                                            <li>
                                                                 <a href="/admin/config/index">Cấu hình</a>
                                                             </li>
                                                             <li>
-                                                                <a href="/admin/role/index">Quyền hạn</a>
+                                                                <a href="/admin/role/index">Quyền</a>
                                                             </li>
                                                         </ul>
                                                     </li>

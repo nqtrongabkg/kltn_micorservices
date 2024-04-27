@@ -3,19 +3,18 @@ import UserService from '../../../services/UserService';
 import { FaToggleOn, FaTrash, FaEdit, FaToggleOff } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { IoIosNotifications } from "react-icons/io";
 import { urlImageUser } from '../../../config';
 
-const UserIndex = () => {
+const StaffIndex = () => {
     const [users, setUsers] = useState([]);
     const [reload, setReload] = useState(0);
 
     useEffect(() => {
         const fetchUsers = async () => {
             try {
-                let result = await UserService.getCustomer();
+                let result = await UserService.getStaffs();
                 // Filter out users with status 2
-                result = result.filter(user => user.status !== 2);
+                result = result.filter(user => user.status !== 2 && user.userName !== "admin");// status == 2 la thung rac
                 // Sort users by createdAt in descending order
                 const sortedUsers = result.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
                 setUsers(sortedUsers);
@@ -45,12 +44,12 @@ const UserIndex = () => {
     return (
         <div className="content">
             <section className="content-header my-2">
-                <h1 className="d-inline">Danh sách người dùng</h1>
-                <Link to="/admin/user/add" className="btn-add">Thêm mới</Link>
+                <h1 className="d-inline">Danh sách thành viên</h1>
+                <Link to="/admin/staff/add" className="btn-add">Thêm mới</Link>
                 <div className="row mt-3 align-items-center">
                     <div className="col-12">
                         <button type="button" className="btn btn-warning">
-                            <a href="/admin/user/trash">Thùng rác</a>
+                            <a href="/admin/staff/trash">Thùng rác</a>
                         </button>
                     </div>
                 </div>
@@ -91,10 +90,10 @@ const UserIndex = () => {
                                                         className={
                                                             user.status === 1 ? "border-0 px-1 text-success" : "border-0 px-1 text-danger"
                                                         }>
-                                                        {user.status === 1 ? <FaToggleOn size={24}/> : <FaToggleOff size={24}/>}
+                                                        {user.status === 1 ? <FaToggleOn /> : <FaToggleOff />}
                                                     </button>
-                                                    <Link to={"/admin/user/edit/" + user.id} className='px-1 text-primary'>
-                                                        <FaEdit size={20}/>
+                                                    <Link to={"/admin/staff/edit/" + user.id} className='px-1 text-primary'>
+                                                        <FaEdit />
                                                     </Link>
                                                     <button
                                                         onClick={() => HandTrash(user.id)}
@@ -103,23 +102,14 @@ const UserIndex = () => {
                                                     </button>
                                                 </div>
                                         </td>
-                                        <td>{user.name}
-                                        <div className="function_style">
-                                                    
-                                                    <Link to={"/admin/notification/add/" + user.id} className='px-1 text-primary border-0'>
-                                                        <IoIosNotifications size={24}/>
-                                                    </Link>
-                    
-                                                </div>
-                                        </td>
+                                        <td>{user.name}</td>
                                         <td>
                                             <img src={urlImageUser + user.avatar} className="img-fluid user-avatar" alt="User" />
                                         </td>
                                         <td>{user.email}</td>
                                         <td>{user.phone}</td>
                                         <td>{user.address}</td>
-                                        <td>{user.role.role === 3 ? "Nguoi mua" : "Nguoi ban"}</td>
-                                        
+                                        <td>Quản trị</td>
                                     </tr>
                                 );
                             })
@@ -131,4 +121,4 @@ const UserIndex = () => {
     );
 };
 
-export default UserIndex;
+export default StaffIndex;

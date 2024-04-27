@@ -19,4 +19,5 @@ public class NotificationRequest {
 
     private String linkTo;
 
+    private int status;
 }

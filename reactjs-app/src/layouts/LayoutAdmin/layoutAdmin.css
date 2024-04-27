@@ -260,3 +260,12 @@ label {
 .signin-link a:hover {
     text-decoration: underline;
 }
+
+.user-avatar {
+    width: 100px;
+    height: 100px;
+    display: block; 
+    margin-left: auto;
+    margin-right: auto;
+  }
+  

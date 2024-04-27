@@ -19,4 +19,8 @@ public interface NotificationService {
     NotificationResponse delete(UUID id);
 
     List<NotificationResponse> getByUser(UUID userId);
+
+    void switchStatus(UUID id);
+
+    void trash(UUID id);
 }

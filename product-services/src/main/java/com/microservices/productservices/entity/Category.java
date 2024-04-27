@@ -25,7 +25,7 @@ public class Category {
     private String name;
 
     @Lob
-    private byte[] image;
+    private String image;
 
     @Column(name = "product_quantity")
     private Long productQuantity;

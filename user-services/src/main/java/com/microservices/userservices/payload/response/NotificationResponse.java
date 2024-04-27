@@ -23,4 +23,6 @@ public class NotificationResponse {
     private String linkTo;
 
     private LocalDateTime createdAt;
+
+    private int status;
 }

@@ -13,6 +13,7 @@ public class RouteValidator {
         "/user-services/api/users/create", 
         "/user-services/api/users/token",
         "/user-services/api/**",
+        "/image-service/**",
             "/eureka"
     );
 
