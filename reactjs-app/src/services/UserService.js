@@ -13,6 +13,24 @@ const UserService = {
             },
         });
     },
+    create: (user) => {
+        return httpAxios.post(`user-services/api/users/create-user`, user);
+    },
+    saveImage: (id, path, image) => {
+        const formData = new FormData();
+        formData.append('path', new Blob([JSON.stringify(path)], {
+            type: "application/json"
+        }));
+        formData.append('image', image);
+        return httpAxios.post(`user-services/api/users/save-image/${id}`, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            },
+        });
+    },
+    deleteImage: (data) => {
+        return httpAxios.delete(`user-services/api/users/delete-image/`, data);
+    },
     login: (user) => {
         return httpAxios.post(`user-services/api/users/token`, user);
     },

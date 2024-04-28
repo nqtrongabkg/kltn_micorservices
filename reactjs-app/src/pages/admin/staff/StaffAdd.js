@@ -54,13 +54,15 @@ const StaffAdd = () => {
             role: selectedRole,
             status: status,
         };
+        const path = {
+            path: "users"
+        };
 
         try {
-            console.log("user data: ",userData)
-            console.log("user image: ",avatar)
-            const result = await UserService.createCustomer(userData, avatar); // Truyền hình ảnh đại diện
+            const result = await UserService.create(userData);
             if (result) {
                 console.log("usser added = ", result);
+                await UserService.saveImage(result.id, path, avatar)
                 toast.success("Thêm thành công");
                 navigate("/admin/staff/index", { replace: true });
             }

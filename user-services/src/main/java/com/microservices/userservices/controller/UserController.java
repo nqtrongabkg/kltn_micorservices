@@ -1,6 +1,8 @@
 package com.microservices.userservices.controller;
 
 import com.microservices.userservices.payload.request.AuthRequest;
+import com.microservices.userservices.payload.request.ImageRequest;
+import com.microservices.userservices.payload.request.PathRequest;
 import com.microservices.userservices.payload.request.UserRequest;
 import com.microservices.userservices.payload.response.AuthenticationResponse;
 import com.microservices.userservices.payload.response.UserResponse;
@@ -16,8 +18,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.security.core.Authentication;
 import java.util.List;
 import java.util.UUID;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 
 @RestController
 @RequestMapping("user-services/api/users")
@@ -43,6 +43,12 @@ public class UserController {
         return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
     }
 
+    @PostMapping("/create-user")
+    public ResponseEntity<UserResponse> create(@RequestBody UserRequest userRequest) {
+        UserResponse createdUser = userService.createUser(userRequest);
+        return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
+    }
+
     @PutMapping("/update/{id}")
     public ResponseEntity<UserResponse> updateUser(
             @PathVariable UUID id,
@@ -56,6 +62,24 @@ public class UserController {
     public ResponseEntity<UserResponse> getUserById(@PathVariable UUID id) {
         UserResponse user = userService.getById(id);
         return ResponseEntity.ok(user);
+    }
+
+    @PostMapping("/save-image/{id}")
+    public ResponseEntity<String> saveImage(@PathVariable UUID id, 
+    @RequestPart("path") PathRequest path,
+        @RequestPart("image") MultipartFile image) {
+            userService.saveImage(id,path, image);
+            return ResponseEntity.ok("Image uploaded successfully");
+    }
+
+    @DeleteMapping("/delete-image")
+    public ResponseEntity<String> deleteImage(@RequestBody ImageRequest request) {
+        try {
+            userService.deleteImage(request.getPath(), request.getFilename());
+            return ResponseEntity.ok("Image deleted successfully");
+        } catch (Exception e) {
+            throw new RuntimeException("Error deleting the file: " + e.getMessage());
+        }
     }
 
     @GetMapping("/get-all")

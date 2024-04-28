@@ -18,6 +18,8 @@ public class UserRequest {
 
     private String userName;
 
+    private String avatar;
+
     private String email;
 
     private String password;

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import UserService from '../../../services/UserService';
 import { FaArrowAltCircleLeft, FaTrash } from 'react-icons/fa';
 import { toast } from 'react-toastify';
+import { urlImageUser } from '../../../config';
 
 const StaffTrash = () => {
     const [users, setUsers] = useState([]);
@@ -98,7 +99,7 @@ const StaffTrash = () => {
                                     </div>
                                 </td>
                                 <td>{user.name}</td>
-                                <td>{/* Render the image if available */}</td>
+                                <td><img src={urlImageUser + user.avatar} className="img-fluid user-avatar" alt="User" /></td>
                                 <td>{user.email}</td>
                                 <td>{user.phone}</td>
                                 <td>{user.address}</td>

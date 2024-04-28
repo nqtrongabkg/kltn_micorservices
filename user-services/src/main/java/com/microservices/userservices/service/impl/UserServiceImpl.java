@@ -2,6 +2,7 @@ package com.microservices.userservices.service.impl;
 
 import com.microservices.userservices.entity.User;
 import com.microservices.userservices.exception.CustomException;
+import com.microservices.userservices.payload.request.PathRequest;
 import com.microservices.userservices.payload.request.UserRequest;
 import com.microservices.userservices.payload.response.AuthenticationResponse;
 import com.microservices.userservices.payload.response.UserResponse;
@@ -55,6 +56,43 @@ public class UserServiceImpl implements UserService {
 
         User savedUser = userRepository.save(user);
         return mapEntityToResponse(savedUser);
+    }
+
+    @Override
+    public UserResponse createUser(UserRequest userRequest){
+        User user = new User();
+        mapRequestToEntity(userRequest, user);
+        user.setCreatedAt(LocalDateTime.now());
+        // Hash password
+        user.setPassword(passwordEncoder.encode(userRequest.getPassword()));
+        User savedUser = userRepository.save(user);
+        return mapEntityToResponse(savedUser);
+    }
+
+    @Override
+    public void saveImage(UUID id, PathRequest path, MultipartFile image){
+        String fileName = id.toString() + "-" + image.getOriginalFilename();
+        try {
+            // Lưu tệp vào thư mục tĩnh của ứng dụng
+            Path filePath = Paths.get("src/main/resources/static/" + path.getPath() + "/" + fileName);
+            Files.copy(image.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            throw new CustomException("Failed to save avatar file", "INTERNAL_SERVER_ERROR");
+        }
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new CustomException("user not found", "USER_NOT_FOUND"));
+        user.setAvatar(fileName);
+        userRepository.save(user);
+    }
+
+    @Override
+    public void deleteImage(String path, String fileName){
+        try {
+            Path filePath = Paths.get("src/main/resources/static/" + path + "/" + fileName);
+            Files.deleteIfExists(filePath);
+        } catch (IOException e) {
+            throw new CustomException("Failed to delete old avatar", "INTERNAL_SERVER_ERROR");
+        }
     }
 
     @Override

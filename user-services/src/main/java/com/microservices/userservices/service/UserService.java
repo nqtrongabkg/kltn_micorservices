@@ -3,6 +3,8 @@ package com.microservices.userservices.service;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.web.multipart.MultipartFile;
+
+import com.microservices.userservices.payload.request.PathRequest;
 import com.microservices.userservices.payload.request.UserRequest;
 import com.microservices.userservices.payload.response.AuthenticationResponse;
 import com.microservices.userservices.payload.response.UserResponse;
@@ -11,6 +13,12 @@ import com.microservices.userservices.payload.response.UserToOrthersResponse;
 public interface UserService {
 
     UserResponse create(UserRequest userRequest, MultipartFile avatar);
+
+    UserResponse createUser(UserRequest userRequest);
+
+    void saveImage(UUID id, PathRequest path, MultipartFile avatar);
+
+    void deleteImage(String path, String fileName);
 
     UserResponse getById(UUID id);
 
