@@ -1,7 +1,4 @@
 
-// import BrandEdit from "../pages/backend/brand/BrandEdit";
-// import BrandIndex from "../pages/backend/brand/BrandIndex";
-// import BrandTrash from "../pages/backend/brand/BrandTrash";
 
 import UserIndex from "../pages/admin/user/UserIndex";
 import UserAdd from "../pages/admin/user/UserAdd";
@@ -22,6 +19,11 @@ import NotificationIndex from "../pages/admin/notification/NotificationIndex";
 import NotificationAdd from "../pages/admin/notification/NotificationAdd";
 import NotificationEdit from "../pages/admin/notification/NotificationEdit";
 import NotificationTrash from "../pages/admin/notification/NotificationTrash";
+
+import BrandAdd from "../pages/admin/brand/BrandAdd";
+import BrandEdit from "../pages/admin/brand/BrandEdit";
+import BrandIndex from "../pages/admin/brand/BrandIndex";
+import BrandTrash from "../pages/admin/brand/BrandTrash";
 
 const RouteAdmin = [
     //user
@@ -44,5 +46,10 @@ const RouteAdmin = [
     { path: '/admin/notification/trash', component: NotificationTrash },
     { path: '/admin/notification/add/:id', component: NotificationAdd },
     { path: '/admin/notification/edit/:id', component: NotificationEdit },
+    //brand
+    { path: '/admin/brand/index', component: BrandIndex },
+    { path: '/admin/brand/trash', component: BrandTrash },
+    { path: '/admin/brand/add', component: BrandAdd },
+    { path: '/admin/brand/edit/:id', component: BrandEdit },
 ];
 export default RouteAdmin;

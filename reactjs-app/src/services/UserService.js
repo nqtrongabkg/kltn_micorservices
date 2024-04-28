@@ -1,6 +1,18 @@
 import httpAxios from '../httpAxios';
 
 const UserService = {
+    createCustomer: (userData, avatar) => {
+        const formData = new FormData();
+        formData.append('userRequest', new Blob([JSON.stringify(userData)], {
+            type: "application/json"
+        }));
+        formData.append('avatar', avatar);
+        return httpAxios.post(`user-services/api/users/create`, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            },
+        });
+    },
     login: (user) => {
         return httpAxios.post(`user-services/api/users/token`, user);
     },
@@ -16,18 +28,7 @@ const UserService = {
     getStaffs: () => {
         return httpAxios.get(`user-services/api/users/get-staffs`);
     },
-    createCustomer: (userData, avatar) => {
-        const formData = new FormData();
-        formData.append('userRequest', new Blob([JSON.stringify(userData)], {
-            type: "application/json"
-        }));
-        formData.append('avatar', avatar);
-        return httpAxios.post(`user-services/api/users/create`, formData, {
-            headers: {
-                'Content-Type': 'multipart/form-data'
-            },
-        });
-    },
+    
     sitchStatus: (id) => {
         return httpAxios.put(`user-services/api/users/switch-status/${id}`);
     },

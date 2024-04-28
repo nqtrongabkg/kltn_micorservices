@@ -26,6 +26,4 @@ public class BrandResponse {
     private UUID updatedBy;
 
     private Integer status;
-
-    private UserResponse User;
 }

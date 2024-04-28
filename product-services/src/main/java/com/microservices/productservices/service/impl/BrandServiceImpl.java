@@ -1,10 +1,5 @@
 package com.microservices.productservices.service.impl;
 
-import com.microservices.productservices.entity.Brand;
-import com.microservices.productservices.payload.request.BrandRequest;
-import com.microservices.productservices.payload.response.BrandResponse;
-import com.microservices.productservices.repository.BrandRepository;
-import com.microservices.productservices.service.BrandService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -18,6 +13,12 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import com.microservices.productservices.entity.Brand;
+import com.microservices.productservices.payload.request.BrandRequest;
+import com.microservices.productservices.payload.response.BrandResponse;
+import com.microservices.productservices.repository.BrandRepository;
+import com.microservices.productservices.service.BrandService;
+
 @Service
 public class BrandServiceImpl implements BrandService {
 
@@ -27,7 +28,7 @@ public class BrandServiceImpl implements BrandService {
         this.brandRepository = brandRepository;
     }
 
-    private void deleteAvatar(String fileName) {
+    private void deleteImage(String fileName) {
         try {
             Path filePath = Paths.get("src/main/resources/static/brands/" + fileName);
             Files.deleteIfExists(filePath);
@@ -36,12 +37,12 @@ public class BrandServiceImpl implements BrandService {
         }
     }
 
-    private String saveAvatar(MultipartFile avatar) {
-        String fileName = UUID.randomUUID().toString() + "-" + avatar.getOriginalFilename();
+    private String saveImage(MultipartFile image) {
+        String fileName = UUID.randomUUID().toString() + "-" + image.getOriginalFilename();
         try {
             // Lưu tệp vào thư mục tĩnh của ứng dụng
             Path filePath = Paths.get("src/main/resources/static/brands/" + fileName);
-            Files.copy(avatar.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+            Files.copy(image.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
             throw new RuntimeException("Failed to save avatar file");
         }
@@ -49,17 +50,22 @@ public class BrandServiceImpl implements BrandService {
     }
 
     @Override
-    public BrandResponse create(BrandRequest brandRequest, MultipartFile image) {
+    public BrandResponse create(BrandRequest brandRequest) {
         Brand brand = new Brand();
         mapRequestToEntity(brandRequest, brand);
         brand.setCreatedAt(LocalDateTime.now());
-        // Save image if provided
-        if (image != null) {
-            String avatarFileName = saveAvatar(image);
-            brand.setImage(avatarFileName);
-        }
         Brand savedBrand = brandRepository.save(brand);
         return mapBrandToBrandResponse(savedBrand);
+    }
+
+    @Override
+    public void image(UUID id, MultipartFile image){
+        if (image != null) {
+            String FileName = saveImage(image);
+            Brand brand = brandRepository.findById(id).orElse(null);
+            brand.setImage(FileName);
+            brandRepository.save(brand);
+        }
     }
 
     @Override
@@ -89,10 +95,10 @@ public class BrandServiceImpl implements BrandService {
             if (newImage != null && !newImage.isEmpty()) {
                 // Delete old avatar if it exists
                 if (existingBrand.getImage() != null && !existingBrand.getImage().isEmpty()) {
-                    deleteAvatar(existingBrand.getImage());
+                    deleteImage(existingBrand.getImage());
                 }
                 // Save new avatar
-                String avatarFileName = saveAvatar(newImage);
+                String avatarFileName = saveImage(newImage);
                 existingBrand.setImage(avatarFileName);
             }
             Brand updatedBrand = brandRepository.save(existingBrand);
@@ -117,6 +123,44 @@ public class BrandServiceImpl implements BrandService {
         return brands.stream()
                 .map(this::mapBrandToBrandResponse)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public void switchStatus(UUID id) {
+        Brand brand = brandRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("ROLE_NOT_FOUND"));
+
+        // Chuyển đổi giá trị của status
+        int currentStatus = brand.getStatus();
+        int newStatus = (currentStatus == 1) ? 0 : 1;
+        brand.setStatus(newStatus);
+        // Lưu trạng thái đã chuyển đổi
+        brandRepository.save(brand);
+    }
+
+    @Override
+    public void trash(UUID id) {
+        Brand brand = brandRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("ROLE_NOT_FOUND"));
+
+        // Đặt trạng thái thành 2
+        brand.setStatus(2);
+
+        // Lưu trạng thái đã thay đổi
+        brandRepository.save(brand);
+    }
+
+    @Override
+    public void isDisplay(UUID id) {
+        Brand brand = brandRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("ROLE_NOT_FOUND"));
+
+         // Chuyển đổi giá trị của status
+         int currentStatus = brand.getStatus();
+         int newStatus = (currentStatus == 3) ? 1 : 3;
+         brand.setStatus(newStatus);
+         // Lưu trạng thái đã chuyển đổi
+         brandRepository.save(brand);
     }
 
     private BrandResponse mapBrandToBrandResponse(Brand brand) {

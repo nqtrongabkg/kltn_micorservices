@@ -56,6 +56,8 @@ const StaffAdd = () => {
         };
 
         try {
+            console.log("user data: ",userData)
+            console.log("user image: ",avatar)
             const result = await UserService.createCustomer(userData, avatar); // Truyền hình ảnh đại diện
             if (result) {
                 console.log("usser added = ", result);

@@ -10,7 +10,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 public interface BrandService {
 
-    BrandResponse create(BrandRequest brandRequest, MultipartFile image);
+    BrandResponse create(BrandRequest brandRequest);
+
+    void image(UUID id, MultipartFile image);
 
     BrandResponse getById(UUID id);
 
@@ -21,4 +23,10 @@ public interface BrandService {
     BrandResponse delete(UUID id);
 
     List<BrandResponse> findByUser(UUID id);
+
+    void switchStatus(UUID id);
+
+    void trash(UUID id);
+
+    public void isDisplay(UUID id);
 }

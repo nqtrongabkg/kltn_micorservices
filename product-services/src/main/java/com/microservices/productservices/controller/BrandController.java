@@ -1,20 +1,14 @@
 package com.microservices.productservices.controller;
 
-import com.microservices.productservices.payload.request.BrandRequest;
-import com.microservices.productservices.payload.response.BrandResponse;
-import com.microservices.productservices.service.BrandService;
-import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.UUID;
-import org.springframework.core.io.Resource;
-import org.springframework.http.MediaType;
-import java.nio.file.Path;
-
+import com.microservices.productservices.payload.request.BrandRequest;
+import com.microservices.productservices.payload.response.BrandResponse;
+import com.microservices.productservices.service.BrandService;
 @RestController
 @RequestMapping("product-services/api/brands")
 @CrossOrigin(origins = { "http://localhost:3000" })
@@ -26,32 +20,19 @@ public class BrandController {
         this.brandService = brandService;
     }
 
-    @GetMapping("/brands/{filename:.+}")
-    public ResponseEntity<Resource> getUserAvatar(@PathVariable String filename) {
-        try {
-            Path fileStorageLocation = Paths.get("src/main/resources/static/brands").toAbsolutePath().normalize();
-            Path filePath = fileStorageLocation.resolve(filename).normalize();
-            Resource resource = new UrlResource(filePath.toUri());
-
-            if (resource.exists() || resource.isReadable()) {
-                return ResponseEntity.ok()
-                        .contentType(MediaType.IMAGE_JPEG) 
-                        .body(resource);
-            } else {
-                throw new RuntimeException("Could not read the file!");
-            }
-        } catch (Exception e) {
-            throw new RuntimeException("Error: " + e.getMessage());
-        }
-    }
-
     @PostMapping("/create")
-    public ResponseEntity<BrandResponse> createBrand(
-        @RequestPart("brandRequest") BrandRequest brandRequest,
-        @RequestPart("image") MultipartFile imageFile) {
-        BrandResponse createdBrand = brandService.create(brandRequest, imageFile);
-        return new ResponseEntity<>(createdBrand, HttpStatus.CREATED);
+    public ResponseEntity<BrandResponse> createBrand(@RequestBody BrandRequest brandRequest) {
+        BrandResponse brandResponse = brandService.create(brandRequest);
+        return new ResponseEntity<>(brandResponse, HttpStatus.CREATED);
     }
+
+    @PostMapping("/image/{id}")
+    public ResponseEntity<String> image(@PathVariable UUID id, 
+        @RequestPart("image") MultipartFile image) {
+            brandService.image(id, image);
+            return ResponseEntity.ok("Image uploaded successfully");
+    }
+
 
     @GetMapping("/get-by-id/{id}")
     public ResponseEntity<BrandResponse> getBrandById(@PathVariable UUID id) {
@@ -96,4 +77,20 @@ public class BrandController {
         return ResponseEntity.ok(brands);
     }
 
+    @PutMapping("/switch-status/{id}")
+    public ResponseEntity<Void> switchStatus(@PathVariable UUID id) {
+        brandService.switchStatus(id);
+        return ResponseEntity.ok().build();
+    }
+    
+    @PutMapping("/trash/{id}")
+    public ResponseEntity<Void> trash(@PathVariable UUID id) {
+        brandService.trash(id);
+        return ResponseEntity.ok().build();
+    }  
+    @PutMapping("/display/{id}")
+    public ResponseEntity<Void> display(@PathVariable UUID id) {
+        brandService.isDisplay(id);
+        return ResponseEntity.ok().build();
+    }  
 }

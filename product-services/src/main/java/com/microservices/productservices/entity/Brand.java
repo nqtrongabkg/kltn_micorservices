@@ -22,11 +22,10 @@ public class Brand {
     private UUID id;
 
     @Column(nullable = false)
-    private String name;
+    private String name;    
 
     private String description;
 
-    @Lob
     private String image;
 
     @Column(nullable = false)

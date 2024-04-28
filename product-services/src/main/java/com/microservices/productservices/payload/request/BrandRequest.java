@@ -14,5 +14,7 @@ public class BrandRequest {
 
     private UUID createdBy;
 
+    private UUID updatedBy;
+
     private Integer status;
 }

@@ -60,6 +60,7 @@ const LayoutAdmin = () => {
                 // console.log("userid and token : ", response);
                 const { userId, token } = response;
                 const userData = { userId, token };
+                // console.log("user login = ",userData)
                 sessionStorage.setItem('useradmin', JSON.stringify(userData));
                 UserService.getUserById(userData.userId)
                         .then(userGet => {
