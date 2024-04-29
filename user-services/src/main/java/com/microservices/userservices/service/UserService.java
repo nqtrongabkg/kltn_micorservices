@@ -14,9 +14,11 @@ public interface UserService {
 
     UserResponse create(UserRequest userRequest, MultipartFile avatar);
 
+    void setImage(UUID id, String image);
+
     UserResponse createUser(UserRequest userRequest);
 
-    void saveImage(UUID id, PathRequest path, MultipartFile avatar);
+    String saveImage(UUID id, PathRequest path, MultipartFile avatar);
 
     void deleteImage(String path, String fileName);
 
@@ -30,7 +32,7 @@ public interface UserService {
 
     List<UserResponse> getStaffs();
     
-    UserResponse update(UUID id, UserRequest roleRequest, MultipartFile newAvatar);
+    UserResponse update(UUID id, UserRequest userRequest);
 
     UserResponse delete(UUID id);
 

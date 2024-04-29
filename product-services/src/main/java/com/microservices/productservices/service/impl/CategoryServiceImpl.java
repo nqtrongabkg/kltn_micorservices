@@ -32,6 +32,51 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    public void setImage(UUID id, String image){
+        Category category = categoryRepository.findById(id).orElse(null);
+        category.setImage(image);
+        categoryRepository.save(category);
+    }
+
+    @Override
+    public void switchStatus(UUID id) {
+        Category category = categoryRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("NOT_FOUND"));
+
+        // Chuyển đổi giá trị của status
+        int currentStatus = category.getStatus();
+        int newStatus = (currentStatus == 1) ? 0 : 1;
+        category.setStatus(newStatus);
+        // Lưu trạng thái đã chuyển đổi
+        categoryRepository.save(category);
+    }
+
+    @Override
+    public void trash(UUID id) {
+        Category category = categoryRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("NOT_FOUND"));
+
+        // Đặt trạng thái thành 2
+        category.setStatus(2);
+
+        // Lưu trạng thái đã thay đổi
+        categoryRepository.save(category);
+    }
+
+    @Override
+    public void isDisplay(UUID id) {
+        Category category = categoryRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("NOT_FOUND"));
+
+         // Chuyển đổi giá trị của status
+         int currentStatus = category.getStatus();
+         int newStatus = (currentStatus == 3) ? 1 : 3;
+         category.setStatus(newStatus);
+         // Lưu trạng thái đã chuyển đổi
+         categoryRepository.save(category);
+    }
+
+    @Override
     public CategoryResponse getById(UUID id) {
         Category category = categoryRepository.findById(id).orElse(null);
         if (category != null) {
@@ -69,6 +114,8 @@ public class CategoryServiceImpl implements CategoryService {
         }
         return null;
     }
+
+    
 
     private CategoryResponse mapCategoryToCategoryResponse(Category category) {
         if (category != null) {

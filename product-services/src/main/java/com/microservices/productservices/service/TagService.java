@@ -10,6 +10,14 @@ public interface TagService {
 
     TagResponse create(TagRequest tagRequest);
 
+    void setImage(UUID id, String image);
+
+    void switchStatus(UUID id);
+
+    void trash(UUID id);
+
+    void isDisplay(UUID id);
+
     TagResponse getById(UUID id);
 
     List<TagResponse> getAll();

@@ -10,6 +10,14 @@ public interface CategoryService {
 
     CategoryResponse create(CategoryRequest categoryRequest);
 
+    void setImage(UUID id, String image);
+
+    void switchStatus(UUID id);
+
+    void trash(UUID id);
+
+    void isDisplay(UUID id);
+
     CategoryResponse getById(UUID id);
 
     List<CategoryResponse> getAll();
@@ -17,4 +25,6 @@ public interface CategoryService {
     CategoryResponse update(UUID id, CategoryRequest categoryRequest);
 
     CategoryResponse delete(UUID id);
+
+    
 }

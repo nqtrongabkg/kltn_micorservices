@@ -153,7 +153,10 @@ const LayoutAdmin = () => {
                                                                 <a href="/admin/product/import" className="margin-left-submenu">Nhập hàng</a>
                                                             </li>
                                                             <li>
-                                                                <a href="/admin/category/index" className="margin-left-submenu">Danh mục</a>
+                                                                <a href="/admin/category/index" className="margin-left-submenu">Loại sản phẩm</a>
+                                                            </li>
+                                                            <li>
+                                                                <a href="/admin/tag/index" className="margin-left-submenu">Nhãn</a>
                                                             </li>
                                                             <li>
                                                                 <a href="/admin/brand/index" className="margin-left-submenu">Thương hiệu</a>

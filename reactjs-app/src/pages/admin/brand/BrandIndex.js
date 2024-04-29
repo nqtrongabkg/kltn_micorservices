@@ -3,6 +3,7 @@ import BrandService from '../../../services/BrandService';
 import { FaToggleOn, FaTrash, FaEdit, FaToggleOff } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { urlImageBrand } from '../../../config';
 
 const BrandIndex = () => {
     const [brands, setBrands] = useState([]);
@@ -12,10 +13,7 @@ const BrandIndex = () => {
         const fetchBrands = async () => {
             try {
                 let result = await BrandService.getAll();
-                // console.log("brands = ",result)
-                // Filter out brands with status 2
                 result = result.filter(brand => brand.status !== 2);
-                // Sort brands by createdAt in descending order
                 const sortedBrands = result.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
                 setBrands(sortedBrands);
             } catch (error) {
@@ -107,8 +105,11 @@ const BrandIndex = () => {
                                                 </div>
                                         </td>
                                         <td>
-                                            {brand.image}
-                                            {/* <img src={urlImageUser + brand.image} className="img-fluid user-avatar" alt="User" /> */}
+                                            {brand.image ? (
+                                                <img src={urlImageBrand + brand.image} className="img-fluid user-avatar" alt="Hinh anh" />
+                                            ) : (
+                                                <p>Không có ảnh</p>
+                                            )}
                                         </td>
                                         <td>{brand.description}</td>
                                         <td>{brand.createdAt}</td>

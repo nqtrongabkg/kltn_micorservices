@@ -13,7 +13,9 @@ public class TagResponse {
 
     private String name;
 
-    private String icon;
+    private String description;
+
+    private String image;
 
     private LocalDateTime createdAt;
 
@@ -22,4 +24,6 @@ public class TagResponse {
     private UUID createdBy;
 
     private UUID updatedBy;
+
+    private Integer status;
 }

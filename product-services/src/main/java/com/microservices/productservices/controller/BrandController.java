@@ -3,10 +3,11 @@ package com.microservices.productservices.controller;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
+// import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 import java.util.UUID;
 import com.microservices.productservices.payload.request.BrandRequest;
+import com.microservices.productservices.payload.request.SetImageRequest;
 import com.microservices.productservices.payload.response.BrandResponse;
 import com.microservices.productservices.service.BrandService;
 @RestController
@@ -26,12 +27,12 @@ public class BrandController {
         return new ResponseEntity<>(brandResponse, HttpStatus.CREATED);
     }
 
-    @PostMapping("/image/{id}")
-    public ResponseEntity<String> image(@PathVariable UUID id, 
-        @RequestPart("image") MultipartFile image) {
-            brandService.image(id, image);
-            return ResponseEntity.ok("Image uploaded successfully");
+    @PutMapping("/set-image")
+    public ResponseEntity<String> setImage(@RequestBody SetImageRequest setImageRequest) {
+        brandService.setImage(setImageRequest.getId(), setImageRequest.getImage());
+        return ResponseEntity.ok("Set image done");
     }
+
 
 
     @GetMapping("/get-by-id/{id}")
@@ -52,10 +53,8 @@ public class BrandController {
     @PutMapping("/update/{id}")
     public ResponseEntity<BrandResponse> updateBrand(
         @PathVariable UUID id,
-        @RequestPart("brandRequest") BrandRequest brandRequest, 
-        @RequestPart("image") MultipartFile image
-        ) {
-        BrandResponse updatedBrand = brandService.update(id, brandRequest, image);
+        @RequestBody BrandRequest brandRequest){
+        BrandResponse updatedBrand = brandService.update(id, brandRequest);
         if (updatedBrand != null) {
             return ResponseEntity.ok(updatedBrand);
         }

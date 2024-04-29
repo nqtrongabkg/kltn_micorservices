@@ -1,20 +1,23 @@
 import httpAxios from '../httpAxios';
 
 const UserService = {
-    createCustomer: (userData, avatar) => {
-        const formData = new FormData();
-        formData.append('userRequest', new Blob([JSON.stringify(userData)], {
-            type: "application/json"
-        }));
-        formData.append('avatar', avatar);
-        return httpAxios.post(`user-services/api/users/create`, formData, {
-            headers: {
-                'Content-Type': 'multipart/form-data'
-            },
-        });
-    },
+    // createCustomer: (userData, avatar) => {
+    //     const formData = new FormData();
+    //     formData.append('userRequest', new Blob([JSON.stringify(userData)], {
+    //         type: "application/json"
+    //     }));
+    //     formData.append('avatar', avatar);
+    //     return httpAxios.post(`user-services/api/users/create`, formData, {
+    //         headers: {
+    //             'Content-Type': 'multipart/form-data'
+    //         },
+    //     });
+    // },
     create: (user) => {
         return httpAxios.post(`user-services/api/users/create-user`, user);
+    },
+    setImage: (data) => {
+        return httpAxios.put(`user-services/api/users/set-image`, data);
     },
     saveImage: (id, path, image) => {
         const formData = new FormData();
@@ -29,8 +32,9 @@ const UserService = {
         });
     },
     deleteImage: (data) => {
-        return httpAxios.delete(`user-services/api/users/delete-image/`, data);
+        return httpAxios.delete(`user-services/api/users/delete-image`, { data: data });
     },
+    
     login: (user) => {
         return httpAxios.post(`user-services/api/users/token`, user);
     },
@@ -56,20 +60,8 @@ const UserService = {
     delete: (id) => {
         return httpAxios.delete(`user-services/api/users/delete/${id}`);
     },
-    update: (id, user, avatar) => {
-        const formData = new FormData();
-        formData.append('userRequest', new Blob([JSON.stringify(user)], {
-            type: "application/json"
-        }));
-        if (avatar) {
-            formData.append('avatar', avatar);
-        }
-    
-        return httpAxios.put(`user-services/api/users/update/${id}`, formData, {
-            headers: {
-                'Content-Type': 'multipart/form-data'
-            },
-        });
+    update: (id, user) => { 
+        return httpAxios.put(`user-services/api/users/update/${id}`, user);
     },
     
 }

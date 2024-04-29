@@ -59,6 +59,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public void setImage(UUID id, String image){
+        User user = userRepository.findById(id).orElse(null);
+        user.setAvatar(image);
+        userRepository.save(user);
+    }
+
+    @Override
     public UserResponse createUser(UserRequest userRequest){
         User user = new User();
         mapRequestToEntity(userRequest, user);
@@ -70,19 +77,16 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void saveImage(UUID id, PathRequest path, MultipartFile image){
+    public String saveImage(UUID id, PathRequest path, MultipartFile image){
         String fileName = id.toString() + "-" + image.getOriginalFilename();
         try {
             // Lưu tệp vào thư mục tĩnh của ứng dụng
             Path filePath = Paths.get("src/main/resources/static/" + path.getPath() + "/" + fileName);
             Files.copy(image.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
-            throw new CustomException("Failed to save avatar file", "INTERNAL_SERVER_ERROR");
+            throw new CustomException("Failed to save image file", "INTERNAL_SERVER_ERROR");
         }
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new CustomException("user not found", "USER_NOT_FOUND"));
-        user.setAvatar(fileName);
-        userRepository.save(user);
+        return fileName;
     }
 
     @Override
@@ -96,36 +100,23 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserResponse update(UUID id, UserRequest userRequest, MultipartFile newAvatar) {
+    public UserResponse update(UUID id, UserRequest userRequest) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new CustomException("User not found", "NOT_FOUND"));
         mapRequestToEntity(userRequest, user);
-
-        // Check if a new avatar is provided
-        if (newAvatar != null && !newAvatar.isEmpty()) {
-            // Delete old avatar if it exists
-            if (user.getAvatar() != null && !user.getAvatar().isEmpty()) {
-                deleteAvatar(user.getAvatar());
-            }
-
-            // Save new avatar
-            String avatarFileName = saveAvatar(newAvatar);
-            user.setAvatar(avatarFileName);
-        }
-
         user.setUpdatedAt(LocalDateTime.now());
         User savedUser = userRepository.save(user);
         return mapEntityToResponse(savedUser);
     }
 
-    private void deleteAvatar(String fileName) {
-        try {
-            Path filePath = Paths.get("src/main/resources/static/users/" + fileName);
-            Files.deleteIfExists(filePath);
-        } catch (IOException e) {
-            throw new CustomException("Failed to delete old avatar", "INTERNAL_SERVER_ERROR");
-        }
-    }
+    // private void deleteAvatar(String fileName) {
+    //     try {
+    //         Path filePath = Paths.get("src/main/resources/static/users/" + fileName);
+    //         Files.deleteIfExists(filePath);
+    //     } catch (IOException e) {
+    //         throw new CustomException("Failed to delete old avatar", "INTERNAL_SERVER_ERROR");
+    //     }
+    // }
 
     private String saveAvatar(MultipartFile avatar) {
         String fileName = UUID.randomUUID().toString() + "-" + avatar.getOriginalFilename();

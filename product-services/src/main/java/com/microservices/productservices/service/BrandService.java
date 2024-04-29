@@ -6,19 +6,17 @@ import com.microservices.productservices.payload.response.BrandResponse;
 import java.util.List;
 import java.util.UUID;
 
-import org.springframework.web.multipart.MultipartFile;
-
 public interface BrandService {
 
     BrandResponse create(BrandRequest brandRequest);
 
-    void image(UUID id, MultipartFile image);
+    void setImage(UUID id, String image);
 
     BrandResponse getById(UUID id);
 
     List<BrandResponse> getAll();
 
-    BrandResponse update(UUID id, BrandRequest brandRequest, MultipartFile newImage);
+    BrandResponse update(UUID id, BrandRequest brandRequest);
 
     BrandResponse delete(UUID id);
 

@@ -3,6 +3,8 @@ import UserService from '../../../services/UserService';
 import { FaArrowAltCircleLeft, FaTrash } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 
+import { urlImageUser } from '../../../config';
+
 const UserTrash = () => {
     const [users, setUsers] = useState([]);
     const [reload, setReload] = useState(0);
@@ -34,7 +36,15 @@ const UserTrash = () => {
 
     const deleteUser = async (id) => {
         try {
-            await UserService.delete(id);
+            const result = await UserService.delete(id);
+            console.log("image: ", result.avatar);
+            if(result.avatar){
+                const deleteImage = {
+                    path: "users",
+                    filename: result.avatar
+                };
+                await UserService.deleteImage(deleteImage)
+            }
             setReload(Date.now());
             toast.success('Xóa vĩnh viễn thành công');
         } catch (error) {
@@ -98,7 +108,7 @@ const UserTrash = () => {
                                     </div>
                                 </td>
                                 <td>{user.name}</td>
-                                <td>{/* Render the image if available */}</td>
+                                <td><img src={urlImageUser + user.avatar} className="img-fluid user-avatar" alt="User" /></td>
                                 <td>{user.email}</td>
                                 <td>{user.phone}</td>
                                 <td>{user.address}</td>

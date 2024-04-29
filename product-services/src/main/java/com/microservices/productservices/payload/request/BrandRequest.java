@@ -17,4 +17,6 @@ public class BrandRequest {
     private UUID updatedBy;
 
     private Integer status;
+
+    private String image;
 }

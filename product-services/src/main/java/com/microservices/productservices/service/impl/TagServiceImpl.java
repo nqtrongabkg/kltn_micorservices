@@ -32,6 +32,51 @@ public class TagServiceImpl implements TagService {
     }
 
     @Override
+    public void setImage(UUID id, String image){
+        Tag tag = tagRepository.findById(id).orElse(null);
+        tag.setImage(image);
+        tagRepository.save(tag);
+    }
+
+    @Override
+    public void switchStatus(UUID id) {
+        Tag tag = tagRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("NOT_FOUND"));
+
+        // Chuyển đổi giá trị của status
+        int currentStatus = tag.getStatus();
+        int newStatus = (currentStatus == 1) ? 0 : 1;
+        tag.setStatus(newStatus);
+        // Lưu trạng thái đã chuyển đổi
+        tagRepository.save(tag);
+    }
+
+    @Override
+    public void trash(UUID id) {
+        Tag tag = tagRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("NOT_FOUND"));
+
+        // Đặt trạng thái thành 2
+        tag.setStatus(2);
+
+        // Lưu trạng thái đã thay đổi
+        tagRepository.save(tag);
+    }
+
+    @Override
+    public void isDisplay(UUID id) {
+        Tag tag = tagRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("NOT_FOUND"));
+
+         // Chuyển đổi giá trị của status
+         int currentStatus = tag.getStatus();
+         int newStatus = (currentStatus == 3) ? 1 : 3;
+         tag.setStatus(newStatus);
+         // Lưu trạng thái đã chuyển đổi
+         tagRepository.save(tag);
+    }
+
+    @Override
     public TagResponse getById(UUID id) {
         Tag tag = tagRepository.findById(id).orElse(null);
         if (tag != null) {
@@ -75,11 +120,13 @@ public class TagServiceImpl implements TagService {
             return TagResponse.builder()
                     .id(tag.getId())
                     .name(tag.getName())
-                    .icon(tag.getIcon())
+                    .image(tag.getImage())
+                    .description(tag.getDescription())
                     .createdAt(tag.getCreatedAt())
                     .updatedAt(tag.getUpdatedAt())
                     .createdBy(tag.getCreatedBy())
                     .updatedBy(tag.getUpdatedBy())
+                    .status(tag.getStatus())
                     .build();
         }
         return null;

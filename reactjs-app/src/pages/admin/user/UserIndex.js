@@ -113,7 +113,11 @@ const UserIndex = () => {
                                                 </div>
                                         </td>
                                         <td>
-                                            <img src={urlImageUser + user.avatar} className="img-fluid user-avatar" alt="User" />
+                                            {user.avatar ? (
+                                                <img src={urlImageUser + user.avatar} className="img-fluid user-avatar" alt="User" />
+                                            ) : (
+                                                <p>Không có ảnh</p>
+                                            )}
                                         </td>
                                         <td>{user.email}</td>
                                         <td>{user.phone}</td>

@@ -4,12 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
-import jakarta.persistence.Lob;
-
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -26,8 +23,9 @@ public class Tag {
 
     private String name;
 
-    @Lob
-    private String icon;
+    private String image;
+
+    private String description;
 
     private LocalDateTime createdAt;
 
@@ -36,4 +34,6 @@ public class Tag {
     private UUID createdBy;
 
     private UUID updatedBy;
+
+    private Integer status;
 }

@@ -34,4 +34,6 @@ public class Options {
     private UUID createdBy;
 
     private UUID updatedBy;
+
+    private Integer status;
 }

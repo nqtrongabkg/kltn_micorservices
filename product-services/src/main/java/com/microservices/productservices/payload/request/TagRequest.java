@@ -10,7 +10,11 @@ public class TagRequest {
 
     private String name;
 
+    private String description;
+
     private UUID createdBy;
 
     private UUID updatedBy;
+
+    private Integer status;
 }

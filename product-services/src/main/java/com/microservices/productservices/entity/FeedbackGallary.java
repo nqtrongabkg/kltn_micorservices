@@ -22,6 +22,5 @@ public class FeedbackGallary {
 
     private UUID feedbackId;
 
-    @Lob
     private String image;
 }

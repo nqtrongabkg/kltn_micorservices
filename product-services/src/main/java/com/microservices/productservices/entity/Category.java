@@ -24,7 +24,6 @@ public class Category {
     @Column(nullable = false)
     private String name;
 
-    @Lob
     private String image;
 
     @Column(name = "product_quantity")

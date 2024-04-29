@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import UserService from '../../../services/UserService';
+import BrandService from '../../../services/BrandService';
 import { FaArrowAltCircleLeft, FaTrash } from 'react-icons/fa';
 import { toast } from 'react-toastify';
+import { urlImageBrand } from '../../../config';
 
 const BrandTrash = () => {
-    const [users, setUsers] = useState([]);
+    const [brands, setBrands] = useState([]);
     const [reload, setReload] = useState(0);
 
     useEffect(() => {
@@ -13,8 +14,8 @@ const BrandTrash = () => {
 
     const fetchTrashedUsers = async () => {
         try {
-            const result = await UserService.getCustomer(); // Ensure this fetches trashed users
-            setUsers(result.filter(user => user.status === 2)); // Assuming status 2 is for trashed users
+            const result = await BrandService.getAll(); // Ensure this fetches trashed users
+            setBrands(result.filter(brand => brand.status === 2)); // Assuming status 2 is for trashed users
         } catch (error) {
             console.error('Error fetching trashed users:', error);
             toast.error('Đã xảy ra lỗi khi tải danh sách người dùng đã xóa.');
@@ -23,7 +24,7 @@ const BrandTrash = () => {
 
     const restoreUser = async (id) => {
         try {
-            await UserService.sitchStatus(id);
+            await BrandService.sitchStatus(id);
             setReload(Date.now());
             toast.success('Khôi phục thành công');
         } catch (error) {
@@ -34,7 +35,7 @@ const BrandTrash = () => {
 
     const deleteUser = async (id) => {
         try {
-            await UserService.delete(id);
+            await BrandService.delete(id);
             setReload(Date.now());
             toast.success('Xóa vĩnh viễn thành công');
         } catch (error) {
@@ -46,12 +47,12 @@ const BrandTrash = () => {
     return (
         <div className="content">
             <section className="content-header my-2">
-                <h1 className="d-inline">Người dùng : Thùng rác</h1>
+                <h1 className="d-inline">Thương hiệu : Thùng rác</h1>
                 
                 <div className="row mt-3 align-items-center">
                     <div className="col-12">
                         <button type="button" className="btn btn-warning">
-                            <a href="/admin/user/index">Về danh sách</a>
+                            <a href="/admin/brand/index">Về danh sách</a>
                         </button>
                     </div>
                 </div>
@@ -63,45 +64,49 @@ const BrandTrash = () => {
                             <th className="text-center" style={{ width: '30px' }}>
                                 <input type="checkbox" id="checkAll" />
                             </th>
-                            <th>Tên đăng nhập</th>
-                            <th>Tên người dùng</th>
-                            <th>Ảnh đại diện</th>
-                            <th>Email</th>
-                            <th>Điện thoại</th>
-                            <th>Địa chỉ</th>
+                            <th>Tên thương hiệu</th>
+                            <th>Logo</th>
+                            <th>Mô tả</th>
+                            <th>Ngày tạo</th>
+                            <th>ID người dùng sở hữu</th>
                         </tr>
                     </thead>
 
                     <tbody>
-                        {users && users.map((user, index) => (
-                            <tr key={user.id} className="datarow">
+                        {brands && brands.map((brand, index) => (
+                            <tr key={brand.id} className="datarow">
                                 <td className="text-center">
                                     <input type="checkbox" id={`checkId${index}`} />
                                 </td>
                                 <td>
                                     <div className="name">
-                                        <a href="menu_index.html">{user.userName}</a>
+                                        <a href="menu_index.html">{brand.name}</a>
                                     </div>
                                     <div className="function_style">
                                         <button
-                                            onClick={() => restoreUser(user.id)}
+                                            onClick={() => restoreUser(brand.id)}
                                             className="border-0 px-1 text-success"
                                         >
                                             <FaArrowAltCircleLeft />
                                         </button>
                                         <button
-                                            onClick={() => deleteUser(user.id)}
+                                            onClick={() => deleteUser(brand.id)}
                                             className="btn-none px-1 text-danger"
                                         >
                                             <FaTrash />
                                         </button>
                                     </div>
                                 </td>
-                                <td>{user.name}</td>
-                                <td>{/* Render the image if available */}</td>
-                                <td>{user.email}</td>
-                                <td>{user.phone}</td>
-                                <td>{user.address}</td>
+                                <td>
+                                            {brand.image ? (
+                                                <img src={urlImageBrand + brand.image} className="img-fluid user-avatar" alt="Hinh anh" />
+                                            ) : (
+                                                <p>Không có ảnh</p>
+                                            )}
+                                        </td>
+                                        <td>{brand.description}</td>
+                                        <td>{brand.createdAt}</td>
+                                        <td>{brand.createdBy}</td>
                             </tr>
                         ))}
                     </tbody>

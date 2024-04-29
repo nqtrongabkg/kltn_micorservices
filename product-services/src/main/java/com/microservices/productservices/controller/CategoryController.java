@@ -1,6 +1,7 @@
 package com.microservices.productservices.controller;
 
 import com.microservices.productservices.payload.request.CategoryRequest;
+import com.microservices.productservices.payload.request.SetImageRequest;
 import com.microservices.productservices.payload.response.CategoryResponse;
 import com.microservices.productservices.service.CategoryService;
 import org.springframework.http.HttpStatus;
@@ -26,6 +27,29 @@ public class CategoryController {
         CategoryResponse createdCategory = categoryService.create(categoryRequest);
         return new ResponseEntity<>(createdCategory, HttpStatus.CREATED);
     }
+
+    @PutMapping("/set-image")
+    public ResponseEntity<String> setImage(@RequestBody SetImageRequest setImageRequest) {
+        categoryService.setImage(setImageRequest.getId(), setImageRequest.getImage());
+        return ResponseEntity.ok("Set image done");
+    }
+
+    @PutMapping("/switch-status/{id}")
+    public ResponseEntity<Void> switchStatus(@PathVariable UUID id) {
+        categoryService.switchStatus(id);
+        return ResponseEntity.ok().build();
+    }
+    
+    @PutMapping("/trash/{id}")
+    public ResponseEntity<Void> trash(@PathVariable UUID id) {
+        categoryService.trash(id);
+        return ResponseEntity.ok().build();
+    }  
+    @PutMapping("/display/{id}")
+    public ResponseEntity<Void> display(@PathVariable UUID id) {
+        categoryService.isDisplay(id);
+        return ResponseEntity.ok().build();
+    }  
 
     @GetMapping("/get-by-id/{id}")
     public ResponseEntity<CategoryResponse> getCategoryById(@PathVariable UUID id) {

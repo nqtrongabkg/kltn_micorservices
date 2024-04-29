@@ -1,5 +1,4 @@
 
-
 import UserIndex from "../pages/admin/user/UserIndex";
 import UserAdd from "../pages/admin/user/UserAdd";
 import UserEdit from "../pages/admin/user/UserEdit";
@@ -24,6 +23,16 @@ import BrandAdd from "../pages/admin/brand/BrandAdd";
 import BrandEdit from "../pages/admin/brand/BrandEdit";
 import BrandIndex from "../pages/admin/brand/BrandIndex";
 import BrandTrash from "../pages/admin/brand/BrandTrash";
+
+import CategoryAdd from "../pages/admin/category/CategoryAdd";
+import CategoryEdit from "../pages/admin/category/CategoryEdit";
+import CategoryIndex from "../pages/admin/category/CategoryIndex";
+import CategoryTrash from "../pages/admin/category/CategoryTrash";
+
+import TagAdd from "../pages/admin/tag/TagAdd";
+import TagEdit from "../pages/admin/tag/TagEdit";
+import TagIndex from "../pages/admin/tag/TagIndex";
+import TagTrash from "../pages/admin/tag/TagTrash";
 
 const RouteAdmin = [
     //user
@@ -51,5 +60,15 @@ const RouteAdmin = [
     { path: '/admin/brand/trash', component: BrandTrash },
     { path: '/admin/brand/add', component: BrandAdd },
     { path: '/admin/brand/edit/:id', component: BrandEdit },
+    //category
+    { path: '/admin/category/index', component: CategoryIndex },
+    { path: '/admin/category/trash', component: CategoryTrash },
+    { path: '/admin/category/add', component: CategoryAdd },
+    { path: '/admin/category/edit/:id', component: CategoryEdit },
+    //tag
+    { path: '/admin/tag/index', component: TagIndex },
+    { path: '/admin/tag/trash', component: TagTrash },
+    { path: '/admin/tag/add', component: TagAdd },
+    { path: '/admin/tag/edit/:id', component: TagEdit },
 ];
 export default RouteAdmin;

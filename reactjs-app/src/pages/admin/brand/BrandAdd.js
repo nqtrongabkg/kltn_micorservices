@@ -1,18 +1,12 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import BrandService from '../../../services/BrandService';
+import UserService from '../../../services/UserService';
 import { toast } from 'react-toastify';
 import { Button } from 'react-bootstrap';
 import { FaSave } from 'react-icons/fa';
 
 const BrandAdd = () => {
-
-    // const sessionUserAdmin = sessionStorage.getItem('useradmin');
-    // let createdBy = null;
-    // if (sessionUserAdmin !== null) {
-    //     const parsedUser = JSON.parse(sessionUserAdmin);
-    //     createdBy = parsedUser.userId;
-    // }
 
     const navigate = useNavigate();
     const [name, setName] = useState("");
@@ -29,25 +23,33 @@ const BrandAdd = () => {
             status,
         };
     
+        const path = {
+            path: "brands"
+        };
+
         try {
-            const response = await BrandService.create(brandRequest);
-            console.log("Server response:", response);  // Check what the response structure looks like
-    
-            const createdBrand = response;  // Directly use the response if it contains the brand data at the top level
-    
-            if (createdBrand && createdBrand.id) {
-                if (image) {
-                    console.log("br id = ", createdBrand.id)
-                    await BrandService.uploadImage(createdBrand.id, image);
+            const result = await BrandService.create(brandRequest);
+            if (result) {
+                console.log("brand add is: ", result.id);
+                if(image !== null){
+                    const imageString = await UserService.saveImage(result.id, path, image)
+                    console.log("string image save brand : ", imageString); 
+                    if(imageString !== null){
+                        const data = {
+                            id: result.id,
+                            image: imageString
+                        };
+                        console.log("setimage data is: ", data);
+                        await BrandService.setImage(data);
+                    }
                 }
-                toast.success("Brand successfully added!");
+                console.log("brand added = ", result);
+                toast.success("Thêm thành công");
                 navigate("/admin/brand/index", { replace: true });
-            } else {
-                toast.error("Failed to retrieve brand ID from server.");
             }
         } catch (error) {
-            console.error("Error adding brand:", error);
-            toast.error(`Failed to add brand: ${error.message}`);
+            console.error("Error adding user:", error);
+            toast.error("Thêm thương hiệu thất bại!");
         }
     };
     

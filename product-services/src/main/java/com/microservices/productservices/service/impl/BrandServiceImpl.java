@@ -2,12 +2,12 @@ package com.microservices.productservices.service.impl;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
-import java.io.IOException;
-import java.nio.file.Files;
+// import org.springframework.web.multipart.MultipartFile;
+// import java.nio.file.Path;
+// import java.nio.file.Paths;
+// import java.nio.file.StandardCopyOption;
+// import java.io.IOException;
+// import java.nio.file.Files;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -28,26 +28,26 @@ public class BrandServiceImpl implements BrandService {
         this.brandRepository = brandRepository;
     }
 
-    private void deleteImage(String fileName) {
-        try {
-            Path filePath = Paths.get("src/main/resources/static/brands/" + fileName);
-            Files.deleteIfExists(filePath);
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to delete old avatar");
-        }
-    }
+    // private void deleteImage(String fileName) {
+    //     try {
+    //         Path filePath = Paths.get("src/main/resources/static/brands/" + fileName);
+    //         Files.deleteIfExists(filePath);
+    //     } catch (IOException e) {
+    //         throw new RuntimeException("Failed to delete old avatar");
+    //     }
+    // }
 
-    private String saveImage(MultipartFile image) {
-        String fileName = UUID.randomUUID().toString() + "-" + image.getOriginalFilename();
-        try {
-            // Lưu tệp vào thư mục tĩnh của ứng dụng
-            Path filePath = Paths.get("src/main/resources/static/brands/" + fileName);
-            Files.copy(image.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to save avatar file");
-        }
-        return fileName;
-    }
+    // private String saveImage(MultipartFile image) {
+    //     String fileName = UUID.randomUUID().toString() + "-" + image.getOriginalFilename();
+    //     try {
+    //         // Lưu tệp vào thư mục tĩnh của ứng dụng
+    //         Path filePath = Paths.get("src/main/resources/static/brands/" + fileName);
+    //         Files.copy(image.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+    //     } catch (IOException e) {
+    //         throw new RuntimeException("Failed to save avatar file");
+    //     }
+    //     return fileName;
+    // }
 
     @Override
     public BrandResponse create(BrandRequest brandRequest) {
@@ -59,13 +59,10 @@ public class BrandServiceImpl implements BrandService {
     }
 
     @Override
-    public void image(UUID id, MultipartFile image){
-        if (image != null) {
-            String FileName = saveImage(image);
-            Brand brand = brandRepository.findById(id).orElse(null);
-            brand.setImage(FileName);
-            brandRepository.save(brand);
-        }
+    public void setImage(UUID id, String image){
+        Brand brand = brandRepository.findById(id).orElse(null);
+        brand.setImage(image);
+        brandRepository.save(brand);
     }
 
     @Override
@@ -86,21 +83,11 @@ public class BrandServiceImpl implements BrandService {
     }
 
     @Override
-    public BrandResponse update(UUID id, BrandRequest brandRequest, MultipartFile newImage) {
+    public BrandResponse update(UUID id, BrandRequest brandRequest) {
         Brand existingBrand = brandRepository.findById(id).orElse(null);
         if (existingBrand != null) {
             mapRequestToEntity(brandRequest, existingBrand);
             existingBrand.setUpdatedAt(LocalDateTime.now());
-            // Check if a new image is provided
-            if (newImage != null && !newImage.isEmpty()) {
-                // Delete old avatar if it exists
-                if (existingBrand.getImage() != null && !existingBrand.getImage().isEmpty()) {
-                    deleteImage(existingBrand.getImage());
-                }
-                // Save new avatar
-                String avatarFileName = saveImage(newImage);
-                existingBrand.setImage(avatarFileName);
-            }
             Brand updatedBrand = brandRepository.save(existingBrand);
             return mapBrandToBrandResponse(updatedBrand);
         }

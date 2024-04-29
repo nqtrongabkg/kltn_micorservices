@@ -3,6 +3,7 @@ package com.microservices.userservices.controller;
 import com.microservices.userservices.payload.request.AuthRequest;
 import com.microservices.userservices.payload.request.ImageRequest;
 import com.microservices.userservices.payload.request.PathRequest;
+import com.microservices.userservices.payload.request.SetImageRequest;
 import com.microservices.userservices.payload.request.UserRequest;
 import com.microservices.userservices.payload.response.AuthenticationResponse;
 import com.microservices.userservices.payload.response.UserResponse;
@@ -52,9 +53,8 @@ public class UserController {
     @PutMapping("/update/{id}")
     public ResponseEntity<UserResponse> updateUser(
             @PathVariable UUID id,
-            @RequestPart("userRequest") UserRequest userRequest,
-            @RequestPart(value = "avatar", required = false) MultipartFile newAvatar) {
-        UserResponse updatedUser = userService.update(id, userRequest, newAvatar);
+            @RequestBody UserRequest userRequest) {
+        UserResponse updatedUser = userService.update(id, userRequest);
         return ResponseEntity.ok(updatedUser);
     }
 
@@ -68,8 +68,8 @@ public class UserController {
     public ResponseEntity<String> saveImage(@PathVariable UUID id, 
     @RequestPart("path") PathRequest path,
         @RequestPart("image") MultipartFile image) {
-            userService.saveImage(id,path, image);
-            return ResponseEntity.ok("Image uploaded successfully");
+            String filename = userService.saveImage(id,path, image);
+            return ResponseEntity.ok(filename);
     }
 
     @DeleteMapping("/delete-image")
@@ -80,6 +80,11 @@ public class UserController {
         } catch (Exception e) {
             throw new RuntimeException("Error deleting the file: " + e.getMessage());
         }
+    }
+    @PutMapping("/set-image")
+    public ResponseEntity<String> setImage(@RequestBody SetImageRequest setImageRequest) {
+        userService.setImage(setImageRequest.getId(), setImageRequest.getImage());
+        return ResponseEntity.ok("Set image done");
     }
 
     @GetMapping("/get-all")

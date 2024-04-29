@@ -85,27 +85,32 @@ const StaffIndex = () => {
                                                 </a>
                                             </div>
                                             <div className="function_style">
-                                                    <button
-                                                        onClick={() => handleStatus(user.id, user.status)}
-                                                        className={
-                                                            user.status === 1 ? "border-0 px-1 text-success" : "border-0 px-1 text-danger"
-                                                        }>
-                                                        {user.status === 1 ? <FaToggleOn /> : <FaToggleOff />}
-                                                    </button>
-                                                    <Link to={"/admin/staff/edit/" + user.id} className='px-1 text-primary'>
-                                                        <FaEdit />
-                                                    </Link>
-                                                    <button
-                                                        onClick={() => HandTrash(user.id)}
-                                                        className="btn-none px-1 text-danger">
-                                                        <FaTrash />
-                                                    </button>
-                                                </div>
+                                                <button
+                                                    onClick={() => handleStatus(user.id, user.status)}
+                                                    className={
+                                                        user.status === 1 ? "border-0 px-1 text-success" : "border-0 px-1 text-danger"
+                                                    }>
+                                                    {user.status === 1 ? <FaToggleOn /> : <FaToggleOff />}
+                                                </button>
+                                                <Link to={"/admin/staff/edit/" + user.id} className='px-1 text-primary'>
+                                                    <FaEdit />
+                                                </Link>
+                                                <button
+                                                    onClick={() => HandTrash(user.id)}
+                                                    className="btn-none px-1 text-danger">
+                                                    <FaTrash />
+                                                </button>
+                                            </div>
                                         </td>
                                         <td>{user.name}</td>
                                         <td>
-                                            <img src={urlImageUser + user.avatar} className="img-fluid user-avatar" alt="User" />
+                                            {user.avatar ? (
+                                                <img src={urlImageUser + user.avatar} className="img-fluid user-avatar" alt="User" />
+                                            ) : (
+                                                <p>Không có ảnh</p>
+                                            )}
                                         </td>
+
                                         <td>{user.email}</td>
                                         <td>{user.phone}</td>
                                         <td>{user.address}</td>

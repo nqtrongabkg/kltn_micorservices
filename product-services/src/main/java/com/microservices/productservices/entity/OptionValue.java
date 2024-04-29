@@ -38,4 +38,6 @@ public class OptionValue {
 
     @Column(name = "updated_by")
     private UUID updatedBy;
+
+    private Integer status;
 }

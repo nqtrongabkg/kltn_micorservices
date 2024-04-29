@@ -33,9 +33,19 @@ const StaffTrash = () => {
         }
     };
 
+    
+
     const deleteUser = async (id) => {
         try {
-            await UserService.delete(id);
+            const result = await UserService.delete(id);
+            console.log("image: ", result.avatar);
+            if(result.avatar){
+                const deleteImage = {
+                    path: "users",
+                    filename: result.avatar
+                };
+                await UserService.deleteImage(deleteImage)
+            }
             setReload(Date.now());
             toast.success('Xóa vĩnh viễn thành công');
         } catch (error) {

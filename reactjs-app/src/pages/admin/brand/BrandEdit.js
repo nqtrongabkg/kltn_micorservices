@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import BrandService from '../../../services/BrandService';
+import UserService from '../../../services/UserService';
 import { toast } from 'react-toastify';
 import { Button } from 'react-bootstrap';
 import { FaSave } from 'react-icons/fa';
@@ -13,13 +14,7 @@ const BrandEdit = () => {
     const [createdBy, setCreatedBy] = useState("");
     const [status, setStatus] = useState(1);
     const [image, setImage] = useState(null);
-
-    // const sessionUserAdmin = sessionStorage.getItem('useradmin');
-    // let updatedBy = null;
-    // if (sessionUserAdmin !== null) {
-    //     const parsedUser = JSON.parse(sessionUserAdmin);
-    //     updatedBy = parsedUser.userId;
-    // }
+    const [stringImageDefault, setStringImageDefault] = useState("");
 
     useEffect(() => {
         const fetchData = async () => {
@@ -30,6 +25,7 @@ const BrandEdit = () => {
                 setDescription(brandData.description);
                 setCreatedBy(brandData.createdBy);
                 setStatus(brandData.status);
+                setStringImageDefault(brandData.image);
             } catch (error) {
                 console.error('Error fetching data:', error);
                 toast.error("Failed to fetch data.");
@@ -43,19 +39,52 @@ const BrandEdit = () => {
         e.preventDefault();
     
         try {
-            const userData = {
+            const brandData = {
                 name: name,
                 description: description,
                 createdBy: createdBy,
                 status: status,
             };
     
+            const path = {
+                path: "brands"
+            };
+            const deleteIfExitsImage = await BrandService.getById(id);
+            console.log("image ole = ", deleteIfExitsImage.image);
+            if(image !== null){
+                if(deleteIfExitsImage.image !== null){
+                    const deleteImage = {
+                        path: "brands",
+                        filename: deleteIfExitsImage.image
+                    };
+                    console.log("delete data = ", deleteImage);
+                    await UserService.deleteImage(deleteImage);
+                }
+            }
     
-            // Sending the FormData to the update API
-            console.log("update data = ", userData);
-            await BrandService.update(id, userData, image);
-            toast.success("User updated successfully!");
-            navigate("/admin/user/index", { replace: true });
+            const result = await BrandService.update(id, brandData);
+            if (result) {
+                if (image !== null) { // Kiểm tra image khác null
+                    const stringImage = await UserService.saveImage(id, path, image);
+                    if(stringImage !== null){
+                        const data = {
+                            id: result.id,
+                            image: stringImage
+                        };
+                        console.log("setimage data is: ", data);
+                        await BrandService.setImage(data);
+                    }
+                }else{
+                    const data = {
+                        id: result.id,
+                        image: stringImageDefault
+                    };
+                    console.log("setimage data is: ", data);
+                    await BrandService.setImage(data);
+                }
+                toast.success("User updated successfully!");
+                navigate("/admin/brand/index", { replace: true });
+            }
         } catch (error) {
             console.error('Error updating user:', error);
             toast.error("Failed to update user.");
