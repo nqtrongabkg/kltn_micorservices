@@ -11,7 +11,7 @@ const BrandService = {
     getById: (id) => {
         return httpAxios.get(`product-services/api/brands/get-by-id/${id}`);
     },
-    getByUser: (userId) => {
+    getByUserId: (userId) => {
         return httpAxios.get(`product-services/api/brands/get-by-user/${userId}`);
     },
     getAll: () => {

@@ -66,6 +66,51 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    public void setImage(UUID id, String image){
+        Product product = productRepository.findById(id).orElse(null);
+        product.setImage(image);
+        productRepository.save(product);
+    }
+
+    @Override
+    public void switchStatus(UUID id) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("NOT_FOUND"));
+
+        // Chuyển đổi giá trị của status
+        int currentStatus = product.getStatus();
+        int newStatus = (currentStatus == 1) ? 0 : 1;
+        product.setStatus(newStatus);
+        // Lưu trạng thái đã chuyển đổi
+        productRepository.save(product);
+    }
+
+    @Override
+    public void trash(UUID id) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("NOT_FOUND"));
+
+        // Đặt trạng thái thành 2
+        product.setStatus(2);
+
+        // Lưu trạng thái đã thay đổi
+        productRepository.save(product);
+    }
+
+    @Override
+    public void isDisplay(UUID id) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("NOT_FOUND"));
+
+         // Chuyển đổi giá trị của status
+         int currentStatus = product.getStatus();
+         int newStatus = (currentStatus == 3) ? 1 : 3;
+         product.setStatus(newStatus);
+         // Lưu trạng thái đã chuyển đổi
+         productRepository.save(product);
+    }
+
+    @Override
     public ProductResponse getById(UUID id) {
         Product product = productRepository.findById(id).orElse(null);
         if (product != null) {

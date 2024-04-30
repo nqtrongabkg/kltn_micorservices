@@ -14,21 +14,25 @@ import lombok.NoArgsConstructor;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-public class Brand {
+public class ProductSale {
 
     @Id
     @GeneratedValue(generator = "uuid2")
     @GenericGenerator(name = "uuid2", strategy = "uuid2")
     private UUID id;
 
-    @Column(nullable = false)
-    private String name;
+    private UUID productId;
+
+    private Integer quantity;
+
+    private Double priceSale;
 
     private String description;
 
-    private String image;
+    private LocalDateTime dateBegin;
 
-    @Column(nullable = false)
+    private LocalDateTime dateEnd;
+
     private LocalDateTime createdAt;
 
     private LocalDateTime updatedAt;
@@ -37,6 +41,5 @@ public class Brand {
 
     private UUID updatedBy;
 
-    @Column(nullable = false)
     private Integer status;
 }

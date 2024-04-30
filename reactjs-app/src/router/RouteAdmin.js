@@ -34,6 +34,11 @@ import TagEdit from "../pages/admin/tag/TagEdit";
 import TagIndex from "../pages/admin/tag/TagIndex";
 import TagTrash from "../pages/admin/tag/TagTrash";
 
+import ProductAdd from "../pages/admin/product/ProductAdd";
+import ProductEdit from "../pages/admin/product/ProductEdit";
+import ProductIndex from "../pages/admin/product/ProductIndex";
+import ProductTrash from "../pages/admin/product/ProductTrash";
+
 const RouteAdmin = [
     //user
     { path: '/admin/user/index', component: UserIndex },
@@ -70,5 +75,10 @@ const RouteAdmin = [
     { path: '/admin/tag/trash', component: TagTrash },
     { path: '/admin/tag/add', component: TagAdd },
     { path: '/admin/tag/edit/:id', component: TagEdit },
+    //product
+    { path: '/admin/product/index', component: ProductIndex },
+    { path: '/admin/product/trash', component: ProductTrash },
+    { path: '/admin/product/add', component: ProductAdd },
+    { path: '/admin/product/edit/:id', component: ProductEdit },
 ];
 export default RouteAdmin;
