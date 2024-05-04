@@ -11,8 +11,6 @@ public class ProductSaleRequest {
 
     private UUID productId;
 
-    private Integer evaluate;
-
     private Integer quantity;
 
     private Double priceSale;

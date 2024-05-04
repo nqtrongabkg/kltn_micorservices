@@ -162,7 +162,10 @@ const LayoutAdmin = () => {
                                                                 <a href="/admin/brand/index" className="margin-left-submenu">Thương hiệu</a>
                                                             </li>
                                                             <li>
-                                                                <a href="/admin/product/sale" className="margin-left-submenu">Khuyễn mãi</a>
+                                                                <a href="/admin/product/sale-index" className="margin-left-submenu">Khuyễn mãi</a>
+                                                            </li>
+                                                            <li>
+                                                                <a href="/admin/product/option-index" className="margin-left-submenu">Lựa chọn sản phẩm</a>
                                                             </li>
                                                         </ul>
                                                     </li>

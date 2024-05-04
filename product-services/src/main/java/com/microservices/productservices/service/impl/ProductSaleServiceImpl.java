@@ -78,6 +78,31 @@ public class ProductSaleServiceImpl implements ProductSaleService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public void switchStatus(UUID id) {
+        ProductSale productSale = productSaleRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("NOT_FOUND"));
+
+        // Chuyển đổi giá trị của status
+        int currentStatus = productSale.getStatus();
+        int newStatus = (currentStatus == 1) ? 0 : 1;
+        productSale.setStatus(newStatus);
+        // Lưu trạng thái đã chuyển đổi
+        productSaleRepository.save(productSale);
+    }
+
+    @Override
+    public void trash(UUID id) {
+        ProductSale productSale = productSaleRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("NOT_FOUND"));
+
+        // Đặt trạng thái thành 2
+        productSale.setStatus(2);
+
+        // Lưu trạng thái đã thay đổi
+        productSaleRepository.save(productSale);
+    }
+
     private ProductSaleResponse mapProductSaleToResponse(ProductSale productSale) {
         return ProductSaleResponse.builder()
                 .id(productSale.getId())

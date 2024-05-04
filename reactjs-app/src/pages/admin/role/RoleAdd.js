@@ -10,11 +10,10 @@ const RoleAdd = () => {
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
     const [role, setRole] = useState(""); 
-    const [status, setStatus] = useState(1); // Mặc định giá trị của status là 1
+    const [status, setStatus] = useState(1);
 
     const handleFormSubmit = (e) => {
         e.preventDefault();
-        // Kiểm tra nếu role không phải là số nguyên thì thông báo lỗi
         if (isNaN(parseInt(role))) {
             toast.error("Vui lòng nhập một số nguyên cho quyền.");
             return;

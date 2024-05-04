@@ -20,4 +20,6 @@ public interface ProductCategoryService {
     void deleteProductCategoriesByCategoryId(UUID categoryId);
 
     List<ProductCategoryResponse> getAllProductCategories();
+
+    ProductCategoryResponse delete(UUID id);
 }

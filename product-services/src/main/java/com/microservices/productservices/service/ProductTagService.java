@@ -14,11 +14,13 @@ public interface ProductTagService {
 
     List<ProductTagResponse> getProductTagsByTagId(UUID tagId);
 
-    void delete(UUID productId, UUID tagId);
+    void deleteByProductIdAndTagId(UUID productId, UUID tagId);
 
     void deleteProductTagsByProductId(UUID productId);
 
     void deleteProductTagsByTagId(UUID tagId);
 
     List<ProductTagResponse> getAllProductTags();
+
+    ProductTagResponse delete(UUID id);
 }

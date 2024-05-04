@@ -134,8 +134,30 @@ public class ProductServiceImpl implements ProductService {
             mapRequestToEntity(productRequest, existingProduct);
             existingProduct.setUpdatedAt(LocalDateTime.now());
             Product updatedProduct = productRepository.save(existingProduct);
+
+            List<ProductCategory> productCategories = new ArrayList<>();
+            for (UUID categoryId : productRequest.getCategoryIds()) {
+                ProductCategory productCategory = new ProductCategory();
+                productCategory.setProductId(existingProduct.getId());
+                productCategory.setCategoryId(categoryId);
+                productCategories.add(productCategory);
+            }
+            productCategoryRepository.saveAll(productCategories);
+
+            // Create and save the ProductTag entities for each tag ID in the request
+            List<ProductTag> productTags = new ArrayList<>();
+            for (UUID tagId : productRequest.getTagIds()) {
+                ProductTag productTag = new ProductTag();
+                productTag.setProductId(existingProduct.getId());
+                productTag.setTagId(tagId);
+                productTags.add(productTag);
+            }
+            productTagRepository.saveAll(productTags);
+
             return mapProductToResponse(updatedProduct);
+
         }
+        
         return null;
     }
 

@@ -98,7 +98,6 @@ const RoleIndex = () => {
                                         </tr>
                                     );
                                 }
-                                // Add a return statement for the case where the condition isn't met
                                 return null;
                             })
                         }

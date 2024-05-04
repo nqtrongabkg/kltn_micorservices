@@ -19,4 +19,8 @@ public interface ProductSaleService {
     ProductSaleResponse delete(UUID id);
 
     List<ProductSaleResponse> findByProductId(UUID productId);
+
+    void switchStatus(UUID id);
+
+    void trash(UUID id);
 }

@@ -33,7 +33,7 @@ const ProductAdd = () => {
                 const categoryResponse = await CategoryService.getAll();
                 const filteredCategories = categoryResponse.filter(category => category.status === 1 || category.status === 3);
                 setCategories(filteredCategories);
-    
+
                 const tagResponse = await TagService.getAll();
                 const filteredTags = tagResponse.filter(tag => tag.status === 1 || tag.status === 3);
                 setTags(filteredTags);

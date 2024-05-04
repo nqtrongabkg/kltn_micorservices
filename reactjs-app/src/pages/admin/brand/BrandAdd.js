@@ -54,7 +54,7 @@ const BrandAdd = () => {
     };
     
     
-
+    
     return (
         <form onSubmit={handleFormSubmit}>
             <div className="content">

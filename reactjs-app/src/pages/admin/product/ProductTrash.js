@@ -1,30 +1,53 @@
 import React, { useEffect, useState } from 'react';
-import CategoryService from '../../../services/CategoryService';
+import ProductService from '../../../services/ProductService';
+import BrandService from '../../../services/BrandService';
 import { FaArrowAltCircleLeft, FaTrash } from 'react-icons/fa';
 import { toast } from 'react-toastify';
-import { urlImageCategory } from '../../../config';
+import { urlImageProduct } from '../../../config';
 
 const ProductTrash = () => {
-    const [categories, setCategories] = useState([]);
+    const [products, setProducts] = useState([]);
     const [reload, setReload] = useState(0);
+    const [brandNames, setBrandNames] = useState({});
 
     useEffect(() => {
-        fetchTrashedCategories();
+        fetchTrashedProducts();
     }, [reload]);
 
-    const fetchTrashedCategories = async () => {
+    useEffect(() => {
+        const fetchBrandNames = async () => {
+            const names = {};
+            for (const product of products) {
+                try {
+                    if(product.brandId !== null){
+                        const brand = await BrandService.getById(product.brandId);
+                        names[product.brandId] = brand !== null ? brand.name : "N/A";
+                    }else{
+                        names[product.brandId] = "N/A";
+                    } 
+                } catch (error) {
+                    console.error("Error fetching brand:", error);
+                    names[product.brandId] = "N/A";
+                }
+            }
+            setBrandNames(names);
+        };
+        fetchBrandNames();
+    }, [products]);
+
+    const fetchTrashedProducts = async () => {
         try {
-            const result = await CategoryService.getAll(); // Ensure this fetches trashed users
-            setCategories(result.filter(category => category.status === 2)); // Assuming status 2 is for trashed users
+            const result = await ProductService.getAll();
+            setProducts(result.filter(product => product.status === 2));
         } catch (error) {
             console.error('Error fetching trashed users:', error);
             toast.error('Đã xảy ra lỗi khi tải danh sách đã xóa.');
         }
     };
 
-    const restoreCategory = async (id) => {
+    const restoreProduct = async (id) => {
         try {
-            await CategoryService.sitchStatus(id);
+            await ProductService.sitchStatus(id);
             setReload(Date.now());
             toast.success('Khôi phục thành công');
         } catch (error) {
@@ -33,9 +56,9 @@ const ProductTrash = () => {
         }
     };
 
-    const deleteCategory = async (id) => {
+    const deleteProduct = async (id) => {
         try {
-            await CategoryService.delete(id);
+            await ProductService.delete(id);
             setReload(Date.now());
             toast.success('Xóa vĩnh viễn thành công');
         } catch (error) {
@@ -47,12 +70,12 @@ const ProductTrash = () => {
     return (
         <div className="content">
             <section className="content-header my-2">
-                <h1 className="d-inline">Loại sản phẩm : Thùng rác</h1>
-                
+                <h1 className="d-inline">Sản phẩm : Thùng rác</h1>
+
                 <div className="row mt-3 align-items-center">
                     <div className="col-12">
                         <button type="button" className="btn btn-warning">
-                            <a href="/admin/category/index">Về danh sách</a>
+                            <a href="/admin/product/index">Về danh sách</a>
                         </button>
                     </div>
                 </div>
@@ -64,53 +87,62 @@ const ProductTrash = () => {
                             <th className="text-center" style={{ width: '30px' }}>
                                 <input type="checkbox" id="checkAll" />
                             </th>
-                            <th>Tên loại</th>
-                            <th>Biểu tượng</th>
+                            <th>Tên</th>
+                            <th>Thương hiệu</th>
+                            <th>Ảnh</th>
                             <th>Mô tả</th>
-                            <th>Số lượng sản phẩm</th>
+                            <th>Đánh giá</th>
                             <th>Ngày tạo</th>
                             <th>ID người tạo</th>
                         </tr>
                     </thead>
 
                     <tbody>
-                        {categories && categories.map((category, index) => (
-                            <tr key={category.id} className="datarow">
-                                <td className="text-center">
-                                    <input type="checkbox" id={`checkId${index}`} />
-                                </td>
-                                <td>
-                                    <div className="name">
-                                        <a href="menu_index.html">{category.name}</a>
-                                    </div>
-                                    <div className="function_style">
-                                        <button
-                                            onClick={() => restoreCategory(category.id)}
-                                            className="border-0 px-1 text-success"
-                                        >
-                                            <FaArrowAltCircleLeft />
-                                        </button>
-                                        <button
-                                            onClick={() => deleteCategory(category.id)}
-                                            className="btn-none px-1 text-danger"
-                                        >
-                                            <FaTrash />
-                                        </button>
-                                    </div>
-                                </td>
-                                <td>
-                                            {category.image ? (
-                                                <img src={urlImageCategory + category.image} className="img-fluid user-avatar" alt="Hinh anh" />
+                        {products && products.length > 0 &&
+                            products.map((product, index) => {
+                                return (
+                                    <tr key={product.id} className="datarow">
+                                        <td className="text-center">
+                                            <input type="checkbox" id={`checkId${index}`} />
+                                        </td>
+                                        <td>
+                                            <div className="name">
+                                                <a href="menu_index.html">
+                                                    {product.name}
+                                                </a>
+                                            </div>
+                                            <div className="function_style">
+                                                <button
+                                                    onClick={() => restoreProduct(product.id)}
+                                                    className="border-0 px-1 text-success"
+                                                >
+                                                    <FaArrowAltCircleLeft />
+                                                </button>
+                                                <button
+                                                    onClick={() => deleteProduct(product.id)}
+                                                    className="btn-none px-1 text-danger"
+                                                >
+                                                    <FaTrash />
+                                                </button>
+                                            </div>
+                                        </td>
+                                        <td>{brandNames[product.brandId]}</td>
+                                        <td>
+                                            {product.image ? (
+                                                <img src={urlImageProduct + product.image} className="img-fluid user-avatar" alt="Hinh anh" />
                                             ) : (
                                                 <p>Không có ảnh</p>
                                             )}
                                         </td>
-                                        <td>{category.description}</td>
-                                        <td>{category.productQuantity}</td>
-                                        <td>{category.createdAt}</td>
-                                        <td>{category.createdBy}</td>
-                            </tr>
-                        ))}
+                                        <td>{product.description}</td>
+                                        <td>{product.evaluate}</td>
+                                        <td>{product.createdAt}</td>
+                                        <td>{product.createdBy}</td>
+
+                                    </tr>
+                                );
+                            })
+                        }
                     </tbody>
 
                 </table>

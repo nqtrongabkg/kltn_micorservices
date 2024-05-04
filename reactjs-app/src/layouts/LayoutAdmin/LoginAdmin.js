@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useAdminContext } from '.';
-import { Link } from 'react-router-dom';
+// import { Link } from 'react-router-dom';
 // import { ToastContainer } from "react-toastify";
 const LoginAdmin = () => {
     const [username, setUsername] = useState('');
@@ -17,7 +17,7 @@ const LoginAdmin = () => {
         };
         login(authRequest);
     };
-    
+   
 
     return (
         <div className="login-container">
@@ -46,9 +46,9 @@ const LoginAdmin = () => {
                     />
                 </div>
                 <button type="submit" className="btn btn-primary">Login</button>
-                <p className="signin-link">
+                {/* <p className="signin-link">
                     Don't have an account? <Link to="/signup">Sign up here</Link>
-                </p>
+                </p> */}
             </form>
         </div>
     );

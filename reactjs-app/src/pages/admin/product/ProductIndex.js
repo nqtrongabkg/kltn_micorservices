@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import ProductService from '../../../services/ProductService';
 import BrandService from '../../../services/BrandService';
-import { FaToggleOn, FaTrash, FaEdit, FaToggleOff } from 'react-icons/fa';
+import { FaToggleOn, FaTrash, FaEdit, FaToggleOff, FaTag, FaHandLizard } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { urlImageProduct } from '../../../config';
@@ -85,7 +85,7 @@ const ProductIndex = () => {
                 <div className="row mt-3 align-items-center">
                     <div className="col-12">
                         <button type="button" className="btn btn-warning">
-                            <a href="/admin/category/trash">Thùng rác</a>
+                            <a href="/admin/product/trash">Thùng rác</a>
                         </button>
                     </div>
                 </div>
@@ -128,10 +128,16 @@ const ProductIndex = () => {
                                                         }>
                                                         {product.status === 1 ? <FaToggleOn size={24}/> : <FaToggleOff size={24}/>}
                                                     </button>
-                                                    <Link to={"/admin/category/edit/" + product.id} className='px-1 text-primary'>
+                                                    <Link to={"/admin/product/edit/" + product.id} className='px-1 text-primary'>
                                                         <FaEdit size={20}/>
                                                     </Link>
-                                                    <button
+                                                    <Link to={'/admin/product/sale-add/' + product.id} className="px-1 text-info">
+                                                        <FaTag />
+                                                    </Link>
+                                                    <Link to={'/admin/product/option-add/' + product.id} className="px-1">
+                                                        <FaHandLizard />
+                                                    </Link>
+                                                    <button 
                                                         onClick={() => HandTrash(product.id)}
                                                         className="btn-none px-1 text-danger">
                                                         <FaTrash />

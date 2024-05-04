@@ -5,6 +5,9 @@ import com.microservices.productservices.payload.request.ProductTagRequest;
 import com.microservices.productservices.payload.response.ProductTagResponse;
 import com.microservices.productservices.repository.ProductTagRepository;
 import com.microservices.productservices.service.ProductTagService;
+
+import jakarta.transaction.Transactional;
+
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -42,14 +45,16 @@ public class ProductTagServiceImpl implements ProductTagService {
     }
 
     @Override
-    public void delete(UUID productId, UUID tagId) {
+    public void deleteByProductIdAndTagId(UUID productId, UUID tagId) {
         productTagRepository.deleteByProductIdAndTagId(productId, tagId);
     }
 
+    @Transactional
     @Override
     public void deleteProductTagsByProductId(UUID productId) {
         productTagRepository.deleteByProductId(productId);
     }
+
 
     @Override
     public void deleteProductTagsByTagId(UUID tagId) {
@@ -60,6 +65,16 @@ public class ProductTagServiceImpl implements ProductTagService {
     public List<ProductTagResponse> getAllProductTags() {
         List<ProductTag> productTags = productTagRepository.findAll();
         return mapProductTagsToResponse(productTags);
+    }
+
+    @Override
+    public ProductTagResponse delete(UUID id) {
+        ProductTag productTag = productTagRepository.findById(id).orElse(null);
+        if (productTag != null) {
+            productTagRepository.delete(productTag);
+            return mapProductTagToResponse(productTag);
+        }
+        return null;
     }
 
     // Helper method to map ProductTag to ProductTagResponse

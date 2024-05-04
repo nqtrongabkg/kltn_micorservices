@@ -28,7 +28,7 @@ public class ProductCategoryController {
         return new ResponseEntity<>(createdProductCategory, HttpStatus.CREATED);
     }
 
-    @DeleteMapping("/delete")
+    @DeleteMapping("/delete-by-product-id")
     public ResponseEntity<Void> deleteProductCategory(@RequestParam("productId") UUID productId,
             @RequestParam("categoryId") UUID categoryId) {
         productCategoryService.deleteProductCategory(productId, categoryId);
@@ -63,5 +63,14 @@ public class ProductCategoryController {
     public ResponseEntity<Void> deleteProductCategoriesByCategoryId(@PathVariable UUID categoryId) {
         productCategoryService.deleteProductCategoriesByCategoryId(categoryId);
         return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<ProductCategoryResponse> deleteBrand(@PathVariable UUID id) {
+        ProductCategoryResponse productCategoryResponse = productCategoryService.delete(id);
+        if (productCategoryResponse != null) {
+            return ResponseEntity.ok(productCategoryResponse);
+        }
+        return ResponseEntity.notFound().build();
     }
 }

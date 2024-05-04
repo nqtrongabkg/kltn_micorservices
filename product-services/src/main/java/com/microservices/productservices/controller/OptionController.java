@@ -59,4 +59,16 @@ public class OptionController {
         }
         return ResponseEntity.notFound().build();
     }
+
+    @PutMapping("/switch-status/{id}")
+    public ResponseEntity<Void> switchStatus(@PathVariable UUID id) {
+        optionService.switchStatus(id);
+        return ResponseEntity.ok().build();
+    }
+    
+    @PutMapping("/trash/{id}")
+    public ResponseEntity<Void> trash(@PathVariable UUID id) {
+        optionService.trash(id);
+        return ResponseEntity.ok().build();
+    }  
 }

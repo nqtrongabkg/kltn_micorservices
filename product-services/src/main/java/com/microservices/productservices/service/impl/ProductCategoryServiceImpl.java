@@ -4,6 +4,9 @@ import com.microservices.productservices.entity.ProductCategory;
 import com.microservices.productservices.payload.response.ProductCategoryResponse;
 import com.microservices.productservices.repository.ProductCategoryRepository;
 import com.microservices.productservices.service.ProductCategoryService;
+
+import jakarta.transaction.Transactional;
+
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -45,6 +48,7 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
         productCategoryRepository.deleteByProductIdAndCategoryId(productId, categoryId);
     }
 
+    @Transactional
     @Override
     public void deleteProductCategoriesByProductId(UUID productId) {
         productCategoryRepository.deleteByProductId(productId);
@@ -59,6 +63,16 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
     public List<ProductCategoryResponse> getAllProductCategories() {
         List<ProductCategory> productCategories = productCategoryRepository.findAll();
         return mapProductCategoriesToResponse(productCategories);
+    }
+
+    @Override
+    public ProductCategoryResponse delete(UUID id) {
+        ProductCategory productCategory = productCategoryRepository.findById(id).orElse(null);
+        if (productCategory != null) {
+            productCategoryRepository.delete(productCategory);
+            return mapProductCategoryToResponse(productCategory);
+        }
+        return null;
     }
 
     // Helper method to map ProductCategory to ProductCategoryResponse

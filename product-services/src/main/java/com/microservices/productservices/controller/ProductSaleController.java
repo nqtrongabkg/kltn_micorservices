@@ -65,4 +65,16 @@ public class ProductSaleController {
         List<ProductSaleResponse> productSales = productSaleService.findByProductId(productId);
         return ResponseEntity.ok(productSales);
     }
+
+    @PutMapping("/switch-status/{id}")
+    public ResponseEntity<Void> switchStatus(@PathVariable UUID id) {
+        productSaleService.switchStatus(id);
+        return ResponseEntity.ok().build();
+    }
+    
+    @PutMapping("/trash/{id}")
+    public ResponseEntity<Void> trash(@PathVariable UUID id) {
+        productSaleService.trash(id);
+        return ResponseEntity.ok().build();
+    }  
 }
