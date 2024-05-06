@@ -46,6 +46,11 @@ import ProductOptionAdd from "../pages/admin/product/ProductOptionAdd";
 import ProductOptionIndex from "../pages/admin/product/ProductOptionIndex";
 import ProductOptionEdit from "../pages/admin/product/ProductOptionEdit";
 import ProductOptionTrash from "../pages/admin/product/ProductOptionTrash";
+import ProductGallaryIndex from "../pages/admin/product/ProductGallaryIndex";
+import ProductStoreIndex from "../pages/admin/store/ProductStoreIndex";
+import ProductStoreEdit from "../pages/admin/store/ProductStoreEdit";
+import ProductImportAdd from "../pages/admin/store/ProductImportAdd";
+import ProductImportIndex from "../pages/admin/store/ProductImportIndex";
 
 const RouteAdmin = [
     //user
@@ -98,5 +103,12 @@ const RouteAdmin = [
     { path: '/admin/product/option-edit/:id', component: ProductOptionEdit },
     { path: '/admin/product/option-add/:id', component: ProductOptionAdd },
     { path: '/admin/product/option-trash', component: ProductOptionTrash },
+    //product gallary
+    { path: '/admin/product/gallary-index/:id', component: ProductGallaryIndex },
+    //product store
+    { path: '/admin/product/store/index', component: ProductStoreIndex },
+    { path: '/admin/product/import/index', component: ProductImportIndex },
+    { path: '/admin/product/store/edit/:id', component: ProductStoreEdit },
+    { path: '/admin/product/import/add/:id', component: ProductImportAdd },
 ];
 export default RouteAdmin;

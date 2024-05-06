@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import ProductOptionService from '../../../services/ProductOptionService';
+import ProductStoreService from '../../../services/ProductStoreService';
 import ProductService from '../../../services/ProductService';
 import { FaArrowAltCircleLeft, FaTrash } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
@@ -35,7 +36,16 @@ const ProductOptionTrash = () => {
 
     const deleteOption = async (id) => {
         try {
-            await ProductOptionService.delete(id);
+            const result = await ProductOptionService.delete(id);
+            console.log("deleted option: ", result);
+            result.values.forEach(async (value) => {
+                try {
+                    await ProductStoreService.deleteByOptionValue(value.id);
+                    console.log("Deleted ProductStore with option value id: ", value.id);
+                } catch (error) {
+                    console.error("Error deleting ProductStore:", error);
+                }
+            });
             setReload(Date.now());
             toast.success('Xóa vĩnh viễn thành công');
         } catch (error) {
@@ -75,7 +85,7 @@ const ProductOptionTrash = () => {
                     <tbody>
                         {options && options.length > 0 &&
                             options.map((option, index) => (
-                                <ProductSaleTableRow key={option.id} option={option} restoreOption={restoreOption} deleteSale={deleteOption} />
+                                <ProductSaleTableRow key={option.id} option={option} restoreOption={restoreOption} deleteOption={deleteOption} />
                             ))
                         }
                     </tbody>

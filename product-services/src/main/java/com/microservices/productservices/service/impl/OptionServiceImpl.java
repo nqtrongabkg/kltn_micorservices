@@ -102,11 +102,12 @@ public class OptionServiceImpl implements OptionService {
     @Override
     public OptionResponse delete(UUID id) {
         Option option = optionRepository.findById(id).orElse(null);
+        OptionResponse optionResponse = mapOptionToResponse(option);
         if (option != null) {
             List<OptionValue> optionValues = optionValueRepository.findByOptionId(id);
             optionValueRepository.deleteAll(optionValues);
             optionRepository.delete(option);
-            return mapOptionToResponse(option);
+            return optionResponse;
         }
         return null;
     }

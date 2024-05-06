@@ -51,8 +51,6 @@ const LayoutAdmin = () => {
         }
     }, [navigate]);
 
-
-
     const login = async (authRequest) => {
         try {
             const response = await UserService.loginAdmin(authRequest);
@@ -90,9 +88,8 @@ const LayoutAdmin = () => {
     const logout = () => {
         sessionStorage.removeItem('useradmin'); // Xóa thông tin người dùng từ Session Storage
         setUser(null);
-        navigate("/admin/login");
+        navigate("/admin");
     };
-
 
     function handleItemClick(item) {
         const hdlitem = document.getElementById(item);
@@ -150,7 +147,7 @@ const LayoutAdmin = () => {
                                                                 <a href="/admin/product/index" className="margin-left-submenu">Tất cả sản phẩm</a>
                                                             </li>
                                                             <li>
-                                                                <a href="/admin/product/import" className="margin-left-submenu">Nhập hàng</a>
+                                                                <a href="/admin/product/store/index" className="margin-left-submenu">Kho hàng</a>
                                                             </li>
                                                             <li>
                                                                 <a href="/admin/category/index" className="margin-left-submenu">Loại sản phẩm</a>

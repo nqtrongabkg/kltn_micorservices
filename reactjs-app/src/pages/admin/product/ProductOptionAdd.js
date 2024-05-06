@@ -3,6 +3,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { useState } from "react";
 import { toast } from 'react-toastify';
 import ProductOptionService from "../../../services/ProductOptionService";
+import ProductStoreService from "../../../services/ProductStoreService"; 
 
 const ProductOptionAdd = () => {
     const { id } = useParams();
@@ -40,6 +41,21 @@ const ProductOptionAdd = () => {
         try {
             const result = await ProductOptionService.create(productOption);
             if (result !== null) {
+                console.log("crated options: ", result);
+                result.values.forEach(async (value) => {
+                    const productStoreData = {
+                        productId: id,
+                        optionValueId: value.id,
+                        quantity: 0,
+                        soldQuantity: 0,
+                        price: 0,
+                        createdBy: JSON.parse(sessionStorage.getItem('useradmin'))?.userId
+                    };
+                    const store =  await ProductStoreService.create(productStoreData);
+                    if(store !== null){
+                        console.log("created store: ", store);
+                    }
+                });
                 toast.success("Tạo lựa chọn sản phẩm thành công");
                 navigate('/admin/product/index', { replace: true });
             }

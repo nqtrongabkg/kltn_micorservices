@@ -11,4 +11,6 @@ public interface ProductGallaryRepository extends JpaRepository<ProductGallary, 
 
     List<ProductGallary> findByProductId(UUID productId);
 
+    void deleteByProductId(UUID productId);
+
 }

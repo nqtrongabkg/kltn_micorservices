@@ -6,6 +6,7 @@ import com.microservices.productservices.entity.ProductTag;
 import com.microservices.productservices.payload.request.ProductRequest;
 import com.microservices.productservices.payload.response.ProductResponse;
 import com.microservices.productservices.repository.ProductCategoryRepository;
+import com.microservices.productservices.repository.ProductGallaryRepository;
 import com.microservices.productservices.repository.ProductRepository;
 import com.microservices.productservices.repository.ProductTagRepository;
 import com.microservices.productservices.service.ProductService;
@@ -24,13 +25,16 @@ public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
     private final ProductCategoryRepository productCategoryRepository;
     private final ProductTagRepository productTagRepository;
+    private final ProductGallaryRepository productGallaryRepository;
 
     public ProductServiceImpl(ProductRepository productRepository,
             ProductCategoryRepository productCategoryRepository,
-            ProductTagRepository productTagRepository) {
+            ProductTagRepository productTagRepository,
+            ProductGallaryRepository productGallaryRepository) {
         this.productRepository = productRepository;
         this.productCategoryRepository = productCategoryRepository;
         this.productTagRepository = productTagRepository;
+        this.productGallaryRepository = productGallaryRepository;
     }
 
     @Override
@@ -170,6 +174,8 @@ public class ProductServiceImpl implements ProductService {
 
             // Delete product tags associated with the product
             productTagRepository.deleteByProductId(id);
+
+            productGallaryRepository.deleteByProductId(id);
 
             // Delete the product itself
             productRepository.delete(product);

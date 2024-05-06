@@ -10,6 +10,8 @@ public interface ProductFeedbackService {
 
     ProductFeedbackResponse create(ProductFeedbackRequest productFeedbackRequest);
 
+    void setImage(UUID id, String image);
+
     ProductFeedbackResponse getById(UUID id);
 
     List<ProductFeedbackResponse> getAll();

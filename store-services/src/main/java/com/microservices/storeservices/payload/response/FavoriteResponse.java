@@ -1,4 +1,4 @@
-package com.microservices.productservices.payload.response;
+package com.microservices.storeservices.payload.response;
 
 import java.util.UUID;
 import lombok.Builder;
@@ -6,11 +6,11 @@ import lombok.Data;
 
 @Builder
 @Data
-public class ProductGallaryResponse {
+public class FavoriteResponse {
 
     private UUID id;
 
     private UUID productId;
 
-    private String image;
+    private UUID userId;
 }

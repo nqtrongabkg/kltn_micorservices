@@ -7,6 +7,9 @@ const ProductOptionService = {
     getById: (id) => {
         return httpAxios.get(`product-services/api/options/get-by-id/${id}`);
     },
+    getOptionValue: (id) => {
+        return httpAxios.get(`product-services/api/option-values/get-by-id/${id}`);
+    },
     getByProduct: (id) => {
         return httpAxios.get(`product-services/api/options/get-by-product-id/${id}`);
     },

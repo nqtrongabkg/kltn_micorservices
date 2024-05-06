@@ -5,6 +5,7 @@ import { FaToggleOn, FaTrash, FaEdit, FaToggleOff, FaTag, FaHandLizard } from 'r
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { urlImageProduct } from '../../../config';
+import { MdOutlineCollections } from "react-icons/md";
 
 const ProductIndex = () => {
     const [products, setProducts] = useState([]);
@@ -129,15 +130,19 @@ const ProductIndex = () => {
                                                         {product.status === 1 ? <FaToggleOn size={24}/> : <FaToggleOff size={24}/>}
                                                     </button>
                                                     <Link to={"/admin/product/edit/" + product.id} className='px-1 text-primary'>
-                                                        <FaEdit size={20}/>
+                                                        <FaEdit size={23}/>
                                                     </Link>
                                                     <Link to={'/admin/product/sale-add/' + product.id} className="px-1 text-info">
-                                                        <FaTag />
+                                                        <FaTag size={23}/>
                                                     </Link>
                                                     <Link to={'/admin/product/option-add/' + product.id} className="px-1">
-                                                        <FaHandLizard />
+                                                        <FaHandLizard size={24}/>
                                                     </Link>
-                                                    <button 
+                                                    <Link to={'/admin/product/gallary-index/' + product.id} className="px-1">
+                                                        <MdOutlineCollections size={24}/>
+                                                    </Link>
+                                                    
+                                                    <button
                                                         onClick={() => HandTrash(product.id)}
                                                         className="btn-none px-1 text-danger">
                                                         <FaTrash />
