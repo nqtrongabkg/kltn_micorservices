@@ -28,20 +28,23 @@ const ProductOptionAdd = () => {
     const handleSubmit = async (event) => {
         event.preventDefault();
         
+        // Kiểm tra nếu danh sách values rỗng thì thêm giá trị "N/A"
+        const updatedValues = values.length === 0 ? ["N/A"] : values;
+    
         const productOption = {
             productId: id,
             name: name,
             description: description,
             createdBy: JSON.parse(sessionStorage.getItem('useradmin'))?.userId,
             status: status,
-            values: values
+            values: updatedValues
         };
         console.log("product option adding: ", productOption);
-
+    
         try {
             const result = await ProductOptionService.create(productOption);
             if (result !== null) {
-                console.log("crated options: ", result);
+                // console.log("crated options: ", result);
                 result.values.forEach(async (value) => {
                     const productStoreData = {
                         productId: id,
@@ -63,6 +66,7 @@ const ProductOptionAdd = () => {
             toast.error("Lỗi khi tạo lựa chọn sản phẩm");
         }
     }
+    
 
     return (
         <form onSubmit={handleSubmit}>

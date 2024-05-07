@@ -41,8 +41,9 @@ const ProductImportIndex = () => {
                             <th>Tên sản phẩm</th>
                             <th>Ảnh</th>
                             <th>Sản phẩm</th>
-                            <th>Giá</th>
+                            <th>Giá nhập</th>
                             <th>Số lượng nhập</th>
+                            <th>Mô tả</th>
                             <th>ID User</th>
                         </tr>
                     </thead>
@@ -111,7 +112,7 @@ const ProductTableRow = ({ importItem }) => {
                     )}
                 </div>
                 <div className="function_style">
-                    <Link to={store && `/admin/product/import/edit/${store.id}`} className='px-1 text-primary'>
+                    <Link to={store && `/admin/product/import/edit/${importItem.id}`} className='px-1 text-primary'>
                         <FaEdit size={24}/>
                     </Link>
                     
@@ -127,6 +128,7 @@ const ProductTableRow = ({ importItem }) => {
             <td>{option ? `${option.name} / ${optionValue ? optionValue.value : ''}` : 'Loading...'}</td>
             <td>{importItem && importItem.price}</td>
             <td>{importItem && importItem.quantity}</td>
+            <td>{importItem && importItem.description}</td>
             <td>{importItem && importItem.createdBy}</td>
         </tr>
     );

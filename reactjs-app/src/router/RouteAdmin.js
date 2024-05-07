@@ -51,6 +51,7 @@ import ProductStoreIndex from "../pages/admin/store/ProductStoreIndex";
 import ProductStoreEdit from "../pages/admin/store/ProductStoreEdit";
 import ProductImportAdd from "../pages/admin/store/ProductImportAdd";
 import ProductImportIndex from "../pages/admin/store/ProductImportIndex";
+import ProductImportEdit from "../pages/admin/store/ProductImportEdit";
 
 const RouteAdmin = [
     //user
@@ -110,5 +111,6 @@ const RouteAdmin = [
     { path: '/admin/product/import/index', component: ProductImportIndex },
     { path: '/admin/product/store/edit/:id', component: ProductStoreEdit },
     { path: '/admin/product/import/add/:id', component: ProductImportAdd },
+    { path: '/admin/product/import/edit/:id', component: ProductImportEdit },
 ];
 export default RouteAdmin;

@@ -41,6 +41,14 @@ public class OptionController {
         List<OptionResponse> options = optionService.getAll();
         return ResponseEntity.ok(options);
     }
+    @GetMapping("/get-by-product-id/{id}")
+    public ResponseEntity<List<OptionResponse>> getByProductId(@PathVariable UUID id) {
+        List<OptionResponse> options = optionService.getByProductId(id);
+        if (options != null) {
+            return ResponseEntity.ok(options);
+        }
+        return ResponseEntity.notFound().build();
+    }
 
     @PutMapping("/update/{id}")
     public ResponseEntity<OptionResponse> updateOption(@RequestBody OptionRequest optionRequest, @PathVariable UUID id) {

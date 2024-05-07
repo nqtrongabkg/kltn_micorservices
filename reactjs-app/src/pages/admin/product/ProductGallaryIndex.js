@@ -72,7 +72,7 @@ const ProductGallaryIndex = () => {
     const handleRemoveImage = async (gallaryId) => {
         try {
             const result = await ProductGallaryService.delete(gallaryId);
-            if(result.image){
+            if (result.image) {
                 const deleteImage = {
                     path: "product-gallaries",
                     filename: result.image
@@ -102,33 +102,32 @@ const ProductGallaryIndex = () => {
                     </div>
                 </section>
                 <section className="content-body my-2">
-                    <div className="row">
-                        <div className="col-md-6">
-                            <div className="mb-3">
-                                {gallaries.map(gallary => (
-                                    <div className="row" key={gallary.id}>
-                                        <div className='col-md-8 mb-5'>
-                                            <img src={urlImageProductGallary + gallary.image} alt="product" style={{ width: '300px', height: '300px' }} />
-                                        </div>
-                                        <div className='col-md-4 d-flex align-items-center'>
-                                            <Button variant="danger" size="sm" onClick={() => handleRemoveImage(gallary.id)}>
-                                                <FaTrash /> Xóa
-                                            </Button>
-                                        </div>
+                    <div className="container">
+                        <div className="row">
+                            {gallaries.map(gallary => (
+                                <div className="col-md-2 mb-4 text-center" key={gallary.id}> {/* Changed col-md-4 to col-md-2 */}
+                                    <div className="gallery-image-container mb-2 p-3 border" style={{ maxWidth: '100%', margin: 'auto' }}>
+                                        <img src={urlImageProductGallary + gallary.image} alt="Product" className="img-fluid" style={{ maxHeight: '150px' }} />
                                     </div>
-                                ))}
-                                <div>
-                            <input type="file" onChange={handleImageChange} accept="image/*" />
-                            <Button type="submit" variant="success" size="sm" disabled={!image}>
-                                <FaSave /> Lưu [Thêm]
-                            </Button>
+                                    <Button variant="danger" size="sm" onClick={() => handleRemoveImage(gallary.id)}>
+                                        <FaTrash />
+                                    </Button>
+                                </div>
+                            ))}
                         </div>
+                        <div className="row">
+                            <div className="col-12">
+                                <input type="file" onChange={handleImageChange} accept="image/*" className="form-control mb-2" />
+                                <Button type="submit" variant="success" size="sm" disabled={!image}>
+                                    <FaSave /> Lưu [Thêm]
+                                </Button>
                             </div>
                         </div>
-                        
-
                     </div>
                 </section>
+
+
+
             </div>
         </form>
     );
