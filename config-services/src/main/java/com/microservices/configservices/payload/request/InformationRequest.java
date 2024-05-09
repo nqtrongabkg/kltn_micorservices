@@ -1,7 +1,6 @@
 package com.microservices.configservices.payload.request;
 
 import java.util.UUID;
-import jakarta.persistence.Lob;
 import lombok.Builder;
 import lombok.Data;
 
@@ -11,8 +10,7 @@ public class InformationRequest {
 
     private String name;
 
-    @Lob
-    private byte[] logo;
+    private String logo;
 
     private String address;
 
@@ -28,5 +26,9 @@ public class InformationRequest {
 
     private String repersentPhone;
 
+    private UUID createdBy;
+
     private UUID updatedBy;
+
+    private int status;
 }

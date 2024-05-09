@@ -1,7 +1,6 @@
 package com.microservices.configservices.payload.request;
 
 import java.util.UUID;
-import jakarta.persistence.Lob;
 import lombok.Builder;
 import lombok.Data;
 
@@ -11,10 +10,9 @@ public class BannerRequest {
 
     private String name;
 
-    @Lob
-    private byte[] image;
+    private String image;
 
-    private String desciption;
+    private String description;
 
     private UUID createdBy;
 

@@ -80,6 +80,15 @@ const ProductAdd = () => {
                         await ProductService.setImage(data);
                     }
                 }
+                for (const categoryId of selectedCategoryIds) {
+                    try {
+                        await ProductService.addQtyToCategory(categoryId);
+                        console.log(`Incremented quantity for category ID ${categoryId}`);
+                    } catch (incrementError) {
+                        console.error(`Error incrementing quantity for category ID ${categoryId}:`, incrementError);
+                        toast.error(`Failed to increment quantity for category ID ${categoryId}`);
+                    }
+                }
                 console.log("Product added = ", result);
                 toast.success("Thêm thành công");
                 navigate("/admin/product/index", { replace: true });

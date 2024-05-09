@@ -123,4 +123,55 @@ public class ImageController {
             throw new RuntimeException("Error: " + e.getMessage());
         }
     }
+    @GetMapping("/sliders/{filename:.+}")
+    public ResponseEntity<Resource> getImageSlider(@PathVariable String filename) {
+        try {
+            Path fileStorageLocation = Paths.get("src/main/resources/static/sliders").toAbsolutePath().normalize();
+            Path filePath = fileStorageLocation.resolve(filename).normalize();
+            Resource resource = new UrlResource(filePath.toUri());
+            if (resource.exists() || resource.isReadable()) {
+                return ResponseEntity.ok()
+                        .contentType(MediaType.IMAGE_JPEG) 
+                        .body(resource);
+            } else {
+                throw new RuntimeException("Could not read the file!");
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Error: " + e.getMessage());
+        }
+    }
+    @GetMapping("/banners/{filename:.+}")
+    public ResponseEntity<Resource> getImageBanner(@PathVariable String filename) {
+        try {
+            Path fileStorageLocation = Paths.get("src/main/resources/static/banners").toAbsolutePath().normalize();
+            Path filePath = fileStorageLocation.resolve(filename).normalize();
+            Resource resource = new UrlResource(filePath.toUri());
+            if (resource.exists() || resource.isReadable()) {
+                return ResponseEntity.ok()
+                        .contentType(MediaType.IMAGE_JPEG) 
+                        .body(resource);
+            } else {
+                throw new RuntimeException("Could not read the file!");
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Error: " + e.getMessage());
+        }
+    }
+    @GetMapping("/informations/{filename:.+}")
+    public ResponseEntity<Resource> getImageImformation(@PathVariable String filename) {
+        try {
+            Path fileStorageLocation = Paths.get("src/main/resources/static/informations").toAbsolutePath().normalize();
+            Path filePath = fileStorageLocation.resolve(filename).normalize();
+            Resource resource = new UrlResource(filePath.toUri());
+            if (resource.exists() || resource.isReadable()) {
+                return ResponseEntity.ok()
+                        .contentType(MediaType.IMAGE_JPEG) 
+                        .body(resource);
+            } else {
+                throw new RuntimeException("Could not read the file!");
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Error: " + e.getMessage());
+        }
+    }
 }

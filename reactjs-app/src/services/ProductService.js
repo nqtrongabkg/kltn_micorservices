@@ -28,6 +28,9 @@ const ProductService = {
     display: (id) => {
         return httpAxios.put(`product-services/api/products/display/${id}`);
     },
+    addQtyToCategory: (id) => {
+        return httpAxios.put(`product-services/api/categories/add-product-qty/${id}`);
+    },
     delete: (id) => {
         return httpAxios.delete(`product-services/api/products/delete/${id}`);
     },

@@ -5,3 +5,6 @@ export const urlImageCategory = "http://localhost:9191/image-service/images/cate
 export const urlImageTag= "http://localhost:9191/image-service/images/tags/";
 export const urlImageProduct= "http://localhost:9191/image-service/images/products/";
 export const urlImageProductGallary= "http://localhost:9191/image-service/images/product-gallaries/";
+export const urlImageSlider= "http://localhost:9191/image-service/images/sliders/";  
+export const urlImageBanner= "http://localhost:9191/image-service/images/banners/";  
+export const urlImageInformation= "http://localhost:9191/image-service/images/informations/";  

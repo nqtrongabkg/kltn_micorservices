@@ -26,5 +26,5 @@ public interface CategoryService {
 
     CategoryResponse delete(UUID id);
 
-    
+    void addProductQty(UUID id);
 }

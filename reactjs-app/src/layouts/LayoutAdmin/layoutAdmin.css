@@ -166,14 +166,14 @@ button.btnfilter {
     top: 12px;
 }
 
-.datarow .function_style {
+.function_style {
     visibility: hidden;
+    display: flex; /* Sử dụng Flexbox */
 }
 
 .datarow:hover .function_style {
     visibility: visible;
 }
-
 /**/
 .btn-add,
 .btn-edit {
@@ -191,6 +191,15 @@ button.btnfilter {
 }
 .margin-left-submenu {
     margin-left: 15px;
+}
+.btn-add {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #007bff; /* Màu nền */
+    color: #fff; /* Màu chữ */
+    border: none;
+    border-radius: 5px; /* Bo tròn viền */
+    text-decoration: none;
 }
 
 /* =========================================================================================== */

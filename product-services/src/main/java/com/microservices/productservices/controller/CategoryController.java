@@ -34,6 +34,16 @@ public class CategoryController {
         return ResponseEntity.ok("Set image done");
     }
 
+    @PutMapping("/add-product-qty/{id}")
+    public ResponseEntity<Void> addProductQty(@PathVariable UUID id) {
+        try {
+            categoryService.addProductQty(id);
+            return ResponseEntity.ok().build();
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
     @PutMapping("/switch-status/{id}")
     public ResponseEntity<Void> switchStatus(@PathVariable UUID id) {
         categoryService.switchStatus(id);

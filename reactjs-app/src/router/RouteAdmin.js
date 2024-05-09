@@ -53,6 +53,21 @@ import ProductImportAdd from "../pages/admin/store/ProductImportAdd";
 import ProductImportIndex from "../pages/admin/store/ProductImportIndex";
 import ProductImportEdit from "../pages/admin/store/ProductImportEdit";
 
+import SliderIndex from "../pages/admin/slider/SliderIndex";
+import SliderAdd from "../pages/admin/slider/SliderAdd";
+import SliderEdit from "../pages/admin/slider/SliderEdit";
+import SliderTrash from "../pages/admin/slider/SliderTrash";
+
+import BannerIndex from "../pages/admin/banner/BannerIndex";
+import BannerAdd from "../pages/admin/banner/BannerAdd";
+import BannerEdit from "../pages/admin/banner/BannerEdit";
+import BannerTrash from "../pages/admin/banner/BannerTrash";
+
+import InformationIndex from "../pages/admin/information/InformationIndex";
+import InformationAdd from "../pages/admin/information/InformationAdd";
+import InformationEdit from "../pages/admin/information/InformationEdit";
+import InformationTrash from "../pages/admin/information/InformationTrash";
+
 const RouteAdmin = [
     //user
     { path: '/admin/user/index', component: UserIndex },
@@ -112,5 +127,20 @@ const RouteAdmin = [
     { path: '/admin/product/store/edit/:id', component: ProductStoreEdit },
     { path: '/admin/product/import/add/:id', component: ProductImportAdd },
     { path: '/admin/product/import/edit/:id', component: ProductImportEdit },
+    //slider
+    { path: '/admin/slider/index', component: SliderIndex },
+    { path: '/admin/slider/trash', component: SliderTrash },
+    { path: '/admin/slider/add', component: SliderAdd },
+    { path: '/admin/slider/edit/:id', component: SliderEdit },
+    //banner
+    { path: '/admin/banner/index', component: BannerIndex },
+    { path: '/admin/banner/trash', component: BannerTrash },
+    { path: '/admin/banner/add', component: BannerAdd },
+    { path: '/admin/banner/edit/:id', component: BannerEdit },
+     //information
+     { path: '/admin/information/index', component: InformationIndex },
+     { path: '/admin/information/trash', component: InformationTrash },
+     { path: '/admin/information/add', component: InformationAdd },
+     { path: '/admin/information/edit/:id', component: InformationEdit },
 ];
 export default RouteAdmin;
