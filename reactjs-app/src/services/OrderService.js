@@ -1,6 +1,6 @@
 import httpAxios from '../httpAxios';
 
-const BannerService = {
+const OrderService = {
 
     create: (brandData) => {
         return httpAxios.post(`order-services/api/orders/create`, brandData);
@@ -23,9 +23,9 @@ const BannerService = {
     delete: (id) => {
         return httpAxios.delete(`order-services/api/orders/delete/${id}`);
     },
-    getCard: (id) => {
-        return httpAxios.get(`order-services/api/orders/get-card/${id}`);
+    getCart: (id) => {
+        return httpAxios.get(`order-services/api/orders/get-cart/${id}`);
     },
 };
 
-export default BannerService;
+export default OrderService;

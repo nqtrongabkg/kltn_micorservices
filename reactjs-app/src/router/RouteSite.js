@@ -1,14 +1,16 @@
 import Home from "../pages/site/Home";
 import OrderDetail from "../pages/site/OrderDetail";
-import productdetail from "../pages/site/ProductDetails";
+import ProductDetails from "../pages/site/ProductDetails";
 import Productfortune from "../pages/site/Productfortune";
-import ShoppingCart from "../pages/site/ShoppingCart";
-
+import ShoppingCart from "../pages/site/Cart";
+import Login from "../layouts/LayoutSite/Login";
 
 const RouteSite = [
     { path: '/', component: Home },
 
-    { path: '/productdetail/:id', component: productdetail },
+    { path: '/login', component: Login },
+
+    { path: '/product-detail/:id', component: ProductDetails },
 
     { path: '/productfortune', component: Productfortune },
 

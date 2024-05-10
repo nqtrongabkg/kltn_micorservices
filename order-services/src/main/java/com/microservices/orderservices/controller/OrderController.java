@@ -66,9 +66,9 @@ public class OrderController {
         return ResponseEntity.ok(orders);
     }
 
-    @GetMapping("/get-card/{userId}")
+    @GetMapping("/get-cart/{userId}")
     public ResponseEntity<OrderResponse> getFirstOrderWithStatusThreeByUserId(@PathVariable UUID userId) {
-        Optional<OrderResponse> orderResponse = orderService.getCard(userId);
+        Optional<OrderResponse> orderResponse = orderService.getCart(userId);
         if (orderResponse.isPresent()) {
             return ResponseEntity.ok(orderResponse.get());
         } else {

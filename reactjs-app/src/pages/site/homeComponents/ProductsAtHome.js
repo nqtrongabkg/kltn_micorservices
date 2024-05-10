@@ -1,11 +1,11 @@
 import React from 'react';
-import Sidebar from './productcomponents/Sidebar';
-import Minimal from './productcomponents/Minimal';
+import Sidebar from './productComponents/Sidebar';
+import Minimal from './productComponents/Minimal';
 // import Featured from './productcomponents/Featured';
 // import Grid from './productcomponents/Grid';
-import Sale from './productcomponents/Sale';
+import Sale from './productComponents/Sale';
 
-const Product = () => {
+const ProductsAtHome = () => {
     return (
         <div className="product-container">
         <div className="container">
@@ -22,4 +22,4 @@ const Product = () => {
     );
 };
 
-export default Product;
+export default ProductsAtHome;

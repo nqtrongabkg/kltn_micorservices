@@ -2,8 +2,51 @@ import React from 'react';
 import IonIcon from '@reacticons/ionicons';
 import logo from '../../../assets/images/logo/logo.svg'
 import Menu from '../../../pages/site/header/menu';
+import { useNavigate } from 'react-router-dom';
 
 export default function Header() {
+    const navigate = useNavigate();
+
+    const handleGoToCartClick = () => {
+        const user = JSON.parse(sessionStorage.getItem('user'));
+        if (!user) {
+            navigate("/login", { state: { redirectTo: `/card` } });
+            return;
+        }
+        else{
+            
+            console.log(JSON.parse(sessionStorage.getItem('user')));
+            navigate("/card");
+        }
+        // Proceed with adding the item to the cart
+    }
+    const handleGoToFavoriteClick = () => {
+        const user = JSON.parse(sessionStorage.getItem('user'));
+        if (!user) {
+            navigate("/login", { state: { redirectTo: `/favorite` } });
+            return;
+        }
+        else{
+            
+            console.log(JSON.parse(sessionStorage.getItem('user')));
+            navigate("/favorite");
+        }
+        // Proceed with adding the item to the cart
+    }
+    const handleGoToUserClick = () => {
+        const user = JSON.parse(sessionStorage.getItem('user'));
+        if (!user) {
+            navigate("/login", { state: { redirectTo: `/user` } });
+            return;
+        }
+        else{
+            
+            console.log(JSON.parse(sessionStorage.getItem('user')));
+            navigate("/user");
+        }
+        // Proceed with adding the item to the cart
+    }
+
     return (
         <>
             <header>
@@ -28,16 +71,16 @@ export default function Header() {
 
                         <div className="header-user-actions">
 
-                            <button className="action-btn">
+                            <button className="action-btn" onClick={handleGoToUserClick}>
                                 <IonIcon name="person-outline" role="img" className="md hydrated" aria-label="person outline"></IonIcon>
                             </button>
 
-                            <button className="action-btn">
+                            <button className="action-btn" onClick={handleGoToFavoriteClick}>
                                 <IonIcon name="heart-outline" role="img" className="md hydrated" aria-label="heart outline"></IonIcon>
                                 <span className="count">0</span>
                             </button>
 
-                            <button className="action-btn">
+                            <button className="action-btn" onClick={handleGoToCartClick}>
                                 <IonIcon name="bag-handle-outline" role="img" className="md hydrated" aria-label="bag handle outline"></IonIcon>
                                 <span className="count">0</span>
                             </button>

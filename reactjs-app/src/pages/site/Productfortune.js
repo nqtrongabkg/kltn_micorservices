@@ -105,6 +105,7 @@ const ProductFortune = () => {
                             {['Mercedes', 'Toyota', 'Mitsubishi', 'Nissan', 'Honda', 'Suzuki'].map((brand, index) => (
                                 <div className="form-check">
                                     <input
+                                    key={index}
                                         className="form-check-input"
                                         type="checkbox"
                                         value={brand}
@@ -133,6 +134,7 @@ const ProductFortune = () => {
                             {['XS', 'SM', 'LG', 'XXL'].map((size, index) => (
                                 <div className="form-check">
                                     <input
+                                    key={index}
                                         className="form-check-input"
                                         type="checkbox"
                                         value={size}
@@ -150,6 +152,7 @@ const ProductFortune = () => {
                             {[1, 2, 3, 4, 5].map((rating, index) => (
                                 <div className="form-check">
                                     <input
+                                    key={index}
                                         className="form-check-input"
                                         type="checkbox"
                                         value={rating}
@@ -171,7 +174,7 @@ const ProductFortune = () => {
                     {currentItems && currentItems.length > 0 &&
                             currentItems.map((product, index) => {
                                 return (
-                                <div key={product.id} className="col-lg-4 col-md-6 mb-4 d-flex">
+                                <div key={index} className="col-lg-4 col-md-6 mb-4 d-flex">
                                 <div className="card w-100 my-2 shadow-2-strong">
                                 <img src={urlImageProduct + product.image} className="card-img-top" alt="Hinh anh" />
                                     <div className="card-body d-flex flex-column">

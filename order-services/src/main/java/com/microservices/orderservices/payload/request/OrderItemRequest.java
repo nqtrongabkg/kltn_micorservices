@@ -10,7 +10,7 @@ public class OrderItemRequest {
 
     private UUID orderId;
 
-    private Integer productId;
+    private UUID productId;
 
     private Integer quantity;
 

@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMinus, faPlus, faShoppingBasket, faHeart, faStar } from '@fortawesome/free-solid-svg-icons';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import ProductGallaryService from '../../../services/ProductGallaryService';
+import OrderService from '../../../services/OrderService';
+import OrderItemService from '../../../services/OrderItemService';
 import { urlImageProductGallary } from '../../../config';
 import ProductOptionService from '../../../services/ProductOptionService';
 import ProductService from '../../../services/ProductService';
 import ProductSaleService from '../../../services/ProductSaleService';
+import { toast } from 'react-toastify';
 
 const ProductGallery = () => {
     const { id } = useParams();
@@ -15,8 +18,9 @@ const ProductGallery = () => {
     const [mainImage, setMainImage] = useState('');
     const [activeOptionId, setActiveOptionId] = useState(null);
     const [product, setProduct] = useState(null);
+    const [quantity, setQuantity] = useState(1);
     const [priceToDisplay, setPriceToDisplay] = useState(0);
-
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchData = async () => {
@@ -34,7 +38,7 @@ const ProductGallery = () => {
                 if (optionsResults !== null) {
                     setOptions(optionsResults);
                 }
-                
+
                 const sales = await ProductSaleService.getByProduct(id);
                 if (sales === null && productData) {
                     setPriceToDisplay(productData.price);
@@ -68,6 +72,48 @@ const ProductGallery = () => {
     const handleValueClick = (value) => {
         console.log("Selected value:", value);
     }
+    const handleQuantityDecrease = () => {
+        if (quantity > 1) {
+            setQuantity(quantity - 1);
+        }
+    };
+
+    const handleQuantityIncrease = () => {
+        setQuantity(quantity + 1);
+    };
+
+
+    const handleAddToCartClick = async () => {
+        const user = JSON.parse(sessionStorage.getItem('user'));
+        if (!user) {
+            navigate("/login", { state: { redirectTo: `/product-detail/${id}` } });
+            return;
+        }
+        else {
+            console.log(JSON.parse(sessionStorage.getItem('user')));
+            const cart = await OrderService.getCart(JSON.parse(sessionStorage.getItem('user')).userId);
+            const totalPrice = quantity * priceToDisplay;
+            if (cart) {
+                console.log("cart:", cart);
+                const dataCreate = {
+                    orderId: cart.userId,
+                    productId: id,
+                    quantity,
+                    totalPrice,
+                    status: 1,
+                };
+                console.log("data item add:", dataCreate);
+                const addedOrderItem = await OrderItemService.create(dataCreate);
+                if(addedOrderItem !== null){
+                    console.log("orderItem added:", addedOrderItem);
+                    toast.success("Thêm vào giỏ hàng thành công");
+                }else{
+                    toast.error("Không thể thêm vào giỏ hàng");
+                }
+            }
+        }
+
+    }
 
 
     return (
@@ -82,22 +128,22 @@ const ProductGallery = () => {
                         </div>
                         <div className="d-flex justify-content-center mb-3">
                             {galleries.map((gallery, index) => (
-                               <a key={index} 
-                               data-fslightbox="mygallery" 
-                               className="border mx-1 rounded-2" 
-                               target="_blank"
-                               data-type="image" 
-                               href={gallery.image}
-                               rel="noopener noreferrer"
-                               onClick={(e) => {
-                                   e.preventDefault();
-                                   handleThumbnailClick(gallery.image); 
-                               }}>
-                                <img width={80}
-                                     height={80}
-                                     src={urlImageProductGallary + gallery.image} 
-                                     alt={`Thumbnail ${index + 1}`} />
-                            </a>
+                                <a key={index}
+                                    data-fslightbox="mygallery"
+                                    className="border mx-1 rounded-2"
+                                    target="_blank"
+                                    data-type="image"
+                                    href={gallery.image}
+                                    rel="noopener noreferrer"
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        handleThumbnailClick(gallery.image);
+                                    }}>
+                                    <img width={80}
+                                        height={80}
+                                        src={urlImageProductGallary + gallery.image}
+                                        alt={`Thumbnail ${index + 1}`} />
+                                </a>
                             ))}
                         </div>
                     </aside>
@@ -116,8 +162,6 @@ const ProductGallery = () => {
                             </div>
                             <p>{product.description}</p>
                             <main className="col-lg-6">
-
-                                {/* Product details and options logic here */}
                                 <div className="product-options" style={{ margin: '10px 0', padding: '10px' }}>
                                     <h2>Chọn sản phẩm</h2>
                                     {options.length > 0 ? options.map((option) => (
@@ -140,28 +184,29 @@ const ProductGallery = () => {
                                     )) : <p>Sản phẩm chỉ có 1 mẫu, không có sự lựa chọn.</p>}
                                 </div>
                             </main>
-                            <hr/>
+                            <hr />
                             <div className="row mb-4">
                                 <div className="col-md-4 col-6 mb-3">
-                                    <label className="mb-2 d-block">Quantity</label>
+                                    <label className="mb-2 d-block">Số lượng</label>
                                     <div className="input-group mb-3" style={{ width: 170 }}>
-                                        <button className="btn btn-white border border-secondary px-3" type="button">
+                                        <button className="btn btn-white border border-secondary px-3" type="button" onClick={handleQuantityDecrease}>
                                             <FontAwesomeIcon icon={faMinus} />
                                         </button>
-                                        <input type="text" className="form-control text-center border border-secondary" placeholder="1" aria-label="Example text with button addon" />
-                                        <button className="btn btn-white border border-secondary px-3" type="button">
+                                        <input type="text" className="form-control text-center border border-secondary" placeholder="1" aria-label="Example text with button addon" value={quantity} readOnly />
+                                        <button className="btn btn-white border border-secondary px-3" type="button" onClick={handleQuantityIncrease}>
                                             <FontAwesomeIcon icon={faPlus} />
                                         </button>
                                     </div>
+
                                 </div>
                             </div>
                             <div className="row">
-                                <a href="#nqt" className="btn btn-primary shadow-0">
+                                <button className="btn btn-primary shadow-0" onClick={handleAddToCartClick}>
                                     <FontAwesomeIcon icon={faShoppingBasket} /> Thêm vào giỏ
-                                </a>
-                                <a href="#nqt" className="btn btn-danger border border-secondary py-2 px-3">
+                                </button>
+                                <button className="btn btn-danger border border-secondary py-2 px-3">
                                     <FontAwesomeIcon icon={faHeart} /> Thêm vào yêu thích
-                                </a>
+                                </button>
                             </div>
                         </div>
                     </main>

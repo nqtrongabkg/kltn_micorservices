@@ -21,5 +21,5 @@ public interface OrderService {
     
     List<OrderResponse> getByUserId(UUID userId);
 
-    Optional<OrderResponse> getCard(UUID userId);
+    Optional<OrderResponse> getCart(UUID userId);
 }

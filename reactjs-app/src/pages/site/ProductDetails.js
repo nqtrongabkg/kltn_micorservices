@@ -1,10 +1,9 @@
 import React from "react";
 import '../../assets/styles/productdetails.css'
-import Content from "./ProductDetailes/Content";
+import Content from "./productDetails/Content";
+import ProductGallery from "./productDetails/ProductGallery";
 
-import ProductGallery from "./ProductDetailes/ProductGallery";
-
-const ProductDetailes = () => {
+const ProductDetails = () => {
     return (
         <>
             <div>
@@ -14,4 +13,4 @@ const ProductDetailes = () => {
         </>
     );
 };
-export default ProductDetailes;
+export default ProductDetails;

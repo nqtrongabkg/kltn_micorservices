@@ -3,7 +3,7 @@ import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {faPlus, faMinus} from '@fortawesome/free-solid-svg-icons';
 
-const ShoppingCart = () => {
+const Cart = () => {
     return (
         <section className="h-100 h-custom" style={{backgroundColor: '#d2c9ff'}}>
         <div className="container py-5 h-100">
@@ -145,4 +145,4 @@ const ShoppingCart = () => {
     );
 };
 
-export default ShoppingCart;
+export default Cart;

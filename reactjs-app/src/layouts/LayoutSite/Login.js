@@ -1,26 +1,26 @@
 import React, { useState } from 'react';
-import { useAdminContext } from '.';
-// import { Link } from 'react-router-dom';
-// import { ToastContainer } from "react-toastify";
-const LoginAdmin = () => {
+import { useUserContext } from './';
+import { Link, useLocation } from 'react-router-dom';
+import './loginSite.css';
+
+const Login = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
-    const { login } = useAdminContext();
+    const location = useLocation();
+    const { login } = useUserContext();
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log("Username:" , username);
-        console.log("Password:" , password);
         const authRequest = {
             username: username,
             password: password
         };
-        login(authRequest);
+        const redirectTo = location.state?.redirectTo || "/";
+        login(authRequest, redirectTo);
     };
-   
 
     return (
-        <div className="login-container">
+        <div className="login-site">
             <h2 className="login-title">Đăng nhập</h2>
             <form onSubmit={handleSubmit} className="login-form">
                 <div className="form-group">
@@ -46,12 +46,13 @@ const LoginAdmin = () => {
                     />
                 </div>
                 <button type="submit" className="btn btn-primary">Đăng nhập</button>
-                {/* <p className="signin-link">
-                    Don't have an account? <Link to="/signup">Sign up here</Link>
-                </p> */}
+                <p className="signin-link">
+                    Bạn chưa có tài khoản? <Link to="/signup">Đăng ký tại đây</Link>
+                </p>
             </form>
         </div>
+
     );
 };
 
-export default LoginAdmin;
+export default Login;

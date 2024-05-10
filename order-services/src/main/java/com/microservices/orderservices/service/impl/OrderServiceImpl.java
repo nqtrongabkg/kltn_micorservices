@@ -84,7 +84,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public Optional<OrderResponse> getCard(UUID userId) {
+    public Optional<OrderResponse> getCart(UUID userId) {
         // Check if there's an existing order with status = 3
         Optional<Order> existingOrder = orderRepository.findFirstByUserIdAndStatus(userId, 3);
         if (existingOrder.isPresent()) {

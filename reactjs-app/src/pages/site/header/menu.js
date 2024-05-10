@@ -63,7 +63,7 @@ const Menu = () => {
     return (
         <ul className="desktop-menu-category-list">
             <li className="menu-category">
-                <a href="#tag" className="menu-title">Trang chủ</a>
+                <a href="/" className="menu-title">Trang chủ</a>
             </li>
             <li className="menu-category">
                 <a href="#tag" className="menu-title">Danh mục</a>

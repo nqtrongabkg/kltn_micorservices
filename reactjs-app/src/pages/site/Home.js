@@ -1,7 +1,7 @@
 import React from "react";
-import Slider from "./homecomponents/Slider";
-import Category from "./homecomponents/Category";
-import Product from "./homecomponents/Product";
+import Slider from "./homeComponents/Slider";
+import Category from "./homeComponents/Category";
+import ProductsAtHome from "./homeComponents/ProductsAtHome";
 // import Testimonials from "./homecomponents/Testimonials";
 // import Blog from "./homecomponents/Blog";
 
@@ -10,7 +10,7 @@ const Home = () => {
         <>
         <Slider></Slider>
         <Category></Category>
-        <Product></Product>
+        <ProductsAtHome></ProductsAtHome>
         {/* <Testimonials></Testimonials>    */}
         {/* <Blog></Blog>   */}
         </>
