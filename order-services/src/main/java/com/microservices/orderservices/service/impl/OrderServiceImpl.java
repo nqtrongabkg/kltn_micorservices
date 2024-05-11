@@ -98,7 +98,7 @@ public class OrderServiceImpl implements OrderService {
             newOrder.setTotalPrice(0.0); 
             newOrder.setDeliveryName("");  
             newOrder.setDeliveryAddress("");  
-            newOrder.setDeliveryPhone(""); 
+            newOrder.setDeliveryPhone("");
 
             Order savedOrder = orderRepository.save(newOrder);
             return Optional.of(mapOrderToOrderResponse(savedOrder));

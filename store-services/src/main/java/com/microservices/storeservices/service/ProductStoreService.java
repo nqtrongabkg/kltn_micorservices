@@ -24,4 +24,6 @@ public interface ProductStoreService {
 
     void deleteByOptionValueId(UUID optionValueId);
 
+    ProductStoreResponse getByOptionValueId(UUID optionValueId);
+
 }

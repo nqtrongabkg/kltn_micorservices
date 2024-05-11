@@ -31,6 +31,9 @@ const ProductStoreService = {
     deleteByOptionValue: (id) => {
         return httpAxios.delete(`store-services/api/product-stores/delete-by-option-value/${id}`);
     },
+    getByOptionValue: (id) => {
+        return httpAxios.get(`store-services/api/product-stores/get-by-option-value/${id}`);
+    },
     getByProductId: (id) => {
         return httpAxios.get(`store-services/api/product-stores/get-by-product/${id}`);
     },

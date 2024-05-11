@@ -24,6 +24,8 @@ public class OrderItem {
 
     private UUID productId;
 
+    private UUID optionValueId;
+
     private Integer quantity;
 
     private Double totalPrice;

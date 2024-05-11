@@ -14,5 +14,4 @@ public interface ProductStoreRepository extends JpaRepository<ProductStore, UUID
     List<ProductStore> findByProductId(UUID productId);
 
     List<ProductStore> findByOptionValueId(UUID optionValueId);
-
 }

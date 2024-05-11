@@ -14,9 +14,8 @@ const RouteSite = [
 
     { path: '/productfortune', component: Productfortune },
 
-    { path: '/shoppingcart/:id', component: ShoppingCart },
+    { path: '/shopping-cart', component: ShoppingCart },
 
     { path: '/orderdetail/:id', component: OrderDetail },
-    
 ];
 export default RouteSite;

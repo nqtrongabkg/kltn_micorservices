@@ -15,6 +15,8 @@ public class OrderItemResponse {
 
     private UUID productId;
 
+    private UUID optionValueId;
+
     private Integer quantity;
 
     private Double totalPrice;

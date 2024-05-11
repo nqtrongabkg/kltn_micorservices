@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import './productGallary.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMinus, faPlus, faShoppingBasket, faHeart, faStar } from '@fortawesome/free-solid-svg-icons';
 import { useParams, useNavigate } from 'react-router-dom';
@@ -9,8 +10,8 @@ import { urlImageProductGallary } from '../../../config';
 import ProductOptionService from '../../../services/ProductOptionService';
 import ProductService from '../../../services/ProductService';
 import ProductSaleService from '../../../services/ProductSaleService';
+import ProductStoreService from '../../../services/ProductStoreService';
 import { toast } from 'react-toastify';
-
 const ProductGallery = () => {
     const { id } = useParams();
     const [galleries, setGalleries] = useState([]);
@@ -21,6 +22,29 @@ const ProductGallery = () => {
     const [quantity, setQuantity] = useState(1);
     const [priceToDisplay, setPriceToDisplay] = useState(0);
     const navigate = useNavigate();
+    const [optionValueId, setOptionValueId] = useState(null);
+    const [stockAvailability, setStockAvailability] = useState({});
+
+    const fetchStockAvailability = async () => {
+        const availability = {};
+        const promises = options.map(async (option) => {
+            return Promise.all(option.values.map(async (value) => {
+                const available = await checkQuantityInStore(value.id);
+                availability[value.id] = available;
+            }));
+        });
+
+        await Promise.all(promises);
+        setStockAvailability(availability);
+    };
+
+    useEffect(() => {
+        if (options.length > 0) {
+            fetchStockAvailability();
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [options]); // Ensure this runs whenever options are updated
+
 
     useEffect(() => {
         const fetchData = async () => {
@@ -58,9 +82,12 @@ const ProductGallery = () => {
 
         fetchData();
     }, [id]);
+
     if (product === null) {
         return <div>Loading...</div>;
     }
+
+
     const handleThumbnailClick = (image) => {
         setMainImage(image);
     };
@@ -69,9 +96,11 @@ const ProductGallery = () => {
         setActiveOptionId(prevState => prevState === optionId ? null : optionId);
     };
 
-    const handleValueClick = (value) => {
-        console.log("Selected value:", value);
+    const handleValueClick = (id) => {
+        console.log("Selected value id:", id);
+        setOptionValueId(id);
     }
+
     const handleQuantityDecrease = () => {
         if (quantity > 1) {
             setQuantity(quantity - 1);
@@ -82,6 +111,15 @@ const ProductGallery = () => {
         setQuantity(quantity + 1);
     };
 
+    const checkQuantityInStore = async (optionValueId) => {
+        try {
+            const result = await ProductStoreService.getByOptionValue(optionValueId);
+            return result && result.quantity > 0;
+        } catch (error) {
+            console.error("Error checking stock:", error);
+            return false;
+        }
+    };
 
     const handleAddToCartClick = async () => {
         const user = JSON.parse(sessionStorage.getItem('user'));
@@ -89,32 +127,41 @@ const ProductGallery = () => {
             navigate("/login", { state: { redirectTo: `/product-detail/${id}` } });
             return;
         }
-        else {
-            console.log(JSON.parse(sessionStorage.getItem('user')));
-            const cart = await OrderService.getCart(JSON.parse(sessionStorage.getItem('user')).userId);
-            const totalPrice = quantity * priceToDisplay;
-            if (cart) {
-                console.log("cart:", cart);
-                const dataCreate = {
-                    orderId: cart.userId,
-                    productId: id,
-                    quantity,
-                    totalPrice,
-                    status: 1,
-                };
-                console.log("data item add:", dataCreate);
-                const addedOrderItem = await OrderItemService.create(dataCreate);
-                if(addedOrderItem !== null){
-                    console.log("orderItem added:", addedOrderItem);
-                    toast.success("Thêm vào giỏ hàng thành công");
-                }else{
-                    toast.error("Không thể thêm vào giỏ hàng");
-                }
-            }
+
+        if (!stockAvailability[optionValueId]) { // Check if the selected option value is out of stock
+            toast.error("Sản phẩm bạn chọn hiện tại hết hàng.");
+            return;
         }
 
-    }
+        const cart = await OrderService.getCart(user.userId);
+        const totalPrice = quantity * priceToDisplay;
+        if (cart) {
+            const dataCreate = {
+                orderId: cart.id,
+                productId: id,
+                optionValueId: optionValueId,
+                quantity,
+                totalPrice,
+                status: 1,
+            };
 
+            const addedOrderItem = await OrderItemService.create(dataCreate);
+            if (addedOrderItem) {
+                const dataUpdateCart = {
+                    userId: cart.userId,
+                    totalPrice: cart.totalPrice + totalPrice,
+                    deliveryAddress: cart.deliveryAddress,
+                    deliveryPhone: cart.deliveryPhone,
+                    deliveryName: cart.deliveryName,
+                    status: cart.status,
+                };
+                await OrderService.update(cart.id, dataUpdateCart);
+                toast.success("Thêm vào giỏ hàng thành công");
+            } else {
+                toast.error("Không thể thêm vào giỏ hàng");
+            }
+        }
+    };
 
     return (
         <section className="py-5">
@@ -166,22 +213,30 @@ const ProductGallery = () => {
                                     <h2>Chọn sản phẩm</h2>
                                     {options.length > 0 ? options.map((option) => (
                                         <div key={option.id} className="option-container d-flex flex-column gap-1" style={{ padding: '5px' }}>
-                                            <button className="btn btn-light w-100 text-start" style={{ marginBottom: '5px' }} onClick={() => toggleOptionVisibility(option.id)}>
+                                            <button className={`btn w-100 text-start ${activeOptionId === option.id ? 'btn-info' : 'btn-light'}`} style={{ marginBottom: '5px' }} onClick={() => toggleOptionVisibility(option.id)}>
                                                 {option.name}:
                                             </button>
                                             {activeOptionId === option.id && (
                                                 <ul className="option-values d-flex flex-wrap list-unstyled gap-1 mb-0" style={{ padding: '1px', margin: '0' }}>
                                                     {option.values.map(value => (
-                                                        <li key={value.id} className="option-item" style={{ padding: '2px' }}>
-                                                            <button className="btn btn-light" onClick={() => handleValueClick(value.value)}>
-                                                                {value.value}
+                                                        <li key={value.id} className="option-item ms-3" style={{ padding: '2px' }}>
+                                                            <button
+                                                                className={`btn ${optionValueId === value.id ? 'btn-info' : 'btn-light'}`}
+                                                                onClick={() => stockAvailability[value.id] ? handleValueClick(value.id) : null}
+                                                                disabled={!stockAvailability[value.id]}
+                                                            >
+                                                                {value.value === "N/A" ? "Mặc định" : value.value}
+                                                                {!stockAvailability[value.id] && " (Hết hàng)"}
                                                             </button>
                                                         </li>
                                                     ))}
                                                 </ul>
                                             )}
+
+
                                         </div>
                                     )) : <p>Sản phẩm chỉ có 1 mẫu, không có sự lựa chọn.</p>}
+
                                 </div>
                             </main>
                             <hr />
@@ -197,13 +252,17 @@ const ProductGallery = () => {
                                             <FontAwesomeIcon icon={faPlus} />
                                         </button>
                                     </div>
-
                                 </div>
                             </div>
                             <div className="row">
-                                <button className="btn btn-primary shadow-0" onClick={handleAddToCartClick}>
+                                <button
+                                    className="btn btn-primary shadow-0"
+                                    onClick={handleAddToCartClick}
+                                    disabled={!stockAvailability[optionValueId]} // Disable based on stock availability
+                                >
                                     <FontAwesomeIcon icon={faShoppingBasket} /> Thêm vào giỏ
                                 </button>
+
                                 <button className="btn btn-danger border border-secondary py-2 px-3">
                                     <FontAwesomeIcon icon={faHeart} /> Thêm vào yêu thích
                                 </button>

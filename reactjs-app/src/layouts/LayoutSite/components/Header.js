@@ -10,13 +10,13 @@ export default function Header() {
     const handleGoToCartClick = () => {
         const user = JSON.parse(sessionStorage.getItem('user'));
         if (!user) {
-            navigate("/login", { state: { redirectTo: `/card` } });
+            navigate("/login", { state: { redirectTo: `/shopping-cart` } });
             return;
         }
         else{
             
             console.log(JSON.parse(sessionStorage.getItem('user')));
-            navigate("/card");
+            navigate("/shopping-cart");
         }
         // Proceed with adding the item to the cart
     }

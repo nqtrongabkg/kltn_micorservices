@@ -83,6 +83,7 @@ public class OrderItemServiceImpl implements OrderItemService {
                 .id(orderItem.getId())
                 .orderId(orderItem.getOrderId())
                 .productId(orderItem.getProductId())
+                .optionValueId(orderItem.getOptionValueId())
                 .quantity(orderItem.getQuantity())
                 .totalPrice(orderItem.getTotalPrice())
                 .createdAt(orderItem.getCreatedAt())
