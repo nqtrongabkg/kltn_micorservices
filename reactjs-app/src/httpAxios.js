@@ -12,6 +12,12 @@ httpAxios.interceptors.request.use(config => {
   if (UserAdmin) {
     const token = JSON.parse(UserAdmin).token;
     config.headers.Authorization = `Bearer ${token}`;
+  }else{
+    const User = sessionStorage.getItem('user');
+    if (User) {
+      const token = JSON.parse(User).token;
+      config.headers.Authorization = `Bearer ${token}`;
+    }
   }
   return config;
 });

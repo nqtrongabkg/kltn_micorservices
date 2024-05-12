@@ -7,6 +7,20 @@ import { useNavigate } from 'react-router-dom';
 export default function Header() {
     const navigate = useNavigate();
 
+    const handleGoToMyUserClick = () => {
+        const user = JSON.parse(sessionStorage.getItem('user'));
+        if (!user) {
+            navigate("/login", { state: { redirectTo: `/my-user` } });
+            return;
+        }
+        else{
+            
+            console.log(JSON.parse(sessionStorage.getItem('user')));
+            navigate("/my-user");
+        }
+        // Proceed with adding the item to the cart
+    }
+
     const handleGoToCartClick = () => {
         const user = JSON.parse(sessionStorage.getItem('user'));
         if (!user) {
@@ -33,19 +47,7 @@ export default function Header() {
         }
         // Proceed with adding the item to the cart
     }
-    const handleGoToUserClick = () => {
-        const user = JSON.parse(sessionStorage.getItem('user'));
-        if (!user) {
-            navigate("/login", { state: { redirectTo: `/user` } });
-            return;
-        }
-        else{
-            
-            console.log(JSON.parse(sessionStorage.getItem('user')));
-            navigate("/user");
-        }
-        // Proceed with adding the item to the cart
-    }
+    
 
     return (
         <>
@@ -71,7 +73,7 @@ export default function Header() {
 
                         <div className="header-user-actions">
 
-                            <button className="action-btn" onClick={handleGoToUserClick}>
+                            <button className="action-btn" onClick={handleGoToMyUserClick}>
                                 <IonIcon name="person-outline" role="img" className="md hydrated" aria-label="person outline"></IonIcon>
                             </button>
 

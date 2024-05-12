@@ -37,7 +37,7 @@ const CartItem = ({ item }) => {
                 <img src={urlImageProduct + product.image} className="img-fluid rounded-3" alt={product.name} />
             </div>
             <div className="col-md-3 col-lg-3 col-xl-3">
-                <h6 className="text-muted">Product</h6>
+                <h6 className="text-muted">Sản phẩm</h6>
                 <h6 className="text-black mb-0">{product.name}</h6>
             </div>
             <div className="col-md-3 col-lg-3 col-xl-3 d-flex">

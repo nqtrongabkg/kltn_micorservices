@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import './productGallary.css';
+import '../../../assets/styles/productGallary.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMinus, faPlus, faShoppingBasket, faHeart, faStar } from '@fortawesome/free-solid-svg-icons';
 import { useParams, useNavigate } from 'react-router-dom';
