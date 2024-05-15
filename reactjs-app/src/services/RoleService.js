@@ -7,6 +7,9 @@ const RoleService = {
     getById: (id) => {
         return httpAxios.get(`user-services/api/roles/get-by-id/${id}`);
     },
+    getByRole: (role) => {
+        return httpAxios.get(`user-services/api/roles/get-by-role/${role}`);
+    },
     getAll: () => {
         return httpAxios.get(`user-services/api/roles/get-all`);
     },

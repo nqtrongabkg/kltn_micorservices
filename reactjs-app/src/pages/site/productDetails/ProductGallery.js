@@ -163,6 +163,51 @@ const ProductGallery = () => {
         }
     };
 
+    const ThumbnailsCarousel = ({ galleries, handleThumbnailClick }) => {
+        const [visibleStart, setVisibleStart] = useState(0);
+        const maxVisible = 4; // Number of thumbnails visible at any time
+    
+        const handlePrevClick = () => {
+            setVisibleStart(Math.max(0, visibleStart - maxVisible));
+        };
+    
+        const handleNextClick = () => {
+            setVisibleStart(Math.min(galleries.length - maxVisible, visibleStart + maxVisible));
+        };
+    
+        return (
+            <div className="thumbnail-carousel d-flex align-items-center justify-content-center">
+            <button className="btn btn-outline-secondary me-2" onClick={handlePrevClick} disabled={visibleStart === 0}>
+                &lt;
+            </button>
+            <div className="thumbnails d-flex overflow-auto" style={{ width: 'calc(100% - 100px)' }}>
+                {galleries.slice(visibleStart, visibleStart + maxVisible).map((gallery, index) => (
+                    <a key={index}
+                        className="border mx-1"
+                        target="_blank"
+                        data-type="image"
+                        href={gallery.image}
+                        rel="noopener noreferrer"
+                        onClick={(e) => {
+                            e.preventDefault();
+                            handleThumbnailClick(gallery.image);
+                        }}>
+                        <img width="120"
+                             height="120"
+                             className="img-fluid rounded"
+                             src={urlImageProductGallary + gallery.image}
+                             alt={`Thumbnail ${index + 1}`} />
+                    </a>
+                ))}
+            </div>
+            <button className="btn btn-outline-secondary ms-2" onClick={handleNextClick} disabled={visibleStart + maxVisible >= galleries.length}>
+                &gt;
+            </button>
+        </div>
+        
+        );
+    };
+
     return (
         <section className="py-5">
             <div className="container">
@@ -173,26 +218,7 @@ const ProductGallery = () => {
                                 <img style={{ maxWidth: '100%', maxHeight: '100vh', margin: 'auto' }} src={urlImageProductGallary + mainImage} alt="Main Product" />
                             </a>
                         </div>
-                        <div className="d-flex justify-content-center mb-3">
-                            {galleries.map((gallery, index) => (
-                                <a key={index}
-                                    data-fslightbox="mygallery"
-                                    className="border mx-1 rounded-2"
-                                    target="_blank"
-                                    data-type="image"
-                                    href={gallery.image}
-                                    rel="noopener noreferrer"
-                                    onClick={(e) => {
-                                        e.preventDefault();
-                                        handleThumbnailClick(gallery.image);
-                                    }}>
-                                    <img width={80}
-                                        height={80}
-                                        src={urlImageProductGallary + gallery.image}
-                                        alt={`Thumbnail ${index + 1}`} />
-                                </a>
-                            ))}
-                        </div>
+                        <ThumbnailsCarousel galleries={galleries} handleThumbnailClick={handleThumbnailClick} />
                     </aside>
                     <main className="col-lg-6">
                         <div className="ps-lg-3">

@@ -27,5 +27,7 @@ public interface ProductService {
     ProductResponse delete(UUID id);
     
     List<ProductResponse> findByBrandId(UUID brandId);
+
+    List<ProductResponse> searchByName(String name);
     
 }

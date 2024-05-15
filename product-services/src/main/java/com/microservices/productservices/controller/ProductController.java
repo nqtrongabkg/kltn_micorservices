@@ -39,17 +39,18 @@ public class ProductController {
         productService.switchStatus(id);
         return ResponseEntity.ok().build();
     }
-    
+
     @PutMapping("/trash/{id}")
     public ResponseEntity<Void> trash(@PathVariable UUID id) {
         productService.trash(id);
         return ResponseEntity.ok().build();
-    }  
+    }
+
     @PutMapping("/display/{id}")
     public ResponseEntity<Void> display(@PathVariable UUID id) {
         productService.isDisplay(id);
         return ResponseEntity.ok().build();
-    }  
+    }
 
     @GetMapping("/get-by-id/{id}")
     public ResponseEntity<ProductResponse> getProductById(@PathVariable UUID id) {
@@ -73,7 +74,8 @@ public class ProductController {
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<ProductResponse> updateProduct(@RequestBody ProductRequest productRequest, @PathVariable UUID id) {
+    public ResponseEntity<ProductResponse> updateProduct(@RequestBody ProductRequest productRequest,
+            @PathVariable UUID id) {
         ProductResponse updatedProduct = productService.update(id, productRequest);
         if (updatedProduct != null) {
             return ResponseEntity.ok(updatedProduct);
@@ -88,5 +90,11 @@ public class ProductController {
             return ResponseEntity.ok(deletedProduct);
         }
         return ResponseEntity.notFound().build();
+    }
+
+    @GetMapping("/search/{name}")
+    public ResponseEntity<List<ProductResponse>> searchProductsByName(@PathVariable String name) {
+        List<ProductResponse> products = productService.searchByName(name);
+        return ResponseEntity.ok(products);
     }
 }

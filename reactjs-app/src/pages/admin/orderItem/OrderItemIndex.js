@@ -3,12 +3,12 @@ import OrderService from '../../../services/OrderService';
 import OrderItemService from '../../../services/OrderItemService';
 import ProductService from '../../../services/ProductService';
 import ProductOptionService from '../../../services/ProductOptionService';
-import { FaToggleOn, FaTrash, FaEdit, FaToggleOff } from 'react-icons/fa';
-import { Link } from 'react-router-dom';
+import { FaToggleOn, FaTrash, FaToggleOff, FaCheckSquare } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import { urlImageProduct } from '../../../config';
+import ProductStoreService from '../../../services/ProductStoreService';
 
-const OrderIndex = () => {
+const OrderItemIndex = () => {
     const [orderItems, setOrderItems] = useState([]);
     const [reload, setReload] = useState(0);
 
@@ -19,7 +19,7 @@ const OrderIndex = () => {
                 const itemsWithProduct = [];
                 for (const item of result) {
                     const order = await OrderService.getById(item.orderId);
-                    if (order.status !== 3) {
+                    if (order.status !== 3) { // status of order === 3 => cart
                         const product = await ProductService.getById(item.productId);
                         const optionValue = await ProductOptionService.getOptionValue(item.optionValueId);
                         const option = await ProductOptionService.getById(optionValue.optionId);
@@ -29,25 +29,43 @@ const OrderIndex = () => {
                         itemsWithProduct.push(item);
                     }
                 }
-                setOrderItems(itemsWithProduct);
+                const itemsWithProductFill = itemsWithProduct.filter(item => item.status !== 2);
+                const sorted =  itemsWithProductFill.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                setOrderItems(sorted);
             } catch (error) {
                 console.error("Error fetching order items:", error);
             }
         };
     
         fetchOrderItems();
-    }, [reload]);    
+    }, [reload]);
 
     const HandTrash = async (id) => {
+        
         await OrderItemService.trash(id);
         setReload(Date.now());
         toast.success("Chuyển vào thùng rác");
     };
 
-    const handleDislay = async (id) => {
-        await OrderItemService.display(id);
-        setReload(Date.now());
-        toast.success("Đã chuyển đổi trưng bày");
+    const handExport = async (item) => {
+        try {
+            await OrderItemService.export(item.id);
+            const dataExport = {
+                orderItemId: item.id,
+                productId: item.productId,
+                quantity: item.quantity,
+                price: item.totalPrice,
+                description: item.option.name + "/" + item.optionValue.value,
+                createdBy: JSON.parse(sessionStorage.getItem('useradmin'))?.userId
+            }
+            const exportAdd = await ProductStoreService.export(dataExport);
+            if(exportAdd !== null){
+                setReload(Date.now());
+            toast.success("Xác nhận đơn hàng");
+            }
+        } catch (error) {
+            console.error("Error export:", error);
+        }
     };
 
     const handleStatus = async (id, currentStatus) => {
@@ -61,6 +79,13 @@ const OrderIndex = () => {
         }
     };
 
+    const getRowClassName = (status) => {
+        if (status < 3) {
+            return "table-info";
+        }
+        return "";
+    };
+
     return (
         <div className="content">
             <section className="content-header my-2">
@@ -68,7 +93,7 @@ const OrderIndex = () => {
                 <div className="row mt-3 align-items-center">
                     <div className="col-12">
                         <button type="button" className="btn btn-warning">
-                            <a href="/admin/order/trash">Thùng rác</a>
+                            <a href="/admin/order-item/trash">Thùng rác</a>
                         </button>
                     </div>
                 </div>
@@ -92,11 +117,35 @@ const OrderIndex = () => {
                         {orderItems && orderItems.length > 0 &&
                             orderItems.map((item) => {
                                 return (
-                                    <tr key={item.id} className="datarow">
+                                    <tr key={item.id} className={`datarow ${getRowClassName(item.status)}`}>
                                         <td className="text-center">
                                             <input type="checkbox" />
                                         </td>
-                                        <td>{item.product ? item.product.name : "Tên sản phẩm không tồn tại"}</td>
+                                        <td>
+                                            <div className='name'>
+                                                {item.product ? item.product.name : "Tên sản phẩm không tồn tại"}
+                                            </div>
+                                            <div className="function_style">
+                                                <button
+                                                    onClick={() => handleStatus(item.id, item.status)}
+                                                    className={
+                                                        item.status === 1 ? "border-0 px-1 text-success" : "border-0 px-1 text-danger"
+                                                    }>
+                                                    {item.status === 0 ? <FaToggleOff size={24} /> : <FaToggleOn size={24} />}
+                                                </button>
+                                                
+                                                <button
+                                                    onClick={() => HandTrash(item.id)}
+                                                    className="btn-none px-1 text-danger">
+                                                    <FaTrash />
+                                                </button>
+                                                <button
+                                                    onClick={() => handExport(item)}
+                                                    className="btn-none px-1 text-danger">
+                                                    <FaCheckSquare size={24}/>
+                                                </button>
+                                            </div>
+                                        </td>
                                         <td>
                                             {item.product ? (
                                                 <img src={urlImageProduct + item.product.image} className="img-fluid user-avatar" alt="Hinh anh" />
@@ -119,4 +168,4 @@ const OrderIndex = () => {
     );
 };
 
-export default OrderIndex;
+export default OrderItemIndex;

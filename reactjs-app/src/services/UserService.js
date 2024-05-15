@@ -1,18 +1,6 @@
 import httpAxios from '../httpAxios';
 
 const UserService = {
-    // createCustomer: (userData, avatar) => {
-    //     const formData = new FormData();
-    //     formData.append('userRequest', new Blob([JSON.stringify(userData)], {
-    //         type: "application/json"
-    //     }));
-    //     formData.append('avatar', avatar);
-    //     return httpAxios.post(`user-services/api/users/create`, formData, {
-    //         headers: {
-    //             'Content-Type': 'multipart/form-data'
-    //         },
-    //     });
-    // },
     create: (user) => {
         return httpAxios.post(`user-services/api/users/create-user`, user);
     },
@@ -60,8 +48,11 @@ const UserService = {
     delete: (id) => {
         return httpAxios.delete(`user-services/api/users/delete/${id}`);
     },
-    update: (id, user) => { 
+    update: (id, user) => {
         return httpAxios.put(`user-services/api/users/update/${id}`, user);
+    },
+    updateToStore: (id) => {
+        return httpAxios.put(`user-services/api/users/update-to-store/${id}`);
     },
     
 }

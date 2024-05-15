@@ -87,22 +87,22 @@ const BrandIndex = () => {
                                                 </a>
                                             </div>
                                             <div className="function_style">
-                                                    <button
-                                                        onClick={() => handleStatus(brand.id, brand.status)}
-                                                        className={
-                                                            brand.status === 1 ? "border-0 px-1 text-success" : "border-0 px-1 text-danger"
-                                                        }>
-                                                        {brand.status === 1 ? <FaToggleOn size={24}/> : <FaToggleOff size={24}/>}
-                                                    </button>
-                                                    <Link to={"/admin/brand/edit/" + brand.id} className='px-1 text-primary'>
-                                                        <FaEdit size={20}/>
-                                                    </Link>
-                                                    <button
-                                                        onClick={() => HandTrash(brand.id)}
-                                                        className="btn-none px-1 text-danger">
-                                                        <FaTrash />
-                                                    </button>
-                                                </div>
+                                                <button
+                                                    onClick={() => handleStatus(brand.id, brand.status)}
+                                                    className={
+                                                        brand.status === 1 ? "border-0 px-1 text-success" : "border-0 px-1 text-danger"
+                                                    }>
+                                                    {brand.status === 1 ? <FaToggleOn size={24} /> : <FaToggleOff size={24} />}
+                                                </button>
+                                                <Link to={"/admin/brand/edit/" + brand.id} className='px-1 text-primary'>
+                                                    <FaEdit size={20} />
+                                                </Link>
+                                                <button
+                                                    onClick={() => HandTrash(brand.id)}
+                                                    className="btn-none px-1 text-danger">
+                                                    <FaTrash />
+                                                </button>
+                                            </div>
                                         </td>
                                         <td>
                                             {brand.image ? (
@@ -115,13 +115,13 @@ const BrandIndex = () => {
                                         <td>{brand.createdAt}</td>
                                         <td>{brand.createdBy}</td>
                                         <td>
-                                        <button
-                                                        onClick={() => handleDislay(brand.id)}
-                                                        className={
-                                                            brand.status === 3 ? "border-0 px-1 text-success" : "border-0 px-1 text-danger"
-                                                        }>
-                                                        {brand.status === 3 ? <FaToggleOn size={24}/> : <FaToggleOff size={24}/>}
-                                                    </button>
+                                            <button
+                                                onClick={() => handleDislay(brand.id)}
+                                                className={
+                                                    brand.status === 3 ? "border-0 px-1 text-success" : "border-0 px-1 text-danger"
+                                                }>
+                                                {brand.status === 3 ? <FaToggleOn size={24} /> : <FaToggleOff size={24} />}
+                                            </button>
                                         </td>
                                     </tr>
                                 );

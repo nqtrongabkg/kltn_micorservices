@@ -85,6 +85,7 @@ const UserEdit = () => {
                 }
             }
     
+            
             const result = await UserService.update(id, userData);
             if (result) {
                 if (avatar !== null) { // Kiểm tra avatar khác null

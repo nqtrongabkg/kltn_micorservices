@@ -190,7 +190,7 @@ const LayoutAdmin = () => {
                                                         <i className="fa-solid fa-plus icon-right"></i>
                                                         <ul className="submenu">
                                                             <li>
-                                                                <a href="/admin/order/index">Tất cả đơn hàng</a>
+                                                                <a href="/admin/order-item/index">Tất cả đơn hàng</a>
                                                             </li>
                                                             <li>
                                                                 <a href="/admin/order/export">Xuất hàng</a>

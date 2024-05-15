@@ -45,4 +45,6 @@ public interface UserService {
     void switchStatus(UUID id);
 
     void trash(UUID id);
+
+    UserResponse updateToStore(UUID id);
 }

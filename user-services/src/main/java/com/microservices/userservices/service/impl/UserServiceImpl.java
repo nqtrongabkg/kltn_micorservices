@@ -1,5 +1,6 @@
 package com.microservices.userservices.service.impl;
 
+import com.microservices.userservices.entity.Role;
 import com.microservices.userservices.entity.User;
 import com.microservices.userservices.exception.CustomException;
 import com.microservices.userservices.payload.request.PathRequest;
@@ -7,6 +8,7 @@ import com.microservices.userservices.payload.request.UserRequest;
 import com.microservices.userservices.payload.response.AuthenticationResponse;
 import com.microservices.userservices.payload.response.UserResponse;
 import com.microservices.userservices.payload.response.UserToOrthersResponse;
+import com.microservices.userservices.repository.RoleRepository;
 import com.microservices.userservices.repository.UserRepository;
 import com.microservices.userservices.service.JwtService;
 import com.microservices.userservices.service.UserService;
@@ -30,13 +32,16 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
+    private final RoleRepository roleRepository;
 
     public UserServiceImpl(UserRepository userRepository,
             JwtService jwtService,
-            PasswordEncoder passwordEncoder) {
+            PasswordEncoder passwordEncoder,
+            RoleRepository roleRepository) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
+        this.roleRepository = roleRepository;
     }
 
     @Override
@@ -109,14 +114,16 @@ public class UserServiceImpl implements UserService {
         return mapEntityToResponse(savedUser);
     }
 
-    // private void deleteAvatar(String fileName) {
-    //     try {
-    //         Path filePath = Paths.get("src/main/resources/static/users/" + fileName);
-    //         Files.deleteIfExists(filePath);
-    //     } catch (IOException e) {
-    //         throw new CustomException("Failed to delete old avatar", "INTERNAL_SERVER_ERROR");
-    //     }
-    // }
+    @Override
+    public UserResponse updateToStore(UUID id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new CustomException("User not found", "NOT_FOUND"));
+        Role role = roleRepository.findFirstByRole(2).orElseThrow(() -> new CustomException("Role not found", "ROLE_NOT_FOUND"));
+        user.setUpdatedAt(LocalDateTime.now());
+        user.setRole(role);
+        User savedUser = userRepository.save(user);
+        return mapEntityToResponse(savedUser);
+    }
 
     private String saveAvatar(MultipartFile avatar) {
         String fileName = UUID.randomUUID().toString() + "-" + avatar.getOriginalFilename();

@@ -21,7 +21,7 @@ const OrderItemDetail = () => {
                     console.log('item in OrderItemDetail:', result);
                     setItem(result);
                     const getProduct = await ProductService.getById(result.productId);
-                    if(getProduct){
+                    if (getProduct) {
                         console.log("product: ", getProduct);
                         setProduct(getProduct);
                     }
@@ -47,14 +47,19 @@ const OrderItemDetail = () => {
         navigate('/my-user');
     };
 
-    const handleClick = () => {
-        if (item && item.status === 3) {
-            console.log('Đã nhận hàng');
+    const handleClickComplete = async (item) => {
+        if (item && item.status > 3) {
+            try {
+                await OrderItemService.complete(item.id);
+                console.log("item complete:",item)
+            } catch (error) {
+                console.error('Error handle:', error);
+            }
         } else {
             console.log('Không thể xác nhận nhận hàng cho đơn hàng này');
         }
     };
-    
+
     return (
         <section className="vh-100" style={{ backgroundColor: '#8c9eff' }}>
             <div className="container py-5 h-100">
@@ -69,7 +74,7 @@ const OrderItemDetail = () => {
                                                 <p className="text-muted mb-2"> Mã đơn hàng <span className="fw-bold text-body">{item ? item.id : ""}</span></p>
                                                 <p className="text-muted mb-0"> Thời gian đặt hàng <span className="fw-bold text-body">{item ? formatDateToLocalDate(item.createdAt) : ""}</span> </p>
                                             </div>
-                                            <h5 className="bold">{product ? product.name :""}</h5>
+                                            <h5 className="bold">{product ? product.name : ""}</h5>
                                             <p className="text-muted"> Số lượng: {item ? item.quantity : ""}</p>
                                             <h4 className="mb-3"> Tổng thanh toán: {item ? item.totalPrice : ""} <span className="small text-muted"> VND </span></h4>
                                             <div className='row'>
@@ -77,7 +82,12 @@ const OrderItemDetail = () => {
                                                     <button className="btn btn-primary" onClick={navigateToMyUser}>Về danh sách</button>
                                                 </div>
                                                 <div className='col-md-6'>
-                                                    <button className={`btn btn-success ${item && item.status === 3 ? '' : 'disabled'}`} onClick={handleClick}>Xác nhận đã nhận hàng</button>
+                                                    <button
+                                                        className={`btn btn-success ${item && item.status === 3 ? '' : 'disabled'}`}
+                                                        onClick={() => handleClickComplete(item)}
+                                                    >
+                                                        {item && item.status === 3 ? "Xác nhận đã nhận hàng" : "Đơn hàng đã hoàn tất"}
+                                                    </button>
                                                 </div>
                                             </div>
                                         </div>
@@ -88,11 +98,12 @@ const OrderItemDetail = () => {
                                 </div>
                             </div>
                             <div className="card-body p-5">
-                                <ul id="progressbar-2" className="d-flex justify-content-between mx-0 mt-0 mb-5 px-0 pt-0 pb-2">
-                                    <li className={`step0 text-center ${item && item.status === 1 ? 'active' : ''}`} id="step1" />
-                                    <li className={`step0 text-center ${item && item.status === 3 ? 'active' : ''}`} id="step2" />
-                                    <li className={`step0 text-muted text-end ${item && item.status === 4 ? 'active' : ''}`} id="step3" />
+                                <ul id="progressbar-2" className="d-flex justify-content-between mx-0 mt-0 mb-5 px-0 pt-0 pb-2" style={{ width: '100%' }}>
+                                    <li className={`step0 text-center ${item && item.status >= 1 ? 'active' : ''}`} id="step1" />
+                                    <li className={`step0 text-center ${item && item.status >= 2 ? 'active' : ''}`} id="step2" />
+                                    <li className={`step0 text-muted text-end ${item && item.status >= 3 ? 'active' : ''}`} id="step3" />
                                 </ul>
+
                                 <div className="d-flex justify-content-between">
                                     <div className="d-lg-flex align-items-center">
                                         <FontAwesomeIcon icon={faClipboardList} size="3x" />
@@ -101,7 +112,6 @@ const OrderItemDetail = () => {
                                             <p className="fw-bold mb-0">Đang được xử lý</p>
                                         </div>
                                     </div>
-                                    
                                     <div className="d-lg-flex align-items-center">
                                         <FontAwesomeIcon icon={faShippingFast} size="3x" />
                                         <div>

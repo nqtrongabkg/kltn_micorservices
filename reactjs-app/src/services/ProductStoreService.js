@@ -7,6 +7,9 @@ const ProductStoreService = {
     import: (data) => {
         return httpAxios.post(`store-services/api/product-imports/create`, data);
     },
+    export: (data) => {
+        return httpAxios.post(`store-services/api/product-exports/create`, data);
+    },
     getById: (id) => {
         return httpAxios.get(`store-services/api/product-stores/get-by-id/${id}`);
     },
@@ -15,6 +18,9 @@ const ProductStoreService = {
     },
     getAll: () => {
         return httpAxios.get(`store-services/api/product-stores/get-all`);
+    },
+    getExports: () => {
+        return httpAxios.get(`store-services/api/product-exports/get-all`);
     },
     getImports: () => {
         return httpAxios.get(`store-services/api/product-imports/get-all`);

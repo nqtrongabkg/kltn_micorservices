@@ -58,6 +58,13 @@ public class UserController {
         return ResponseEntity.ok(updatedUser);
     }
 
+    @PutMapping("/update-to-store/{id}")
+    public ResponseEntity<UserResponse> updateUserToStore(
+            @PathVariable UUID id) {
+        UserResponse updatedUser = userService.updateToStore(id);
+        return ResponseEntity.ok(updatedUser);
+    }
+
     @GetMapping("/get-by-id/{id}")
     public ResponseEntity<UserResponse> getUserById(@PathVariable UUID id) {
         UserResponse user = userService.getById(id);

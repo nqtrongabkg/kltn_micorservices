@@ -68,7 +68,9 @@ import InformationAdd from "../pages/admin/information/InformationAdd";
 import InformationEdit from "../pages/admin/information/InformationEdit";
 import InformationTrash from "../pages/admin/information/InformationTrash";
 
-import OrderIndex from "../pages/admin/order/OrderIndex";
+import OrderItemIndex from "../pages/admin/orderItem/OrderItemIndex";
+import OrderItemTrash from "../pages/admin/orderItem/OrderItemTrash";
+import ProductExportIndex from "../pages/admin/store/ProductExportIndex";
 
 const RouteAdmin = [
     //user
@@ -144,7 +146,10 @@ const RouteAdmin = [
     { path: '/admin/information/trash', component: InformationTrash },
     { path: '/admin/information/add', component: InformationAdd },
     { path: '/admin/information/edit/:id', component: InformationEdit },
-    //order
-    { path: '/admin/order/index', component: OrderIndex },
+    //order-item
+    { path: '/admin/order-item/index', component: OrderItemIndex },
+    { path: '/admin/order-item/trash', component: OrderItemTrash },
+    //order-export
+    { path: '/admin/order/export', component: ProductExportIndex },
 ];
 export default RouteAdmin;

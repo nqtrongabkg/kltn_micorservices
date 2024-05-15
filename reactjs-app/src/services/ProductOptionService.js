@@ -25,6 +25,7 @@ const ProductOptionService = {
     trash: (id) => {
         return httpAxios.put(`product-services/api/options/trash/${id}`);
     },
+    
     delete: (id) => {
         return httpAxios.delete(`product-services/api/options/delete/${id}`);
     },

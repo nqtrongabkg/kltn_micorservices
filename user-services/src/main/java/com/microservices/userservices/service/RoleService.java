@@ -21,4 +21,6 @@ public interface RoleService {
     void switchStatus(UUID id);
 
     void trash(UUID id);
+
+    RoleResponse getByRole(int role);
 }

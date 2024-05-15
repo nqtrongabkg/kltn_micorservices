@@ -47,11 +47,10 @@ const Login = () => {
                 </div>
                 <button type="submit" className="btn btn-primary">Đăng nhập</button>
                 <p className="signin-link">
-                    Bạn chưa có tài khoản? <Link to="/signup">Đăng ký tại đây</Link>
+                    Bạn chưa có tài khoản? <Link to="/register">Đăng ký tại đây</Link>
                 </p>
             </form>
         </div>
-
     );
 };
 

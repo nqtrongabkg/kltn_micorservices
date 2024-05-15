@@ -95,6 +95,13 @@ public class RoleServiceImpl implements RoleService {
         roleRepository.save(role);
     }
 
+    @Override
+    public RoleResponse getByRole(int role) {
+        Role roleEntity = roleRepository.findFirstByRole(role)
+                .orElseThrow(() -> new CustomException("Role not found", "ROLE_NOT_FOUND"));
+        return convertToResponse(roleEntity);
+    }
+
     private RoleResponse convertToResponse(Role role) {
         RoleResponse response = new RoleResponse();
         response.setId(role.getId());

@@ -70,7 +70,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public void setImage(UUID id, String image){
+    public void setImage(UUID id, String image) {
         Product product = productRepository.findById(id).orElse(null);
         product.setImage(image);
         productRepository.save(product);
@@ -106,12 +106,12 @@ public class ProductServiceImpl implements ProductService {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("NOT_FOUND"));
 
-         // Chuyển đổi giá trị của status
-         int currentStatus = product.getStatus();
-         int newStatus = (currentStatus == 3) ? 1 : 3;
-         product.setStatus(newStatus);
-         // Lưu trạng thái đã chuyển đổi
-         productRepository.save(product);
+        // Chuyển đổi giá trị của status
+        int currentStatus = product.getStatus();
+        int newStatus = (currentStatus == 3) ? 1 : 3;
+        product.setStatus(newStatus);
+        // Lưu trạng thái đã chuyển đổi
+        productRepository.save(product);
     }
 
     @Override
@@ -161,7 +161,7 @@ public class ProductServiceImpl implements ProductService {
             return mapProductToResponse(updatedProduct);
 
         }
-        
+
         return null;
     }
 
@@ -188,6 +188,14 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public List<ProductResponse> findByBrandId(UUID brandId) {
         List<Product> products = productRepository.findByBrandId(brandId);
+        return products.stream()
+                .map(this::mapProductToResponse)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ProductResponse> searchByName(String name) {
+        List<Product> products = productRepository.findByNameContainingIgnoreCase(name);
         return products.stream()
                 .map(this::mapProductToResponse)
                 .collect(Collectors.toList());
