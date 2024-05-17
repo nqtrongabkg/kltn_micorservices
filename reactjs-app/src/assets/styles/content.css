@@ -1,0 +1,22 @@
+/* Custom CSS for additional styling */
+.card {
+    border-radius: 10px;
+}
+
+.img-md {
+    object-fit: cover;
+    border-radius: 5px;
+}
+
+.feedback-item {
+    align-items: center;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 15px;
+    margin-bottom: 15px;
+}
+
+.feedback-item:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}

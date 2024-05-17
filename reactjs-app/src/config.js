@@ -8,3 +8,4 @@ export const urlImageProductGallary= "http://localhost:9191/image-service/images
 export const urlImageSlider= "http://localhost:9191/image-service/images/sliders/";  
 export const urlImageBanner= "http://localhost:9191/image-service/images/banners/";  
 export const urlImageInformation= "http://localhost:9191/image-service/images/informations/";  
+export const urlImageFeedback= "http://localhost:9191/image-service/images/feedbacks/";  

@@ -4,8 +4,10 @@ import UserService from '../../services/UserService';
 import RoleService from '../../services/RoleService';
 import { urlImageUser } from '../../config';
 import { toast } from 'react-toastify';
+import { useUserContext } from '../../layouts/LayoutSite';
 
 const UserManager = () => {
+    const { logout } = useUserContext();
     const navigate = useNavigate();
     const user = JSON.parse(sessionStorage.getItem('user'));
 
@@ -97,6 +99,12 @@ const UserManager = () => {
         return date.toLocaleDateString('en-US', options);
     };
 
+    const handleLogout = () => {
+        logout(); // Call logout function
+        sessionStorage.removeItem('user'); // Remove user from sessionStorage
+        navigate('/login'); // Navigate to login page after logout
+    };
+
     return (
         <div>
             <section className="profile-section">
@@ -184,25 +192,45 @@ const UserManager = () => {
                             </div>
                         </div>
                         <div className="col-lg-4">
-                            <div className="card mb-4 align-items-center">
-                                <div className="card-body text-center">
-                                    <img src={userDisplay && userDisplay.avatar ? `${urlImageUser}${userDisplay.avatar}` : ''} alt="Chưa có ảnh" className="rounded-circle img-fluid mb-3" style={{ width: '150px' }} />
+                            <div className="card mb-4">
+                                <div className="card-body text-center d-flex flex-column align-items-center">
+                                    <img
+                                        src={userDisplay && userDisplay.avatar ? `${urlImageUser}${userDisplay.avatar}` : ''}
+                                        alt="Chưa có ảnh"
+                                        className="rounded-circle img-fluid mb-3"
+                                        style={{ width: '150px' }}
+                                    />
                                     {editMode ? (
                                         <div className="mb-3">
                                             <label><strong>Ảnh đại diện</strong></label>
-                                            <input type="file" id="image" className="form-control" onChange={(e) => setAvatar(e.target.files[0])} />
+                                            <input
+                                                type="file"
+                                                id="image"
+                                                className="form-control"
+                                                onChange={(e) => setAvatar(e.target.files[0])}
+                                            />
                                         </div>
-                                    ) : (
-                                        ''
-                                    )}
+                                    ) : null}
                                     {!editMode ? (
-                                        <button type="button" className="btn btn-outline-primary" onClick={() => setEditMode(true)}>Cập nhật thông tin</button>
-                                    ) : (
-                                        ''
-                                    )}
+                                        <button
+                                            type="button"
+                                            className="btn btn-outline-primary mb-2"
+                                            onClick={() => setEditMode(true)}
+                                        >
+                                            Cập nhật thông tin
+                                        </button>
+                                    ) : null}
+                                    <button
+                                        type="button"
+                                        className="btn btn-outline-primary"
+                                        onClick={handleLogout}
+                                    >
+                                        Đăng xuất
+                                    </button>
                                 </div>
                             </div>
                         </div>
+
                     </div>
                 </div>
             </section>

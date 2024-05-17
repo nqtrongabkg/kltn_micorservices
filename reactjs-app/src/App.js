@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import LayoutSite from "./layouts/LayoutSite";
 import AppRoute from "./router";
 import LayoutAdmin from "./layouts/LayoutAdmin";
+import SiteAdmin from "./layouts/siteAdmin";
 import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
@@ -16,6 +17,12 @@ function App() {
         </Route>
         <Route path="/admin" element={<LayoutAdmin />}>
           {AppRoute.RouteAdmin.map((route, index) => {
+            const Page = route.component;
+            return <Route path={route.path} key={index} element={<Page />} />
+          })}
+        </Route>
+        <Route path="/site-admin" element={<SiteAdmin />}>
+          {AppRoute.SiteAdmin.map((route, index) => {
             const Page = route.component;
             return <Route path={route.path} key={index} element={<Page />} />
           })}

@@ -33,8 +33,6 @@ public class BrandController {
         return ResponseEntity.ok("Set image done");
     }
 
-
-
     @GetMapping("/get-by-id/{id}")
     public ResponseEntity<BrandResponse> getBrandById(@PathVariable UUID id) {
         BrandResponse brand = brandService.getById(id);

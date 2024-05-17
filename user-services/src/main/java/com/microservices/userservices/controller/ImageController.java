@@ -174,4 +174,21 @@ public class ImageController {
             throw new RuntimeException("Error: " + e.getMessage());
         }
     }
+    @GetMapping("/feedbacks/{filename:.+}")
+    public ResponseEntity<Resource> getImageFeedback(@PathVariable String filename) {
+        try {
+            Path fileStorageLocation = Paths.get("src/main/resources/static/feedbacks").toAbsolutePath().normalize();
+            Path filePath = fileStorageLocation.resolve(filename).normalize();
+            Resource resource = new UrlResource(filePath.toUri());
+            if (resource.exists() || resource.isReadable()) {
+                return ResponseEntity.ok()
+                        .contentType(MediaType.IMAGE_JPEG) 
+                        .body(resource);
+            } else {
+                throw new RuntimeException("Could not read the file!");
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Error: " + e.getMessage());
+        }
+    }
 }

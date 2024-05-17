@@ -10,6 +10,9 @@ import com.microservices.productservices.repository.ProductGallaryRepository;
 import com.microservices.productservices.repository.ProductRepository;
 import com.microservices.productservices.repository.ProductTagRepository;
 import com.microservices.productservices.service.ProductService;
+
+import jakarta.transaction.Transactional;
+
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
@@ -132,6 +135,14 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    public List<ProductResponse> findByUser(UUID id) {
+        List<Product> products = productRepository.findByCreatedBy(id);
+        return products.stream()
+                .map(this::mapProductToResponse)
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public ProductResponse update(UUID id, ProductRequest productRequest) {
         Product existingProduct = productRepository.findById(id).orElse(null);
         if (existingProduct != null) {
@@ -166,6 +177,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @Transactional
     public ProductResponse delete(UUID id) {
         Product product = productRepository.findById(id).orElse(null);
         if (product != null) {

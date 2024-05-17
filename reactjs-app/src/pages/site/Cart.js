@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus, faMinus } from '@fortawesome/free-solid-svg-icons';
+import { MdDelete } from "react-icons/md";
 import OrderService from '../../services/OrderService';
 import OrderItemService from '../../services/OrderItemService';
 import ProductService from '../../services/ProductService';
@@ -9,7 +10,7 @@ import ProductStoreService from '../../services/ProductStoreService';
 import { urlImageProduct } from '../../config';
 import { toast } from 'react-toastify';
 
-const CartItem = ({ item }) => {
+const CartItem = ({ item, reload, setReload }) => {
     const [product, setProduct] = useState(null);
 
     useEffect(() => {
@@ -30,6 +31,15 @@ const CartItem = ({ item }) => {
     if (!item || !product) {
         return <div>Loading...</div>; // Hiển thị thông báo hoặc hiệu ứng tải dữ liệu
     }
+
+    const handleDeleteItem = async (itemId) => {
+        try {
+            await OrderItemService.delete(itemId);
+            setReload(!reload);
+        } catch (error) {
+            console.error('Error deleting item:', error);
+        }
+    };
 
     return (
         <div className="row mb-4 d-flex justify-content-between align-items-center">
@@ -53,7 +63,9 @@ const CartItem = ({ item }) => {
                 <h6 className="mb-0">{item.price}</h6>
             </div>
             <div className="col-md-1 col-lg-1 col-xl-1 text-end">
-                <a href="#!" className="text-muted"><i className="fas fa-times" /></a>
+                <button className="btn btn-link text-muted" onClick={() => handleDeleteItem(item.id)}>
+                    <MdDelete size={30} />
+                </button>
             </div>
         </div>
     );
@@ -70,6 +82,7 @@ const Cart = () => {
     const [deliveryPhone, setDeliveryPhone] = useState("");
     const [deliveryName, setDeliveryName] = useState("");
 
+    const [reload, setReload] = useState(false);
 
     useEffect(() => {
         const fetchCartItems = async () => {
@@ -101,7 +114,7 @@ const Cart = () => {
         };
 
         fetchCartItems();
-    }, [user.userId]);
+    }, [user.userId, reload]);
 
     const submitOrderInCart = async () => {
         const dataUpdateCart = {
@@ -170,8 +183,9 @@ const Cart = () => {
                                             </div>
                                             <hr className="my-4" />
                                             {orderItems && orderItems.map((item, index) => (
-                                                <CartItem key={index} item={item} />
+                                                <CartItem key={index} item={item} reload={reload} setReload={setReload} />
                                             ))}
+
                                             <hr className="my-4" />
                                             <div className="pt-5">
                                                 <h6 className="mb-0"><a href="/" className="text-body"><i className="fas fa-long-arrow-alt-left me-2" />Quay về trang chủ</a></h6>

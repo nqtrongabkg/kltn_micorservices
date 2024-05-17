@@ -48,10 +48,11 @@ const OrderItemDetail = () => {
     };
 
     const handleClickComplete = async (item) => {
-        if (item && item.status > 3) {
+        if (item && item.status >= 3) {
             try {
-                await OrderItemService.complete(item.id);
+                // await OrderItemService.complete(item.id);
                 console.log("item complete:",item)
+                navigate(`/create-feedback`, { state: { orderItemId: item.id, productId: item.productId } });
             } catch (error) {
                 console.error('Error handle:', error);
             }
@@ -100,7 +101,7 @@ const OrderItemDetail = () => {
                             <div className="card-body p-5">
                                 <ul id="progressbar-2" className="d-flex justify-content-between mx-0 mt-0 mb-5 px-0 pt-0 pb-2" style={{ width: '100%' }}>
                                     <li className={`step0 text-center ${item && item.status >= 1 ? 'active' : ''}`} id="step1" />
-                                    <li className={`step0 text-center ${item && item.status >= 2 ? 'active' : ''}`} id="step2" />
+                                    <li className={`step0 text-center ${item && item.status >= 3 ? 'active' : ''}`} id="step2" />
                                     <li className={`step0 text-muted text-end ${item && item.status >= 3 ? 'active' : ''}`} id="step3" />
                                 </ul>
 

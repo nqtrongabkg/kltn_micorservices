@@ -9,6 +9,7 @@ import RegisterUser from "../layouts/LayoutSite/RegisterUser";
 import UserManager from "../pages/site/UserManager";
 import RegisterStore from "../pages/site/RegisterStore";
 import FavoriteProduct from "../pages/site/FavoriteProduct";
+import CreateFeedback from "../pages/site/CreateFeedback";
 
 const RouteSite = [
     { path: '/', component: Home },
@@ -32,5 +33,7 @@ const RouteSite = [
     { path: '/favorite', component: FavoriteProduct },
 
     { path: '/order-item-detail/:id', component: OrderItemDetail },
+
+    { path: '/create-feedback', component: CreateFeedback },
 ];
 export default RouteSite;

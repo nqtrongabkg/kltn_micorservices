@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { IonIcon } from '@ionic/react';
 import { star, starOutline } from 'ionicons/icons';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate hook
 import ProductService from '../../services/ProductService';
 import FavoriteService from '../../services/FavoriteService';
 import ProductSaleService from '../../services/ProductSaleService';
@@ -14,6 +15,7 @@ const FavoriteProduct = () => {
     const [products, setProducts] = useState([]);
     const [currentPage, setCurrentPage] = useState(0);
     const productsPerPage = 5;
+    const navigate = useNavigate(); // Initialize useNavigate
 
     useEffect(() => {
         const fetchFavorites = async () => {
@@ -54,6 +56,19 @@ const FavoriteProduct = () => {
 
     const handlePageChange = ({ selected }) => {
         setCurrentPage(selected);
+    };
+
+    const handleDelete = async (favoriteId) => {
+        try {
+            await FavoriteService.delete(favoriteId);
+            setFavorites(favorites.filter(favorite => favorite.id !== favoriteId));
+        } catch (error) {
+            console.error('Error deleting favorite:', error);
+        }
+    };
+
+    const handleViewProduct = (productId) => {
+        navigate(`/product-detail/${productId}`); // Navigate to product detail page using navigate
     };
 
     const indexOfLastProduct = (currentPage + 1) * productsPerPage;
@@ -126,16 +141,18 @@ const FavoriteProduct = () => {
                                                     data-mdb-ripple-init
                                                     className="btn btn-primary btn-sm"
                                                     type="button"
+                                                    onClick={() => handleViewProduct(product.id)} // Call handleViewProduct onClick
                                                 >
-                                                    Chi tiết
+                                                    Xem
                                                 </button>
                                                 <button
                                                     data-mdb-button-init
                                                     data-mdb-ripple-init
                                                     className="btn btn-outline-primary btn-sm mt-2"
                                                     type="button"
+                                                    onClick={() => handleDelete(favorites[index].id)}
                                                 >
-                                                    Thêm vào giỏ hàng
+                                                    Xóa khỏi yêu thích
                                                 </button>
                                             </div>
                                         </div>
@@ -151,8 +168,8 @@ const FavoriteProduct = () => {
                     pageCount={Math.ceil(products.length / productsPerPage)}
                     onPageChange={handlePageChange}
                     containerClassName={'pagination'}
-                    previousLinkClassName={'pagination__link'}
-                    nextLinkClassName={'pagination__link'}
+                    previousLinkClassName={'pagination__link pagination__link--previous'}
+                    nextLinkClassName={'pagination__link pagination__link--next'}
                     disabledClassName={'pagination__link--disabled'}
                     activeClassName={'pagination__link--active'}
                 />

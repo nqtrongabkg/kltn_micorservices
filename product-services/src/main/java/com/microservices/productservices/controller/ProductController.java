@@ -67,6 +67,12 @@ public class ProductController {
         return ResponseEntity.ok(products);
     }
 
+    @GetMapping("/get-by-user/{userId}")
+    public ResponseEntity<List<ProductResponse>> getByUser(@PathVariable UUID userId) {
+        List<ProductResponse> products = productService.findByUser(userId);
+        return ResponseEntity.ok(products);
+    }
+
     @GetMapping("/get-by-brand/{id}")
     public ResponseEntity<List<ProductResponse>> getByBrand(@PathVariable UUID id) {
         List<ProductResponse> products = productService.findByBrandId(id);

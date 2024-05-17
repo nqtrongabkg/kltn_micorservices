@@ -10,6 +10,9 @@ const ProductService = {
     getById: (id) => {
         return httpAxios.get(`product-services/api/products/get-by-id/${id}`);
     },
+    getByUser: (id) => {
+        return httpAxios.get(`product-services/api/products/get-by-user/${id}`);
+    },
     getByBrand: (id) => {
         return httpAxios.get(`product-services/api/products/get-by-brand/${id}`);
     },

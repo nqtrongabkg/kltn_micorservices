@@ -126,7 +126,7 @@ const MyUser = () => {
                                     </div>
                                     <div className="d-flex justify-content-center mb-2">
                                         {userInfor && userInfor.role.name === "Seller" ? (
-                                            <button type="button" data-mdb-button-init data-mdb-ripple-init className="btn btn-primary me-2" onClick={() => navigate(`/my-store/${user.userId}`)}>Cửa hàng</button>
+                                            <button type="button" data-mdb-button-init data-mdb-ripple-init className="btn btn-primary me-2" onClick={() => navigate(`/site-admin`)}>Cửa hàng</button>
                                         ) : (
                                             <button type="button" data-mdb-button-init data-mdb-ripple-init className="btn btn-primary me-2" onClick={() => navigate(`/register-store/${user.userId}`)}>Đăng ký cửa hàng</button>
                                         )}

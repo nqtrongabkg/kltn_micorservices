@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import TagService from '../../../../services/TagService';
 import ProductTagService from '../../../../services/ProductTagService';
 import ProductService from '../../../../services/ProductService';
@@ -7,6 +7,7 @@ import { urlImageProduct } from '../../../../config';
 
 const Minimal = () => {
     const [tagsWithProducts, setTagsWithProducts] = useState([]);
+    const navigate = useNavigate(); // Initialize useNavigate
 
     useEffect(() => {
         const fetchProducts = async () => {
@@ -36,6 +37,10 @@ const Minimal = () => {
         fetchProducts();
     }, []);
 
+    const handleProductClick = (productId) => {
+        navigate(`/product-detail/${productId}`);
+    };
+
     return (
         <div className="product-minimal">
             {tagsWithProducts.map(({ tag, products }, index) => (
@@ -44,7 +49,7 @@ const Minimal = () => {
                     <div className="showcase-wrapper has-scrollbar">
                         <div className="showcase-container">
                             {products.map((product, idx) => (
-                                <div key={idx} className="showcase">
+                                <div key={idx} className="showcase" onClick={() => handleProductClick(product.id)}>
                                     <a href="#nqt" className="showcase-img-box">
                                         <img src={urlImageProduct + product.image} alt={product.name} width={70} className="showcase-img" />
                                     </a>

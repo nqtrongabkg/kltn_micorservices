@@ -21,6 +21,8 @@ public interface ProductService {
     ProductResponse getById(UUID id);
     
     List<ProductResponse> getAll();
+
+    List<ProductResponse> findByUser(UUID id);
     
     ProductResponse update(UUID id, ProductRequest productRequest);
     
