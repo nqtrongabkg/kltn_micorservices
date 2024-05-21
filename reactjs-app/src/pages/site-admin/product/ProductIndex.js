@@ -11,21 +11,23 @@ const ProductIndex = () => {
     const [products, setProducts] = useState([]);
     const [reload, setReload] = useState(0);
     const [brandNames, setBrandNames] = useState({});
+    const [page, setPage] = useState(0);
+    const [size] = useState(10);
+    const [totalPages, setTotalPages] = useState(0);
 
     useEffect(() => {
         const fetchProducts = async () => {
             try {
                 const sessionUser = JSON.parse(sessionStorage.getItem('user'));
-                let result = await ProductService.getByUser(sessionUser.userId);
-                result = result.filter(product => product.status !== 2);
-                const sortedProducts = result.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-                setProducts(sortedProducts);
+                const response = await ProductService.getByUser(sessionUser.userId, page, size);
+                setProducts(response.content);
+                setTotalPages(response.totalPages);
             } catch (error) {
                 console.error("Error fetching:", error);
             }
         };
         fetchProducts();
-    }, [reload]);
+    }, [page, size, reload]);
 
     useEffect(() => {
         const fetchBrandNames = async () => {
@@ -65,12 +67,17 @@ const ProductIndex = () => {
         }
     };
 
+    const handlePageChange = (newPage) => {
+        if (newPage >= 0 && newPage < totalPages) {
+            setPage(newPage);
+        }
+    };
+
     function formatDateToLocalDate(datetimeString) {
         const date = new Date(datetimeString);
         const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
         return date.toLocaleDateString('en-US', options);
     }
-    
 
     return (
         <div className="content">
@@ -95,6 +102,7 @@ const ProductIndex = () => {
                             <th>Tên</th>
                             <th>Thương hiệu</th>
                             <th>Ảnh</th>
+                            <th>Giá</th>
                             <th>Mô tả</th>
                             <th>Đánh giá</th>
                             <th>Ngày tạo</th>
@@ -150,6 +158,7 @@ const ProductIndex = () => {
                                                 <p>Không có ảnh</p>
                                             )}
                                         </td>
+                                        <td>{product.price}</td>
                                         <td>{product.description}</td>
                                         <td>{product.evaluate}</td>
                                         <td>{formatDateToLocalDate(product.createdAt)}</td>
@@ -160,6 +169,19 @@ const ProductIndex = () => {
                         }
                     </tbody>
                 </table>
+                <div className="pagination">
+                    <ul className="pagination">
+                        <li className={`page-item ${page === 0 ? 'disabled' : ''}`}>
+                            <button className="page-link" onClick={() => handlePageChange(page - 1)}>Trang trước</button>
+                        </li>
+                        <li className="page-item disabled">
+                            <span className="page-link">Trang {page + 1} trên {totalPages}</span>
+                        </li>
+                        <li className={`page-item ${page === totalPages - 1 ? 'disabled' : ''}`}>
+                            <button className="page-link" onClick={() => handlePageChange(page + 1)}>Trang sau</button>
+                        </li>
+                    </ul>
+                </div>
             </section>
         </div>
     );

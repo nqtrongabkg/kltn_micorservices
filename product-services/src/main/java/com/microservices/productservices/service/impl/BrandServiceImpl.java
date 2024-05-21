@@ -28,27 +28,6 @@ public class BrandServiceImpl implements BrandService {
         this.brandRepository = brandRepository;
     }
 
-    // private void deleteImage(String fileName) {
-    //     try {
-    //         Path filePath = Paths.get("src/main/resources/static/brands/" + fileName);
-    //         Files.deleteIfExists(filePath);
-    //     } catch (IOException e) {
-    //         throw new RuntimeException("Failed to delete old avatar");
-    //     }
-    // }
-
-    // private String saveImage(MultipartFile image) {
-    //     String fileName = UUID.randomUUID().toString() + "-" + image.getOriginalFilename();
-    //     try {
-    //         // Lưu tệp vào thư mục tĩnh của ứng dụng
-    //         Path filePath = Paths.get("src/main/resources/static/brands/" + fileName);
-    //         Files.copy(image.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
-    //     } catch (IOException e) {
-    //         throw new RuntimeException("Failed to save avatar file");
-    //     }
-    //     return fileName;
-    // }
-
     @Override
     public BrandResponse create(BrandRequest brandRequest) {
         Brand brand = new Brand();
@@ -115,7 +94,7 @@ public class BrandServiceImpl implements BrandService {
     @Override
     public void switchStatus(UUID id) {
         Brand brand = brandRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("ROLE_NOT_FOUND"));
+                .orElseThrow(() -> new RuntimeException("NOT_FOUND"));
 
         // Chuyển đổi giá trị của status
         int currentStatus = brand.getStatus();
@@ -128,7 +107,7 @@ public class BrandServiceImpl implements BrandService {
     @Override
     public void trash(UUID id) {
         Brand brand = brandRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("ROLE_NOT_FOUND"));
+                .orElseThrow(() -> new RuntimeException("NOT_FOUND"));
 
         // Đặt trạng thái thành 2
         brand.setStatus(2);
@@ -140,7 +119,7 @@ public class BrandServiceImpl implements BrandService {
     @Override
     public void isDisplay(UUID id) {
         Brand brand = brandRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("ROLE_NOT_FOUND"));
+                .orElseThrow(() -> new RuntimeException("NOT_FOUND"));
 
          // Chuyển đổi giá trị của status
          int currentStatus = brand.getStatus();
@@ -148,6 +127,27 @@ public class BrandServiceImpl implements BrandService {
          brand.setStatus(newStatus);
          // Lưu trạng thái đã chuyển đổi
          brandRepository.save(brand);
+    }
+
+    @Override
+    public void isPublic(UUID id) {
+        Brand brand = brandRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("NOT_FOUND"));
+
+         // Chuyển đổi giá trị của status
+         int currentStatus = brand.getStatus();
+         int newStatus = (currentStatus == 4) ? 1 : 4;
+         brand.setStatus(newStatus);
+         // Lưu trạng thái đã chuyển đổi
+         brandRepository.save(brand);
+    }
+
+    @Override
+    public List<BrandResponse> getBrandForClient(UUID id) {
+        List<Brand> brands = brandRepository.findByStatusOrCreatedBy(4, id);
+        return brands.stream()
+                .map(this::mapBrandToBrandResponse)
+                .collect(Collectors.toList());
     }
 
     private BrandResponse mapBrandToBrandResponse(Brand brand) {

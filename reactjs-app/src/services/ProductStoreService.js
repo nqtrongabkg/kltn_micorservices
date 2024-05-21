@@ -22,6 +22,9 @@ const ProductStoreService = {
     getExports: () => {
         return httpAxios.get(`store-services/api/product-exports/get-all`);
     },
+    getExportsByUser: (id) => {
+        return httpAxios.get(`store-services/api/product-exports/get-by-user/${id}`);
+    },
     getImports: () => {
         return httpAxios.get(`store-services/api/product-imports/get-all`);
     },
@@ -45,6 +48,9 @@ const ProductStoreService = {
     },
     getbyUserId: (id) => {
         return httpAxios.get(`store-services/api/product-stores/get-by-user/${id}`);
+    },
+    getImportsByUserId: (id) => {
+        return httpAxios.get(`store-services/api/product-imports/get-by-user/${id}`);
     },
 }
 export default ProductStoreService;

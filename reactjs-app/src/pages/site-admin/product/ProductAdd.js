@@ -28,7 +28,7 @@ const ProductAdd = () => {
             try {
                 const sessionUser = JSON.parse(sessionStorage.getItem('user'));
                 const brandResponse = await BrandService.getByUserId(sessionUser.userId);
-                const filteredBrands = brandResponse.filter(brand => brand.status === 1 || brand.status === 3);
+                const filteredBrands = brandResponse.filter(brand => brand.status === 1 || brand.status >= 3);
                 setBrands(filteredBrands);
     
                 const categoryResponse = await CategoryService.getAll();
@@ -49,6 +49,13 @@ const ProductAdd = () => {
 
     const handleFormSubmit = async (e) => {
         e.preventDefault();
+
+        // Validation check for price
+        if (price < 1000) {
+            toast.error("Giá bán phải lớn hơn hoặc bằng 1000!");
+            return;
+        }
+
         const productRequest = {
             name,
             price,
@@ -70,32 +77,26 @@ const ProductAdd = () => {
             const result = await ProductService.create(productRequest);
             if (result) {
                 if (image !== null) {
-                    const imageString = await UserService.saveImage(result.id, path, image)
-                    console.log("string image save : ", imageString);
+                    const imageString = await UserService.saveImage(result.id, path, image);
                     if (imageString !== null) {
                         const data = {
                             id: result.id,
                             image: imageString
                         };
-                        console.log("setimage data is: ", data);
                         await ProductService.setImage(data);
                     }
                 }
                 for (const categoryId of selectedCategoryIds) {
                     try {
                         await ProductService.addQtyToCategory(categoryId);
-                        console.log(`Incremented quantity for category ID ${categoryId}`);
                     } catch (incrementError) {
-                        console.error(`Error incrementing quantity for category ID ${categoryId}:`, incrementError);
                         toast.error(`Failed to increment quantity for category ID ${categoryId}`);
                     }
                 }
-                console.log("Product added = ", result);
                 toast.success("Thêm thành công");
                 navigate("/site-admin/product/index", { replace: true });
             }
         } catch (error) {
-            console.error("Error adding product:", error);
             toast.error("Thêm loại thất bại!");
         }
     };
@@ -105,35 +106,27 @@ const ProductAdd = () => {
     const [selectedCategoryIds, setSelectedCategoryIds] = useState([]);
     const [selectedTagIds, setSelectedTagIds] = useState([]);
 
-    // Xử lý khi thay đổi chọn danh mục
+    // Handle category change
     const handleCategoryChange = (categoryId) => {
         const updatedSelectedCategoryIds = [...selectedCategoryIds];
-
         if (updatedSelectedCategoryIds.includes(categoryId)) {
-            // Nếu categoryId đã được chọn, loại bỏ nó ra khỏi mảng
             const index = updatedSelectedCategoryIds.indexOf(categoryId);
             updatedSelectedCategoryIds.splice(index, 1);
         } else {
-            // Nếu categoryId chưa được chọn, thêm vào mảng
             updatedSelectedCategoryIds.push(categoryId);
         }
-
         setSelectedCategoryIds(updatedSelectedCategoryIds);
     };
 
-    // Xử lý khi thay đổi chọn tag
+    // Handle tag change
     const handleTagChange = (tagId) => {
         const updatedSelectedTagIds = [...selectedTagIds];
-
         if (updatedSelectedTagIds.includes(tagId)) {
-            // Nếu tagId đã được chọn, loại bỏ nó ra khỏi mảng
             const index = updatedSelectedTagIds.indexOf(tagId);
             updatedSelectedTagIds.splice(index, 1);
         } else {
-            // Nếu tagId chưa được chọn, thêm vào mảng
             updatedSelectedTagIds.push(tagId);
         }
-
         setSelectedTagIds(updatedSelectedTagIds);
     };
 

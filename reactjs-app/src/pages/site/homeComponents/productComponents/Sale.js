@@ -82,6 +82,10 @@ const ProductSaleTableRow = ({ sale }) => {
 
     }
 
+    const formatPrice = (price) => {
+        return price.toLocaleString('vi-VN');
+    };
+
     return (
         <div className="showcase">
             <div className="showcase-banner">
@@ -126,8 +130,8 @@ const ProductSaleTableRow = ({ sale }) => {
                 </div>
                 {/* Display product price */}
                 <div className="price-box">
-                    <p className="price">${sale.priceSale.toFixed(2)}</p>
-                    <del>${product.price.toFixed(2)}</del>
+                    <p className="price">{formatPrice(sale.priceSale)}</p>
+                    <del>{formatPrice(product.price)}</del>
                 </div>
             </div>
         </div>

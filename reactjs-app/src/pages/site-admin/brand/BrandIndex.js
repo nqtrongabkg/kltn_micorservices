@@ -15,7 +15,7 @@ const BrandIndex = () => {
                 const sessionUser = JSON.parse(sessionStorage.getItem('user'));
                 
                 let result = await BrandService.getByUserId(sessionUser.userId);
-                result = result.filter(brand => brand.status !== 2);
+                result = result.filter(brand => brand.status === 1 || brand.status === 3);
                 const sortedBrands = result.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
                 setBrands(sortedBrands);
             } catch (error) {

@@ -13,7 +13,8 @@ const ProductSaleIndex = () => {
 
     useEffect(() => {
         (async () => {
-            const result = await ProductSaleService.getAll();
+            const sessionUser = JSON.parse(sessionStorage.getItem('user'));
+            const result = await ProductSaleService.getByUser(sessionUser.userId);
             // Filter out sales with status 2
             const filteredSales = result.filter(sale => sale.status !== 2);
             // Sort the filtered sales array by createdAt property from newest to oldest
@@ -46,7 +47,7 @@ const ProductSaleIndex = () => {
                 <div className="row mt-3 align-items-center">
                     <div className="col-12">
                         <button type="button" className="btn btn-warning">
-                            <a href="/admin/product/sale-trash">Thùng rác</a>
+                            <a href="/site-admin/product/sale-trash">Thùng rác</a>
                         </button>
                     </div>
                 </div>
@@ -60,6 +61,7 @@ const ProductSaleIndex = () => {
                             </th>
                             <th>Tên sản phẩm</th>
                             <th>Ảnh</th>
+                            <th>Giá</th>
                             <th>Giá giảm</th>
                             <th>Số lượng</th>
                             <th>Mô tả</th>
@@ -120,7 +122,7 @@ const ProductSaleTableRow = ({ sale, HandTrash, handleStatus }) => {
                         className={sale.status === 1 ? "border-0 px-1 text-success" : "border-0 px-1 text-danger"}>
                         {sale.status === 1 ? <FaToggleOn /> : <FaToggleOff />}
                     </button>
-                    <Link to={`/admin/product/sale-edit/${sale.id}`} className='px-1 text-primary'>
+                    <Link to={`/site-admin/product/sale-edit/${sale.id}`} className='px-1 text-primary'>
                         <FaEdit />
                     </Link>
                     <button
@@ -137,6 +139,7 @@ const ProductSaleTableRow = ({ sale, HandTrash, handleStatus }) => {
                     <p>Không có ảnh</p>
                 )}
             </td>
+            <td>{product ? product.price : "Loading..."}</td>
             <td>{sale.priceSale}</td>
             <td>{sale.quantity}</td>
             <td>{sale.description}</td>

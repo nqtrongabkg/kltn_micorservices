@@ -73,6 +73,14 @@ public class OptionServiceImpl implements OptionService {
     }
 
     @Override
+    public List<OptionResponse> findByUser(UUID id) {
+        List<Option> options = optionRepository.findByCreatedBy(id);
+        return options.stream()
+                .map(this::mapOptionToResponse)
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public OptionResponse update(UUID id, OptionRequest optionRequest) {
         Option existingOption = optionRepository.findById(id).orElse(null);
         if (existingOption != null) {

@@ -12,7 +12,8 @@ const ProductImportIndex = () => {
 
     useEffect(() => {
         (async () => {
-            const result = await ProductStoreService.getImports();
+            const sessionUser = JSON.parse(sessionStorage.getItem('user'));
+            const result = await ProductStoreService.getImportsByUserId(sessionUser.userId);
             result.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
             setImports(result);
             // console.log("imports is:", result);
@@ -26,7 +27,7 @@ const ProductImportIndex = () => {
                 <div className="row mt-3 align-items-center">
                     <div className="col-12">
                         <button type="button" className="btn btn-warning">
-                            <a href="/admin/product/store/index">Về kho hàng</a>
+                            <a href="/site-admin/product/store/index">Về kho hàng</a>
                         </button>
                     </div>
                 </div>
@@ -44,7 +45,6 @@ const ProductImportIndex = () => {
                             <th>Giá nhập</th>
                             <th>Số lượng nhập</th>
                             <th>Mô tả</th>
-                            <th>ID User</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -112,10 +112,9 @@ const ProductTableRow = ({ importItem }) => {
                     )}
                 </div>
                 <div className="function_style">
-                    <Link to={store && `/admin/product/import/edit/${importItem.id}`} className='px-1 text-primary'>
+                    <Link to={store && `/site-admin/product/import/edit/${importItem.id}`} className='px-1 text-primary'>
                         <FaEdit size={24}/>
                     </Link>
-                    
                 </div>
             </td>
             <td>
@@ -129,7 +128,6 @@ const ProductTableRow = ({ importItem }) => {
             <td>{importItem && importItem.price}</td>
             <td>{importItem && importItem.quantity}</td>
             <td>{importItem && importItem.description}</td>
-            <td>{importItem && importItem.createdBy}</td>
         </tr>
     );
 };

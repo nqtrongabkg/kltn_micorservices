@@ -14,18 +14,22 @@ const OrderItemTrash = () => {
     useEffect(() => {
         const fetchOrderItems = async () => {
             try {
+                const sessionUser = JSON.parse(sessionStorage.getItem('user'));
                 const result = await OrderItemService.getAll();
                 const itemsWithProduct = [];
                 for (const item of result) {
                     const order = await OrderService.getById(item.orderId);
                     if (order.status !== 3) { // status of order === 3 => cart
                         const product = await ProductService.getById(item.productId);
-                        const optionValue = await ProductOptionService.getOptionValue(item.optionValueId);
-                        const option = await ProductOptionService.getById(optionValue.optionId);
-                        item.product = product; // Thêm thông tin sản phẩm vào mỗi item
-                        item.option = option; // Thêm thông tin loại lựa chọn vào mỗi item
-                        item.optionValue = optionValue; // Thêm thông tin giá trị loại lựa chọn vào mỗi item
-                        itemsWithProduct.push(item);
+                        if(product.createdBy === sessionUser.userId){
+                            const optionValue = await ProductOptionService.getOptionValue(item.optionValueId);
+                            const option = await ProductOptionService.getById(optionValue.optionId);
+                            item.order = order;
+                            item.product = product;
+                            item.option = option;
+                            item.optionValue = optionValue; 
+                            itemsWithProduct.push(item);
+                        }
                     }
                 }
                 const itemsWithProductFill = itemsWithProduct.filter(item => item.status === 2);
@@ -69,7 +73,7 @@ const OrderItemTrash = () => {
                 <div className="row mt-3 align-items-center">
                     <div className="col-12">
                         <button type="button" className="btn btn-warning">
-                            <a href="/admin/order-item/index">Về danh sách</a>
+                            <a href="/site-admin/order-item/index">Về danh sách</a>
                         </button>
                     </div>
                 </div>

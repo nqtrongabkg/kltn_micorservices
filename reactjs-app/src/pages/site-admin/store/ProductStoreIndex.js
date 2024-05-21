@@ -12,7 +12,8 @@ const ProductStoreIndex = () => {
 
     useEffect(() => {
         (async () => {
-            const result = await ProductStoreService.getAll();
+            const sessionUser = JSON.parse(sessionStorage.getItem('user'));
+            const result = await ProductStoreService.getbyUserId(sessionUser.userId);
             result.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
             setStores(result);
             // console.log("stores is:", result);
@@ -26,7 +27,7 @@ const ProductStoreIndex = () => {
                 <div className="row mt-3 align-items-center">
                     <div className="col-12">
                         <button type="button" className="btn btn-warning">
-                            <a href="/admin/product/import/index">Lịch sử nhập hàng</a>
+                            <a href="/site-admin/product/import/index">Lịch sử nhập hàng</a>
                         </button>
                     </div>
                 </div>
@@ -44,7 +45,6 @@ const ProductStoreIndex = () => {
                             <th>Giá</th>
                             <th>Số lượng</th>
                             <th>Đã bán</th>
-                            <th>ID người dùng sở hữu</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -109,10 +109,10 @@ const ProductTableRow = ({ store }) => {
                 </div>
                 <div className="function_style">
 
-                    <Link to={`/admin/product/store/edit/${store.id}`} className='px-1 text-primary'>
+                    <Link to={`/site-admin/product/store/edit/${store.id}`} className='px-1 text-primary'>
                         <FaEdit size={24}/>
                     </Link>
-                    <Link to={`/admin/product/import/add/${store.id}`} className="px-1">
+                    <Link to={`/site-admin/product/import/add/${store.id}`} className="px-1">
                         <FaDollyFlatbed size={24} />
                     </Link>
                 </div>
@@ -128,7 +128,6 @@ const ProductTableRow = ({ store }) => {
             <td>{store.price}</td>
             <td>{store.quantity}</td>
             <td>{store.soldQuantity}</td>
-            <td>{store.createdBy}</td>
         </tr>
     );
 };

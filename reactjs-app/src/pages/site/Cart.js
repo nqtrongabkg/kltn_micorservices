@@ -7,6 +7,7 @@ import OrderItemService from '../../services/OrderItemService';
 import ProductService from '../../services/ProductService';
 import UserService from '../../services/UserService';
 import ProductStoreService from '../../services/ProductStoreService';
+import ProductSaleService from '../../services/ProductSaleService';
 import { urlImageProduct } from '../../config';
 import { toast } from 'react-toastify';
 
@@ -73,7 +74,7 @@ const CartItem = ({ item, reload, setReload }) => {
 
 const Cart = () => {
     const user = JSON.parse(sessionStorage.getItem('user'));
-    console.log("user in cart", user);
+    // console.log("user in cart", user);
 
     const [orderItems, setOrderItems] = useState(null);
     const [cart, setCart] = useState(null);
@@ -90,17 +91,18 @@ const Cart = () => {
                 const cart = await OrderService.getCart(user.userId);
                 const getUserFull = await UserService.getUserById(user.userId);
                 if (getUserFull) {
-                    console.log("full user in cart:", getUserFull);
+                    // console.log("full user in cart:", getUserFull);
                     setDeliveryAddress(getUserFull.address);
                     setDeliveryPhone(getUserFull.phone);
                     setDeliveryName(getUserFull.name);
                 }
                 if (cart) {
-                    console.log("cart in cart:", cart);
+                    // console.log("cart in cart:", cart);
                     setCart(cart);
                     const cartItems = await OrderItemService.getByOrder(cart.id);
+                    // console.log("items in cart:", cartItems);
                     if (cartItems) {
-                        console.log("items in cart", cartItems);
+                        // console.log("items in cart", cartItems);
                         const itemsWithProducts = await Promise.all(cartItems.map(async (item) => {
                             const product = await ProductService.getById(item.productId);
                             return { ...item, product };
@@ -127,30 +129,45 @@ const Cart = () => {
         };
         const updateCartToOrder = await OrderService.update(cart.id, dataUpdateCart);
         if (updateCartToOrder !== null) {
-            //Chạy vòng lặp orderItems ở đây
             if (orderItems) {
                 for (const item of orderItems) {
-                    console.log("Inside loop:", item);
-                    const storeOfItem = await ProductStoreService.getByOptionValue(item.optionValueId);
-                    console.log("store of item:", storeOfItem);
-                    if (storeOfItem !== null) {
-                        const updatedProductStore = {
-                            productId: storeOfItem.productId,
-                            optionValueId: storeOfItem.optionValueId,
-                            quantity: storeOfItem.quantity - item.quantity,
-                            soldQuantity: storeOfItem.soldQuantity + item.quantity,
-                            price: storeOfItem.price,
-                            createdBy: storeOfItem.createdBy,
-                        };
-                        try {
+                    try {
+                        console.log("Inside loop:", item);
+    
+                        // Update the product store
+                        const storeOfItem = await ProductStoreService.getByOptionValue(item.optionValueId);
+                        console.log("store of item:", storeOfItem);
+                        if (storeOfItem !== null) {
+                            const updatedProductStore = {
+                                productId: storeOfItem.productId,
+                                optionValueId: storeOfItem.optionValueId,
+                                quantity: storeOfItem.quantity - item.quantity,
+                                soldQuantity: storeOfItem.soldQuantity + item.quantity,
+                                price: storeOfItem.price,
+                                createdBy: storeOfItem.createdBy,
+                            };
                             await ProductStoreService.update(storeOfItem.id, updatedProductStore);
-                        } catch (error) {
-                            console.error('Error updating product store:', error);
-                            toast.error("Đã xảy ra lỗi khi cập nhật kho hàng sản phẩm.");
                         }
+    
+                        // Check if the product has an active sale before calling exportSale
+                        const sales = await ProductSaleService.getByProduct(item.productId);
+                        const activeSale = sales.find(sale => sale.status === 1);
+    
+                        if (activeSale) {
+                            // Call exportSale for the active sale
+                            await ProductSaleService.exportSale(item.productId, item.quantity);
+                        } else {
+                            console.warn(`No active sale for product ${item.productId}`);
+                        }
+                    } catch (error) {
+                        console.error('Error processing item:', error);
+                        toast.error("Đã xảy ra lỗi khi xử lý sản phẩm.");
+                        return;
                     }
                 }
             }
+    
+            // Refresh the cart after successful order
             const cart = await OrderService.getCart(user.userId);
             if (cart) {
                 setCart(cart);
@@ -166,7 +183,8 @@ const Cart = () => {
             console.log("UPDATE cart to order:", updateCartToOrder);
             toast.success("Đặt hàng thành công");
         }
-    }
+    };
+    
 
     return (
         <section className="h-100 h-custom" style={{ backgroundColor: '#d2c9ff' }}>

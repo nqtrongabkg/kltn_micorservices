@@ -20,3 +20,21 @@
     margin-bottom: 0;
     padding-bottom: 0;
 }
+
+.product-card {
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.product-card img {
+    transition: opacity 0.3s;
+}
+
+.product-card:hover img {
+    opacity: 0.9;
+}
+

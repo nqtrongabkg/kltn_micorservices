@@ -14,6 +14,8 @@ public interface OptionService {
 
     List<OptionResponse> getAll();
 
+    List<OptionResponse> findByUser(UUID id);
+
     List<OptionResponse> getByProductId(UUID productId);
 
     OptionResponse update(UUID id, OptionRequest optionRequest);

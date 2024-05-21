@@ -12,7 +12,8 @@ const ProductExportIndex = () => {
     useEffect(() => {
         const fetchExports = async () => {
             try {
-                const result = await ProductStoreService.getExports();
+                const sessionUser = JSON.parse(sessionStorage.getItem('user'));
+                const result = await ProductStoreService.getExportsByUser(sessionUser.userId);
                 if(result){
                     result.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
                     setExports(result);

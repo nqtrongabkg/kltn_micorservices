@@ -1,6 +1,7 @@
 import React from 'react';
 import Sidebar from './productComponents/Sidebar';
 import Minimal from './productComponents/Minimal';
+import NewProducts from './productComponents/NewProducts';
 // import Featured from './productcomponents/Featured';
 // import Grid from './productcomponents/Grid';
 import Sale from './productComponents/Sale';
@@ -15,6 +16,7 @@ const ProductsAtHome = () => {
                 {/* <Featured></Featured> */}
                 {/* <Grid></Grid> */}
                 <Sale></Sale>
+                <NewProducts></NewProducts>
             </div>
         </div>
         </div>

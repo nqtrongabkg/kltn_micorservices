@@ -34,6 +34,12 @@ const BrandIndex = () => {
         toast.success("Đã chuyển đổi trưng bày");
     };
 
+    const handlePublic = async (id) => {
+        await BrandService.setPublic(id);
+        setReload(Date.now());
+        toast.success("Đã chuyển đổi trưng bày");
+    };
+
     const handleStatus = async (id, currentStatus) => {
         try {
             await BrandService.sitchStatus(id);
@@ -70,6 +76,7 @@ const BrandIndex = () => {
                             <th>Ngày tạo</th>
                             <th>ID người dùng sở hữu</th>
                             <th>Trưng bày</th>
+                            <th>Công cộng</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -121,6 +128,15 @@ const BrandIndex = () => {
                                                     brand.status === 3 ? "border-0 px-1 text-success" : "border-0 px-1 text-danger"
                                                 }>
                                                 {brand.status === 3 ? <FaToggleOn size={24} /> : <FaToggleOff size={24} />}
+                                            </button>
+                                        </td>
+                                        <td>
+                                            <button
+                                                onClick={() => handlePublic(brand.id)}
+                                                className={
+                                                    brand.status === 4 ? "border-0 px-1 text-success" : "border-0 px-1 text-danger"
+                                                }>
+                                                {brand.status === 4 ? <FaToggleOn size={24} /> : <FaToggleOff size={24} />}
                                             </button>
                                         </td>
                                     </tr>

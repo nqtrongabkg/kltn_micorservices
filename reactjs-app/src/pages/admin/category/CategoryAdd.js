@@ -63,7 +63,7 @@ const CategoryAdd = () => {
                     <h1 className="d-inline">Thêm loại sản phẩm</h1>
                     <div className="row mt-2 align-items-center">
                         <div className="col-md-12 text-end">
-                            <Button variant="success" size="sm" href="/admin/brand/index" className="ml-2">
+                            <Button variant="success" size="sm" href="/admin/category/index" className="ml-2">
                                 <FaSave /> Về danh sách
                             </Button>
                         </div>

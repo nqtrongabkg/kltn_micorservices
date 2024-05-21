@@ -10,15 +10,23 @@ const ProductService = {
     getById: (id) => {
         return httpAxios.get(`product-services/api/products/get-by-id/${id}`);
     },
-    getByUser: (id) => {
-        return httpAxios.get(`product-services/api/products/get-by-user/${id}`);
-    },
+    getByUser: (id, page, size) => {
+        return httpAxios.get(`product-services/api/products/get-by-user/${id}?page=${page}&size=${size}`);
+    },    
     getByBrand: (id) => {
         return httpAxios.get(`product-services/api/products/get-by-brand/${id}`);
     },
     getAll: () => {
         return httpAxios.get(`product-services/api/products/get-all`);
     },
+    getPageSize: (page, size) => {
+        return httpAxios.get(`product-services/api/products/get-product-page`, {
+            params: {
+                page: page,
+                size: size
+            }
+        });
+    }, 
     update: (id, data) => { 
         return httpAxios.put(`product-services/api/products/update/${id}`, data);
     },
@@ -30,6 +38,9 @@ const ProductService = {
     },
     display: (id) => {
         return httpAxios.put(`product-services/api/products/display/${id}`);
+    },
+    resetEvaluate: (id) => {
+        return httpAxios.put(`product-services/api/products/update-evaluate/${id}`);
     },
     addQtyToCategory: (id) => {
         return httpAxios.put(`product-services/api/categories/add-product-qty/${id}`);

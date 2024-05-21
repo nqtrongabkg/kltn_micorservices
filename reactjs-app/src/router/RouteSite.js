@@ -10,6 +10,9 @@ import UserManager from "../pages/site/UserManager";
 import RegisterStore from "../pages/site/RegisterStore";
 import FavoriteProduct from "../pages/site/FavoriteProduct";
 import CreateFeedback from "../pages/site/CreateFeedback";
+import ProductOfCategoryPage from "../pages/site/ProductOfCategoryPage";
+import ProductOfBrandPage from "../pages/site/ProductOfBrandPage";
+import ProductOfTagPage from "../pages/site/ProductOfTagPage";
 
 const RouteSite = [
     { path: '/', component: Home },
@@ -35,5 +38,11 @@ const RouteSite = [
     { path: '/order-item-detail/:id', component: OrderItemDetail },
 
     { path: '/create-feedback', component: CreateFeedback },
+
+    { path: '/product-of-category/:id', component: ProductOfCategoryPage },
+
+    { path: '/product-of-brand/:id', component: ProductOfBrandPage },
+    
+    { path: '/product-of-tag/:id', component: ProductOfTagPage },
 ];
 export default RouteSite;

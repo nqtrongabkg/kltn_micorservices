@@ -26,7 +26,8 @@ const ProductImport = () => {
     useEffect(() => {
         async function fetchData() {
             try {
-                const brandResponse = await BrandService.getAll();
+                const sessionUser = JSON.parse(sessionStorage.getItem('user'));
+                const brandResponse = await BrandService.getByUserId(sessionUser.userId);
                 const filteredBrands = brandResponse.filter(brand => brand.status === 1 || brand.status === 3);
                 setBrands(filteredBrands);
     
@@ -54,7 +55,7 @@ const ProductImport = () => {
             description,
             detail,
             evaluate,
-            createdBy: JSON.parse(sessionStorage.getItem('useradmin'))?.userId,
+            createdBy: JSON.parse(sessionStorage.getItem('user'))?.userId,
             status,
             brandId: selectedBrandId,
             categoryIds: selectedCategoryIds,
@@ -82,7 +83,7 @@ const ProductImport = () => {
                 }
                 console.log("Product added = ", result);
                 toast.success("Thêm thành công");
-                navigate("/admin/product/index", { replace: true });
+                navigate("/site-admin/product/index", { replace: true });
             }
         } catch (error) {
             console.error("Error adding product:", error);
@@ -135,7 +136,7 @@ const ProductImport = () => {
                     <h1 className="d-inline">Thêm sản phẩm</h1>
                     <div className="row mt-2 align-items-center">
                         <div className="col-md-12 text-end">
-                            <Button variant="success" size="sm" href="/admin/product/index" className="ml-2">
+                            <Button variant="success" size="sm" href="/site-admin/product/index" className="ml-2">
                                 <FaSave /> Về danh sách
                             </Button>
                         </div>

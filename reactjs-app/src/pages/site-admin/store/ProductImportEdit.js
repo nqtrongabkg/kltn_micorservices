@@ -79,7 +79,7 @@ const ProductImportEdit = () => {
             if(result !== null){
                 await ProductStoreService.update(id, updatedProductStore);
                 toast.success('Cập nhật thành công');
-                navigate("/admin/product/import/index", { replace: true });
+                navigate("/site-admin/product/import/index", { replace: true });
             }
         } catch (error) {
             console.error('Error updating product store:', error);
@@ -95,7 +95,7 @@ const ProductImportEdit = () => {
                     <h1 className="d-inline">Chỉnh sửa nhập hàng</h1>
                     <div className="row mt-2 align-items-center">
                         <div className="col-md-12 text-end">
-                            <Button variant="info" size="sm" onClick={() => navigate("/admin/product/import/index", { replace: true })}>
+                            <Button variant="info" size="sm" onClick={() => navigate("/site-admin/product/import/index", { replace: true })}>
                                 <FaArrowLeft /> Về danh sách
                             </Button>
                         </div>

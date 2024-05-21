@@ -4,6 +4,8 @@ import com.microservices.productservices.payload.request.ProductRequest;
 import com.microservices.productservices.payload.request.SetImageRequest;
 import com.microservices.productservices.payload.response.ProductResponse;
 import com.microservices.productservices.service.ProductService;
+
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -67,12 +69,6 @@ public class ProductController {
         return ResponseEntity.ok(products);
     }
 
-    @GetMapping("/get-by-user/{userId}")
-    public ResponseEntity<List<ProductResponse>> getByUser(@PathVariable UUID userId) {
-        List<ProductResponse> products = productService.findByUser(userId);
-        return ResponseEntity.ok(products);
-    }
-
     @GetMapping("/get-by-brand/{id}")
     public ResponseEntity<List<ProductResponse>> getByBrand(@PathVariable UUID id) {
         List<ProductResponse> products = productService.findByBrandId(id);
@@ -101,6 +97,27 @@ public class ProductController {
     @GetMapping("/search/{name}")
     public ResponseEntity<List<ProductResponse>> searchProductsByName(@PathVariable String name) {
         List<ProductResponse> products = productService.searchByName(name);
+        return ResponseEntity.ok(products);
+    }
+
+    @PutMapping("/update-evaluate/{productId}")
+    public ResponseEntity<Void> updateProductEvaluate(@PathVariable UUID productId) {
+        productService.updateProductEvaluate(productId);
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/get-product-page")
+    public ResponseEntity<Page<ProductResponse>> getPage(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        Page<ProductResponse> productPage = productService.getPage(page, size);
+        return ResponseEntity.ok(productPage);
+    }
+    @GetMapping("/get-by-user/{userId}")
+    public ResponseEntity<Page<ProductResponse>> getByUser(@PathVariable UUID userId,
+                                                           @RequestParam(defaultValue = "0") int page,
+                                                           @RequestParam(defaultValue = "10") int size) {
+        Page<ProductResponse> products = productService.findByUser(userId, page, size);
         return ResponseEntity.ok(products);
     }
 }

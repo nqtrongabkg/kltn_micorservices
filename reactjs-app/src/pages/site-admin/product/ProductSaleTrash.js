@@ -13,7 +13,8 @@ const ProductSaleTrash = () => {
 
     useEffect(() => {
         (async () => {
-            const result = await ProductSaleService.getAll();
+            const sessionUser = JSON.parse(sessionStorage.getItem('user'));
+            const result = await ProductSaleService.getByUser(sessionUser.userId);
             // Filter out sales with status 2
             const filteredSales = result.filter(sale => sale.status === 2);
             // Sort the filtered sales array by createdAt property from newest to oldest
@@ -52,7 +53,7 @@ const ProductSaleTrash = () => {
                 <div className="row mt-3 align-items-center">
                     <div className="col-12">
                         <button type="button" className="btn btn-warning">
-                            <a href="/admin/product/sale-index">Về danh sách</a>
+                            <a href="/site-admin/product/sale-index">Về danh sách</a>
                         </button>
                     </div>
                 </div>
@@ -115,7 +116,7 @@ const ProductSaleTableRow = ({ sale, restoreSale, deleteSale }) => {
             <td>
                 <div className="name">
                     {product ? (
-                        <Link to={`/admin/product/${product.id}`}>{product.name}</Link>
+                        <Link to={`/site-admin/product/${product.id}`}>{product.name}</Link>
                     ) : (
                         <span>Loading...</span>
                     )}

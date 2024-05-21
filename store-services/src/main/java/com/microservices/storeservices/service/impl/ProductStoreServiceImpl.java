@@ -105,6 +105,20 @@ public class ProductStoreServiceImpl implements ProductStoreService {
         return null;
     }
 
+    @Override
+    public List<ProductStoreResponse> findByUser(UUID id) {
+        List<ProductStore> stores = productStoreRepository.findByCreatedBy(id);
+        return stores.stream()
+                .map(this::mapProductStoreToResponse)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public void deleteByProductId(UUID productId) {
+        List<ProductStore> productStores = productStoreRepository.findByProductId(productId);
+        productStores.forEach(productStoreRepository::delete);
+    }
+
     private ProductStoreResponse mapProductStoreToResponse(ProductStore productStore) {
         return ProductStoreResponse.builder()
                 .id(productStore.getId())

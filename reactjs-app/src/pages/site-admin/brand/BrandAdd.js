@@ -54,7 +54,6 @@ const BrandAdd = () => {
     };
     
     
-    
     return (
         <form onSubmit={handleFormSubmit}>
             <div className="content">
@@ -62,7 +61,7 @@ const BrandAdd = () => {
                     <h1 className="d-inline">Thêm thương hiệu</h1>
                     <div className="row mt-2 align-items-center">
                         <div className="col-md-12 text-end">
-                            <Button variant="success" size="sm" href="/admin/brand/index" className="ml-2">
+                            <Button variant="success" size="sm" href="/site-admin/brand/index" className="ml-2">
                                 <FaSave /> Về danh sách
                             </Button>
                         </div>

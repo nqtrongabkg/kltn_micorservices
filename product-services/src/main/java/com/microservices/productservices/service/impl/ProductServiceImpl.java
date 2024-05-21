@@ -10,10 +10,12 @@ import com.microservices.productservices.repository.ProductGallaryRepository;
 import com.microservices.productservices.repository.ProductRepository;
 import com.microservices.productservices.repository.ProductTagRepository;
 import com.microservices.productservices.service.ProductService;
+import com.microservices.productservices.service.ProductFeedbackService;
 
 import jakarta.transaction.Transactional;
 
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -22,6 +24,9 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 @Service
 public class ProductServiceImpl implements ProductService {
 
@@ -29,15 +34,18 @@ public class ProductServiceImpl implements ProductService {
     private final ProductCategoryRepository productCategoryRepository;
     private final ProductTagRepository productTagRepository;
     private final ProductGallaryRepository productGallaryRepository;
+    private final ProductFeedbackService productFeedbackService;
 
     public ProductServiceImpl(ProductRepository productRepository,
             ProductCategoryRepository productCategoryRepository,
             ProductTagRepository productTagRepository,
-            ProductGallaryRepository productGallaryRepository) {
+            ProductGallaryRepository productGallaryRepository,
+            ProductFeedbackService productFeedbackService) {
         this.productRepository = productRepository;
         this.productCategoryRepository = productCategoryRepository;
         this.productTagRepository = productTagRepository;
         this.productGallaryRepository = productGallaryRepository;
+        this.productFeedbackService = productFeedbackService;
     }
 
     @Override
@@ -134,13 +142,6 @@ public class ProductServiceImpl implements ProductService {
                 .collect(Collectors.toList());
     }
 
-    @Override
-    public List<ProductResponse> findByUser(UUID id) {
-        List<Product> products = productRepository.findByCreatedBy(id);
-        return products.stream()
-                .map(this::mapProductToResponse)
-                .collect(Collectors.toList());
-    }
 
     @Override
     public ProductResponse update(UUID id, ProductRequest productRequest) {
@@ -211,6 +212,31 @@ public class ProductServiceImpl implements ProductService {
         return products.stream()
                 .map(this::mapProductToResponse)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public void updateProductEvaluate(UUID productId) {
+        Integer averageEvaluate = productFeedbackService.getAverageEvaluateByProductId(productId);
+        if (averageEvaluate != null) {
+            Product product = productRepository.findById(productId)
+                    .orElseThrow(() -> new RuntimeException("NOT_FOUND"));
+            product.setEvaluate(averageEvaluate);
+            productRepository.save(product);
+        }
+    }
+
+    @Override
+    public Page<ProductResponse> findByUser(UUID userId, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Product> productPage = productRepository.findByCreatedBy(userId, pageable);
+        return productPage.map(this::mapProductToResponse);
+    }
+
+    @Override
+    public Page<ProductResponse> getPage(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Product> productPage = productRepository.findAll(pageable);
+        return productPage.map(this::mapProductToResponse);
     }
 
     private ProductResponse mapProductToResponse(Product product) {

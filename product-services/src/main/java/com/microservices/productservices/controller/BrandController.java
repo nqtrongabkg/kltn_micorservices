@@ -70,7 +70,7 @@ public class BrandController {
 
     @GetMapping("/get-by-user/{userId}")
     public ResponseEntity<List<BrandResponse>> getBrandsByUser(@PathVariable UUID userId) {
-        List<BrandResponse> brands = brandService.findByUser(userId);
+        List<BrandResponse> brands = brandService.getBrandForClient(userId);
         return ResponseEntity.ok(brands);
     }
 
@@ -88,6 +88,11 @@ public class BrandController {
     @PutMapping("/display/{id}")
     public ResponseEntity<Void> display(@PathVariable UUID id) {
         brandService.isDisplay(id);
+        return ResponseEntity.ok().build();
+    }  
+    @PutMapping("/public/{id}")
+    public ResponseEntity<Void> isPublic(@PathVariable UUID id) {
+        brandService.isPublic(id);
         return ResponseEntity.ok().build();
     }  
 }

@@ -80,7 +80,7 @@ const ProductImportAdd = () => {
             await ProductStoreService.import(createdProductImport);
             await ProductStoreService.update(id, updatedProductStore);
             toast.success('Cập nhật kho hàng sản phẩm thành công');
-            navigate("/admin/product/store/index", { replace: true });
+            navigate("/site-admin/product/store/index", { replace: true });
         } catch (error) {
             console.error('Error updating product store:', error);
             toast.error("Đã xảy ra lỗi khi cập nhật kho hàng sản phẩm.");
@@ -95,7 +95,7 @@ const ProductImportAdd = () => {
                     <h1 className="d-inline">Nhập hàng</h1>
                     <div className="row mt-2 align-items-center">
                         <div className="col-md-12 text-end">
-                            <Button variant="info" size="sm" onClick={() => navigate("/admin/product/store/index", { replace: true })}>
+                            <Button variant="info" size="sm" onClick={() => navigate("/site-admin/product/store/index", { replace: true })}>
                                 <FaArrowLeft /> Về danh sách
                             </Button>
                         </div>

@@ -41,6 +41,13 @@ public class OptionController {
         List<OptionResponse> options = optionService.getAll();
         return ResponseEntity.ok(options);
     }
+
+    @GetMapping("/get-by-user/{userId}")
+    public ResponseEntity<List<OptionResponse>> getBrandsByUser(@PathVariable UUID userId) {
+        List<OptionResponse> options = optionService.findByUser(userId);
+        return ResponseEntity.ok(options);
+    }
+
     @GetMapping("/get-by-product-id/{id}")
     public ResponseEntity<List<OptionResponse>> getByProductId(@PathVariable UUID id) {
         List<OptionResponse> options = optionService.getByProductId(id);

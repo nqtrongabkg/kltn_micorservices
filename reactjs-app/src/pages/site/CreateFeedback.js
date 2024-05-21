@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import FeedbackService from '../../services/FeedbackService';
 import UserService from '../../services/UserService';
+import ProductService from '../../services/ProductService';
 import '../../assets/styles/createFeedback.css';
 import { useNavigate } from 'react-router-dom';
 
@@ -45,6 +46,7 @@ const CreateFeedback = () => {
                         await FeedbackService.setImage(data);
                     }
                 }
+                await ProductService.resetEvaluate(productId);
                 console.log("brand added = ", result);
                 navigate("/my-user", { replace: true });
             }

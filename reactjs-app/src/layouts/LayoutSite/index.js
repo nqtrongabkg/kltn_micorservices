@@ -1,11 +1,12 @@
 import React, {createContext, useContext} from 'react';
-
+import '../../assets/styles/style.css';
 import '../../assets/styles/style-prefix.css';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import UserService from '../../services/UserService';
+
 
 const UserContext = createContext();
 

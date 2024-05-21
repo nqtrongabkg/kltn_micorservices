@@ -12,6 +12,7 @@ const ProductOptionEdit = () => {
     const [productId, setProductId] = useState("");
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
+    const [createdBy, setCreateBy] = useState("");
     const [status, setStatus] = useState(1);
     const [values, setValues] = useState([]);
     const [valuesOld, setValuesOld] = useState([]);
@@ -23,6 +24,7 @@ const ProductOptionEdit = () => {
                 setProductId(result.productId);
                 setName(result.name);
                 setDescription(result.description);
+                setCreateBy(result.createdBy);
                 setStatus(result.status);
                 setValues(result.values);
                 setValuesOld(result.values);
@@ -41,6 +43,7 @@ const ProductOptionEdit = () => {
             productId: productId,
             name: name,
             description: description,
+            createdBy,
             status: status,
             values: updatedValues // Truyền danh sách các chuỗi
         };
@@ -60,12 +63,12 @@ const ProductOptionEdit = () => {
                     quantity: 0, // Cài đặt quantity tùy theo yêu cầu
                     soldQuantity: 0,
                     price: 0, // Cài đặt giá tùy theo yêu cầu
-                    createdBy: JSON.parse(sessionStorage.getItem('useradmin'))?.userId
+                    createdBy: JSON.parse(sessionStorage.getItem('user'))?.userId
                 };
                 await ProductStoreService.create(productStoreData);
             });
 
-            navigate("/admin/product/option-index", { replace: true });
+            navigate("/site-admin/product/option-index", { replace: true });
         } catch (error) {
             toast.error("Đã xảy ra lỗi khi cập nhật.");
         }
@@ -93,7 +96,7 @@ const ProductOptionEdit = () => {
                     <h1 className="d-inline">Cập nhật lựa chọn sản phẩm</h1>
                     <div className="row mt-2 align-items-center">
                         <div className="col-md-12 text-end">
-                            <Button variant="info" size="sm" onClick={() => navigate("/admin/product/option-index", { replace: true })}>
+                            <Button variant="info" size="sm" onClick={() => navigate("/site-admin/product/option-index", { replace: true })}>
                                 <FaArrowLeft /> Về danh sách
                             </Button>
                         </div>

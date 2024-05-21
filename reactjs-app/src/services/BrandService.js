@@ -29,6 +29,9 @@ const BrandService = {
     display: (id) => {
         return httpAxios.put(`product-services/api/brands/display/${id}`);
     },
+    setPublic: (id) => {
+        return httpAxios.put(`product-services/api/brands/public/${id}`);
+    },
     delete: (id) => {
         return httpAxios.delete(`product-services/api/brands/delete/${id}`);
     },

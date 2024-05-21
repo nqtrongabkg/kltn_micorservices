@@ -21,4 +21,6 @@ public interface ProductFeedbackService {
     ProductFeedbackResponse delete(UUID id);
 
     List<ProductFeedbackResponse> findByProductId(UUID productId);
+
+    Integer getAverageEvaluateByProductId(UUID productId);
 }

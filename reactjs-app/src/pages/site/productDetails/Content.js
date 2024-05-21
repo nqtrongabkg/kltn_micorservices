@@ -1,32 +1,47 @@
 import React, { useEffect, useState } from 'react';
 import FeedbackService from '../../../services/FeedbackService';
-import { useParams } from 'react-router-dom';
-import { urlImageFeedback } from '../../../config';
+import ProductService from '../../../services/ProductService';
+import { useParams, useNavigate } from 'react-router-dom';
+import { urlImageFeedback, urlImageProduct } from '../../../config';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faStar } from '@fortawesome/free-solid-svg-icons';
-import ImageModal from './ImageModal'; // Import the ImageModal component
+import ImageModal from './ImageModal';
 import '../../../assets/styles/content.css';
 
 const Content = () => {
     const { id } = useParams();
+    const navigate = useNavigate();
     const [feedbacks, setFeedbacks] = useState([]);
     const [showModal, setShowModal] = useState(false);
     const [currentImage, setCurrentImage] = useState('');
+    const [products, setProducts] = useState([]);
 
     useEffect(() => {
-        const getFeedbacks = async (id) => {
+        const getData = async (id) => {
             const result = await FeedbackService.getByProductId(id);
             if (result) {
-                console.log("feedbacks:", result);
                 setFeedbacks(result);
             }
+
+            const getProduct = await ProductService.getById(id);
+            if (getProduct) {
+                const getProducts = await ProductService.getByUser(getProduct.createdBy, 0, 5);
+                if (getProducts && getProducts && getProducts.content) {
+                    setProducts(getProducts.content);
+                }
+            }
         };
-        getFeedbacks(id);
+        getData(id);
     }, [id]);
 
     const handleImageClick = (imageUrl) => {
         setCurrentImage(imageUrl);
         setShowModal(true);
+    };
+
+    const handleProductClick = (productId) => {
+        window.scrollTo(0, 0);
+        navigate(`/product-detail/${productId}`);
     };
 
     const renderStars = (count) => {
@@ -39,6 +54,10 @@ const Content = () => {
         ));
     };
 
+    const formatPrice = (price) => {
+        return price.toLocaleString('vi-VN');
+    };
+
     return (
         <section className="bg-light border-top py-4">
             <div className="container">
@@ -47,20 +66,24 @@ const Content = () => {
                         <div className="card">
                             <div className="card-body">
                                 <h5 className="card-title">Đánh giá sản phẩm</h5>
-                                {feedbacks.map(feedback => (
-                                    <div key={feedback.id} className="d-flex mb-4 feedback-item">
-                                        <div className="me-3" onClick={() => handleImageClick(`${urlImageFeedback}${feedback.image}`)}>
-                                            <img src={`${urlImageFeedback}${feedback.image}`} style={{ width: 96, height: 96, cursor: 'pointer' }} className="img-md img-thumbnail" alt="Hình ảnh đánh giá" />
-                                        </div>
-                                        <div className="info">
-                                            <div className="nav-link mb-1">
-                                                <div>Đánh giá: {renderStars(feedback.evaluate)}</div>
-                                                <strong className="text-dark">{feedback.description}</strong>
-                                                <div>{feedback.detail}</div>
+                                {feedbacks.length > 0 ? (
+                                    feedbacks.map(feedback => (
+                                        <div key={feedback.id} className="d-flex mb-4 feedback-item">
+                                            <div className="me-3" onClick={() => handleImageClick(`${urlImageFeedback}${feedback.image}`)}>
+                                                <img src={`${urlImageFeedback}${feedback.image}`} style={{ width: 96, height: 96, cursor: 'pointer' }} className="img-md img-thumbnail" alt="Hình ảnh đánh giá" />
+                                            </div>
+                                            <div className="info">
+                                                <div className="nav-link mb-1">
+                                                    <div>Đánh giá: {renderStars(feedback.evaluate)}</div>
+                                                    <strong className="text-dark">{feedback.description}</strong>
+                                                    <div>{feedback.detail}</div>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                ))}
+                                    ))
+                                ) : (
+                                    <p>Chưa có đánh giá</p>
+                                )}
                             </div>
                         </div>
                     </div>
@@ -68,20 +91,25 @@ const Content = () => {
                         <div className="px-0 border rounded-2 shadow-0">
                             <div className="card">
                                 <div className="card-body">
-                                    <h5 className="card-title">Sản phẩm tương tự</h5>
-                                    <div className="d-flex mb-3">
-                                        <a href="#!" className="me-3">
-                                            <img src="https://mdbcdn.b-cdn.net/img/bootstrap-ecommerce/items/8.webp" style={{ minWidth: 96, height: 96 }} className="img-md img-thumbnail" alt="HinhAnh" />
-                                        </a>
-                                        <div className="info">
-                                            <a href="#!" className="nav-link mb-1">
-                                                Rucksack Backpack Large <br />
-                                                Line Mounts
-                                            </a>
-                                            <strong className="text-dark">$38.90</strong>
+                                    <h5 className="card-title">Các sản phẩm khác của shop</h5>
+                                    {products.map(product => (
+                                        <div 
+                                            key={product.id} 
+                                            className="d-flex mb-3 product-card" 
+                                            style={{ textDecoration: 'none', color: 'inherit', cursor: 'pointer' }} 
+                                            onClick={() => handleProductClick(product.id)}
+                                        >
+                                            <div className="me-3">
+                                                <img src={`${urlImageProduct}/${product.image}`} style={{ minWidth: 96, height: 96 }} className="img-md img-thumbnail" alt={product.name} />
+                                            </div>
+                                            <div className="info">
+                                                <div className="nav-link mb-1">
+                                                    {product.name}
+                                                </div>
+                                                <strong className="text-dark">{formatPrice(product.price)} VND</strong>
+                                            </div>
                                         </div>
-                                    </div>
-                                    {/* Add more similar products here */}
+                                    ))}
                                 </div>
                             </div>
                         </div>

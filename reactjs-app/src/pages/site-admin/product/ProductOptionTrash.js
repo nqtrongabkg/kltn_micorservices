@@ -14,7 +14,8 @@ const ProductOptionTrash = () => {
 
     useEffect(() => {
         (async () => {
-            const result = await ProductOptionService.getAll();
+            const sessionUser = JSON.parse(sessionStorage.getItem('user'));
+            const result = await ProductOptionService.getByUser(sessionUser.userId);
             // Filter out sales with status 2
             const filtered = result.filter(sale => sale.status === 2);
             // Sort the filtered sales array by createdAt property from newest to oldest
@@ -62,7 +63,7 @@ const ProductOptionTrash = () => {
                 <div className="row mt-3 align-items-center">
                     <div className="col-12">
                         <button type="button" className="btn btn-warning">
-                            <a href="/admin/product/option-index">Về danh sách</a>
+                            <a href="/site-admin/product/option-index">Về danh sách</a>
                         </button>
                     </div>
                 </div>

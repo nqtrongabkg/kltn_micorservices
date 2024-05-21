@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { IonIcon } from '@ionic/react';
-import { addOutline, star } from 'ionicons/icons';
 import CategoryService from '../../../../services/CategoryService';
 import BrandService from '../../../../services/BrandService';
 import { urlImageCategory, urlImageBrand } from '../../../../config';
@@ -33,9 +31,6 @@ const Sidebar = () => {
                         <img src={urlImageCategory + category.image} className="img-fluid user-avatar" alt="Hình ảnh" />
                         <p className="menu-title">{category.name}</p>
                     </div>
-                    <div>
-                        <IonIcon icon={addOutline} className="add-icon" />
-                    </div>
                 </button>
             </li>
         ));
@@ -50,16 +45,14 @@ const Sidebar = () => {
                         <img src={urlImageBrand + brand.image} className="img-fluid user-avatar" alt="Hình ảnh thương hiệu" />
                         <p className="menu-title">{brand.name}</p>
                     </div>
-                    <div>
-                        <IonIcon icon={star} className="star-icon" />
-                    </div>
                 </button>
             </li>
         ));
     };
 
     return (
-        <div className="sidebar has-scrollbar" data-mobile-menu>
+        <>
+         <div className="sidebar has-scrollbar" data-mobile-menu>
             <div className="sidebar-category">
                 <h2 className="sidebar-title">Danh mục</h2>
                 <ul className="sidebar-menu-category-list">
@@ -73,6 +66,9 @@ const Sidebar = () => {
                 </ul>
             </div>
         </div>
+        
+        </>
+       
     );
 };
 

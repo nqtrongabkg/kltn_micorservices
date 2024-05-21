@@ -12,6 +12,7 @@ const ProductOptionEdit = () => {
     const [productId, setProductId] = useState("");
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
+    const [createdBy, setCreateBy] = useState("");
     const [status, setStatus] = useState(1);
     const [values, setValues] = useState([]);
     const [valuesOld, setValuesOld] = useState([]);
@@ -23,6 +24,7 @@ const ProductOptionEdit = () => {
                 setProductId(result.productId);
                 setName(result.name);
                 setDescription(result.description);
+                setCreateBy(result.createdBy);
                 setStatus(result.status);
                 setValues(result.values);
                 setValuesOld(result.values);
@@ -40,6 +42,7 @@ const ProductOptionEdit = () => {
         const updatedOption = {
             productId: productId,
             name: name,
+            createdBy, 
             description: description,
             status: status,
             values: updatedValues // Truyền danh sách các chuỗi

@@ -26,4 +26,7 @@ public interface ProductStoreService {
 
     ProductStoreResponse getByOptionValueId(UUID optionValueId);
 
+    List<ProductStoreResponse> findByUser(UUID id);
+
+    void deleteByProductId(UUID productId);
 }

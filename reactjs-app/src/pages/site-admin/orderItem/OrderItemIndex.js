@@ -15,19 +15,22 @@ const OrderItemIndex = () => {
     useEffect(() => {
         const fetchOrderItems = async () => {
             try {
+                const sessionUser = JSON.parse(sessionStorage.getItem('user'));
                 const result = await OrderItemService.getAll();
                 const itemsWithProduct = [];
                 for (const item of result) {
                     const order = await OrderService.getById(item.orderId);
-                    if (order.status !== 3) { // status of order === 3 => cart
+                    if (order.status !== 3 && order.status !== 2) { // status of order === 3 => cart
                         const product = await ProductService.getById(item.productId);
-                        const optionValue = await ProductOptionService.getOptionValue(item.optionValueId);
-                        const option = await ProductOptionService.getById(optionValue.optionId);
-                        item.order = order;
-                        item.product = product;
-                        item.option = option;
-                        item.optionValue = optionValue; 
-                        itemsWithProduct.push(item);
+                        if(product.createdBy === sessionUser.userId){
+                            const optionValue = await ProductOptionService.getOptionValue(item.optionValueId);
+                            const option = await ProductOptionService.getById(optionValue.optionId);
+                            item.order = order;
+                            item.product = product;
+                            item.option = option;
+                            item.optionValue = optionValue; 
+                            itemsWithProduct.push(item);
+                        }
                     }
                 }
                 const itemsWithProductFill = itemsWithProduct.filter(item => item.status !== 2);
@@ -57,7 +60,7 @@ const OrderItemIndex = () => {
                 quantity: item.quantity,
                 price: item.totalPrice,
                 description: item.option.name + "/" + item.optionValue.value,
-                createdBy: JSON.parse(sessionStorage.getItem('useradmin'))?.userId
+                createdBy: JSON.parse(sessionStorage.getItem('user'))?.userId
             }
             const exportAdd = await ProductStoreService.export(dataExport);
             if(exportAdd !== null){
@@ -100,7 +103,7 @@ const OrderItemIndex = () => {
                 <div className="row mt-3 align-items-center">
                     <div className="col-12">
                         <button type="button" className="btn btn-warning">
-                            <a href="/admin/order-item/trash">Thùng rác</a>
+                            <a href="/site-admin/order-item/trash">Thùng rác</a>
                         </button>
                     </div>
                 </div>

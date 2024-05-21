@@ -32,7 +32,7 @@ public class ProductFeedbackServiceImpl implements ProductFeedbackService {
     }
 
     @Override
-    public void setImage(UUID id, String image){
+    public void setImage(UUID id, String image) {
         ProductFeedback productFeedback = productFeedbackRepository.findById(id).orElse(null);
         productFeedback.setImage(image);
         productFeedbackRepository.save(productFeedback);
@@ -83,6 +83,15 @@ public class ProductFeedbackServiceImpl implements ProductFeedbackService {
             return mapProductFeedbackToResponse(productFeedback);
         }
         return null;
+    }
+
+    @Override
+    public Integer getAverageEvaluateByProductId(UUID productId) {
+        Double averageEvaluate = productFeedbackRepository.findAverageEvaluateByProductId(productId);
+        if (averageEvaluate == null) {
+            return 1;
+        }
+        return averageEvaluate.intValue();
     }
 
     // Helper method to map entity to response object

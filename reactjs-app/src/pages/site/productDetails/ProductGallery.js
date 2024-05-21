@@ -12,6 +12,7 @@ import ProductService from '../../../services/ProductService';
 import ProductSaleService from '../../../services/ProductSaleService';
 import ProductStoreService from '../../../services/ProductStoreService';
 import { toast } from 'react-toastify';
+
 const ProductGallery = () => {
     const { id } = useParams();
     const [galleries, setGalleries] = useState([]);
@@ -86,7 +87,6 @@ const ProductGallery = () => {
     if (product === null) {
         return <div>Loading...</div>;
     }
-
 
     const handleThumbnailClick = (image) => {
         setMainImage(image);
@@ -225,9 +225,12 @@ const ProductGallery = () => {
                             <h4 className="title text-dark">{product.name}</h4>
                             <div className="d-flex flex-row my-3">
                                 <div className="text-warning mb-1 me-2">
-                                    <FontAwesomeIcon icon={faStar} />
-                                    <FontAwesomeIcon icon={faStar} />
-                                    <FontAwesomeIcon icon={faStar} />
+                                    {Array.from({ length: product.evaluate }, (_, i) => (
+                                        <FontAwesomeIcon key={i} icon={faStar} />
+                                    ))}
+                                    {Array.from({ length: 5 - product.evaluate }, (_, i) => (
+                                        <FontAwesomeIcon key={product.evaluate + i} icon={faStar} style={{ color: '#e4e5e9' }} />
+                                    ))}
                                 </div>
                             </div>
                             <div className="mb-3">
@@ -258,11 +261,8 @@ const ProductGallery = () => {
                                                     ))}
                                                 </ul>
                                             )}
-
-
                                         </div>
                                     )) : <p>Sản phẩm chỉ có 1 mẫu, không có sự lựa chọn.</p>}
-
                                 </div>
                             </main>
                             <hr />

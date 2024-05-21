@@ -27,4 +27,8 @@ public interface BrandService {
     void trash(UUID id);
 
     public void isDisplay(UUID id);
+
+    public void isPublic(UUID id);
+
+    List<BrandResponse> getBrandForClient(UUID id);
 }

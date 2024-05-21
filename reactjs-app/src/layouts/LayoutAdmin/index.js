@@ -36,7 +36,7 @@ const LayoutAdmin = () => {
                         }else{
                             sessionStorage.removeItem('useradmin'); // Xóa thông tin người dùng từ Session Storage
                             setUser(null);
-                            navigate("/admin/login");
+                            navigate("/admin");
                         }
                     })
                     .catch(error => {
@@ -66,9 +66,10 @@ const LayoutAdmin = () => {
                                 // console.log("user infor cuccess: ", userGet);
                             setUser(userGet);
                             }else{
+                                toast.error("Đăng nhập thất bại!");
                                 sessionStorage.removeItem('useradmin'); // Xóa thông tin người dùng từ Session Storage
                                 setUser(null);
-                                navigate("/admin/login");
+                                navigate("/admin");
                             }
                         })
                         .catch(error => {
@@ -86,7 +87,7 @@ const LayoutAdmin = () => {
     };
 
     const logout = () => {
-        sessionStorage.removeItem('useradmin'); // Xóa thông tin người dùng từ Session Storage
+        sessionStorage.removeItem('useradmin'); 
         setUser(null);
         navigate("/admin");
     };
@@ -150,7 +151,7 @@ const LayoutAdmin = () => {
                                                                 <a href="/admin/product/store/index" className="margin-left-submenu">Kho hàng</a>
                                                             </li>
                                                             <li>
-                                                                <a href="/admin/category/index" className="margin-left-submenu">Loại sản phẩm</a>
+                                                                <a href="/admin/category/index" className="margin-left-submenu">Danh mục sản phẩm</a>
                                                             </li>
                                                             <li>
                                                                 <a href="/admin/tag/index" className="margin-left-submenu">Nhãn</a>
@@ -176,9 +177,6 @@ const LayoutAdmin = () => {
                                                             </li>
                                                             <li>
                                                                 <a href="/admin/topic/index">Chủ đề</a>
-                                                            </li>
-                                                            <li>
-                                                                <a href="/admin/page/index">Trang đơn</a>
                                                             </li>
                                                         </ul>
                                                     </li>

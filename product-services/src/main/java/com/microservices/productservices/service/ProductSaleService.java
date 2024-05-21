@@ -20,7 +20,11 @@ public interface ProductSaleService {
 
     List<ProductSaleResponse> findByProductId(UUID productId);
 
+    List<ProductSaleResponse> findByUser(UUID id);
+
     void switchStatus(UUID id);
 
     void trash(UUID id);
+
+    void exportSale(UUID id, int quantity);
 }

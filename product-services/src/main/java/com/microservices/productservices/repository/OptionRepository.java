@@ -10,4 +10,6 @@ import com.microservices.productservices.entity.Option;
 public interface OptionRepository extends JpaRepository<Option, UUID> {
     
     List<Option> findByProductId(UUID productId);
+
+    List<Option> findByCreatedBy(UUID id);
 }

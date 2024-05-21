@@ -2,8 +2,8 @@ import React from "react";
 import Slider from "./homeComponents/Slider";
 import Category from "./homeComponents/Category";
 import ProductsAtHome from "./homeComponents/ProductsAtHome";
-// import Testimonials from "./homecomponents/Testimonials";
-// import Blog from "./homecomponents/Blog";
+import Blog from "./homeComponents/Blog";
+import Testimonials from "./homeComponents/Testimonials";
 
 const Home = () => {
     return (
@@ -11,8 +11,8 @@ const Home = () => {
         <Slider></Slider>
         <Category></Category>
         <ProductsAtHome></ProductsAtHome>
-        {/* <Testimonials></Testimonials>    */}
-        {/* <Blog></Blog>   */}
+        <Testimonials></Testimonials>   
+        <Blog></Blog>  
         </>
     );
 };

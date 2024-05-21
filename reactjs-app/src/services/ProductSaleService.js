@@ -13,6 +13,9 @@ const ProductSaleService = {
     getAll: () => {
         return httpAxios.get(`product-services/api/product-sales/get-all`);
     },
+    getByUser: (id) => {
+        return httpAxios.get(`product-services/api/product-sales/get-by-user/${id}`);
+    },
     update: (id, data) => { 
         return httpAxios.put(`product-services/api/product-sales/update/${id}`, data);
     },
@@ -25,5 +28,9 @@ const ProductSaleService = {
     delete: (id) => {
         return httpAxios.delete(`product-services/api/product-sales/delete/${id}`);
     },
+    exportSale: (id, quantity) => {
+        return httpAxios.put(`product-services/api/product-sales/export-sale/${id}/${quantity}`);
+    },
+    
 }
 export default ProductSaleService;

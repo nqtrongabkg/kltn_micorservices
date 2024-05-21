@@ -41,6 +41,10 @@ const Minimal = () => {
         navigate(`/product-detail/${productId}`);
     };
 
+    const formatPrice = (price) => {
+        return price.toLocaleString('vi-VN');
+    };
+
     return (
         <div className="product-minimal">
             {tagsWithProducts.map(({ tag, products }, index) => (
@@ -59,8 +63,8 @@ const Minimal = () => {
                                         </a>
                                         <a href="#nqt" className="showcase-category">{product.category}</a>
                                         <div className="price-box">
-                                            <p className="price">${product.price.toFixed(2)}</p>
-                                            {product.originalPrice && <del>${product.originalPrice.toFixed(2)}</del>}
+                                            <p className="price">{formatPrice(product.price)}</p>
+                                            {product.originalPrice && <del>{formatPrice(product.originalPrice)}</del>}
                                         </div>
                                     </div>
                                 </div>

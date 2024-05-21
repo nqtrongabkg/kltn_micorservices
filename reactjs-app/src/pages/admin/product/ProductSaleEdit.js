@@ -12,6 +12,7 @@ const ProductSaleEdit = () => {
     const [productId, setProductId] = useState("");
     const [priceSale, setPriceSale] = useState(0);
     const [quantity, setQty] = useState(0);
+    const [createdBy, setCreateBy] = useState("");
     const [dateBegin, setBegin] = useState("");
     const [dateEnd, setEnd] = useState("");
     const [description, setDescription] = useState("");
@@ -26,6 +27,7 @@ const ProductSaleEdit = () => {
                 setQty(result.quantity);
                 setBegin(result.dateBegin);
                 setEnd(result.dateEnd);
+                setCreateBy(result.createdBy);
                 setDescription(result.description);
                 setStatus(result.status);
             } catch (error) {
@@ -49,6 +51,7 @@ const ProductSaleEdit = () => {
             dateBegin: begin,
             dateEnd: end,
             description,
+            createdBy,
             status
         };
         try {

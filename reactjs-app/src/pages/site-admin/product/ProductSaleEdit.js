@@ -15,6 +15,7 @@ const ProductSaleEdit = () => {
     const [dateBegin, setBegin] = useState("");
     const [dateEnd, setEnd] = useState("");
     const [description, setDescription] = useState("");
+    const [createdBy, setCreateBy] = useState("");
     const [status, setStatus] = useState(1);
 
     useEffect(() => {
@@ -27,6 +28,7 @@ const ProductSaleEdit = () => {
                 setBegin(result.dateBegin);
                 setEnd(result.dateEnd);
                 setDescription(result.description);
+                setCreateBy(result.createdBy);
                 setStatus(result.status);
             } catch (error) {
                 console.error('Error fetching product sale:', error);
@@ -37,11 +39,16 @@ const ProductSaleEdit = () => {
 
     const handleFormSubmit = async (e) => {
         e.preventDefault();
+        
+        // Helper function to format date
+        const formatDate = (date) => {
+            return date.includes('T00:00:00') ? date : date + 'T00:00:00';
+        };
+        
         // Convert date strings to LocalDateTime objects
-        const formattedBegin = dateBegin + 'T00:00:00';
-        const formattedEnd = dateEnd + 'T00:00:00';
-        const begin = LocalDateTime.parse(formattedBegin);
-        const end = LocalDateTime.parse(formattedEnd);
+        const begin = LocalDateTime.parse(formatDate(dateBegin));
+        const end = LocalDateTime.parse(formatDate(dateEnd));
+        
         const updatedProductSale = {
             productId,
             priceSale,
@@ -49,12 +56,14 @@ const ProductSaleEdit = () => {
             dateBegin: begin,
             dateEnd: end,
             description,
+            createdBy,
             status
         };
+        
         try {
             const result = await ProductSaleService.update(id, updatedProductSale);
             toast.success(result.message);
-            navigate("/admin/product/sale-index", { replace: true });
+            navigate("/site-admin/product/sale-index", { replace: true });
         } catch (error) {
             console.error('Error updating product sale:', error);
             toast.error("Đã xảy ra lỗi khi cập nhật giảm giá sản phẩm.");
@@ -68,7 +77,7 @@ const ProductSaleEdit = () => {
                     <h1 className="d-inline">Cập nhật giảm giá sản phẩm</h1>
                     <div className="row mt-2 align-items-center">
                         <div className="col-md-12 text-end">
-                            <Button variant="info" size="sm" onClick={() => navigate("/admin/product/sale-index", { replace: true })}>
+                            <Button variant="info" size="sm" onClick={() => navigate("/site-admin/product/sale-index", { replace: true })}>
                                 <FaArrowLeft /> Về danh sách
                             </Button>
                         </div>

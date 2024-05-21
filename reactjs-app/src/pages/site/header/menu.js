@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import CategoryService from '../../../services/CategoryService';
 import BrandService from '../../../services/BrandService';
+import TagService from '../../../services/TagService';
+import '../../../assets/styles/menu.css';
 
 const Menu = () => {
     const [categories, setCategories] = useState([]);
     const [brands, setBrands] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [tags, setTags] = useState([]);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -14,44 +17,52 @@ const Menu = () => {
                 const categoriesResult = await CategoryService.getAll();
                 const brandsResult = await BrandService.getAll();
 
-                const filteredCategories = categoriesResult.filter(category => category.status === 3);
-                const filteredBrands = brandsResult.filter(brand => brand.status === 3);
+                const filteredCategories = categoriesResult.filter(category => category.status >= 3);
+                const filteredBrands = brandsResult.filter(brand => brand.status >= 3);
 
-                setCategories(filteredCategories);
+                // Sort categories by productQuantity in descending order
+                const sortedCategories = filteredCategories.sort((a, b) => b.productQuantity - a.productQuantity);
+
+                setCategories(sortedCategories);
                 setBrands(filteredBrands);
             } catch (error) {
                 console.error("Error fetching data:", error);
             }
             setLoading(false);
         };
-
+        const fetchTags = async () => {
+            try {
+                let result = await TagService.getAll();
+                const sortedtags = result.filter(brand => brand.status >= 3);
+                setTags(sortedtags);
+            } catch (error) {
+                console.error("Error fetching:", error);
+            }
+        };
+        fetchTags();
         fetchData();
     }, []);
 
     const renderCategories = () => {
-        const numberOfItemsPerColumn = 3;
-        const columns = [];
-
-        for (let i = 0; i < categories.length; i += numberOfItemsPerColumn) {
-            const columnItems = categories.slice(i, i + numberOfItemsPerColumn);
-            columns.push(
-                <ul key={i} className="dropdown-panel-list">
-                    {columnItems.map(category => (
-                        <li key={category.id} className="panel-list-item">
-                            <a href="#tag">{category.name}</a>
-                        </li>
-                    ))}
-                </ul>
-            );
-        }
-
-        return columns;
+        return categories.map(category => (
+            <li key={category.id} className="dropdown-item">
+                <a href={`/product-of-category/${category.id}`} className="menu-title">{category.name}</a>
+            </li>
+        ));
     };
 
     const renderBrands = () => {
         return brands.map(brand => (
             <li key={brand.id} className="dropdown-item">
-                <a href="#tag" className="menu-title">{brand.name}</a>
+                <a href={`/product-of-brand/${brand.id}`} className="menu-title">{brand.name}</a>
+            </li>
+        ));
+    };
+
+    const renderTags = () => {
+        return tags.map(tag => (
+            <li key={tag.id} className="dropdown-item">
+                <a href={`/product-of-tag/${tag.id}`} className="menu-title">{tag.name}</a>
             </li>
         ));
     };
@@ -66,15 +77,21 @@ const Menu = () => {
                 <a href="/" className="menu-title">Trang chủ</a>
             </li>
             <li className="menu-category">
-                <a href="#tag" className="menu-title">Danh mục</a>
-                <div className="dropdown-panel">
+                <a href="#nqt" className="menu-title">Danh mục</a>
+                <ul className="dropdown-list">
                     {renderCategories()}
-                </div>
+                </ul>
             </li>
             <li className="menu-category">
-                <a href="#tag" className="menu-title">Thương hiệu nổi bật</a>
+                <a href="#nqt" className="menu-title">Thương hiệu nổi bật</a>
                 <ul className="dropdown-list">
                     {renderBrands()}
+                </ul>
+            </li>
+            <li className="menu-category">
+                <a href="#nqt" className="menu-title">Xu hướng sản phẩm</a>
+                <ul className="dropdown-list">
+                    {renderTags()}
                 </ul>
             </li>
         </ul>

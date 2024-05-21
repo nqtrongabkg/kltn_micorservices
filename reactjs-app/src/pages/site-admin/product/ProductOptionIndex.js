@@ -13,7 +13,8 @@ const ProductOptionIndex = () => {
 
     useEffect(() => {
         (async () => {
-            const result = await ProductOptionService.getAll();
+            const sessionUser = JSON.parse(sessionStorage.getItem('user'));
+            const result = await ProductOptionService.getByUser(sessionUser.userId);
             if(result !== null){
                 console.log("option list: ",result);
             }
@@ -49,7 +50,7 @@ const ProductOptionIndex = () => {
                 <div className="row mt-3 align-items-center">
                     <div className="col-12">
                         <button type="button" className="btn btn-warning">
-                            <a href="/admin/product/option-trash">Thùng rác</a>
+                            <a href="/site-admin/product/option-trash">Thùng rác</a>
                         </button>
                     </div>
                 </div>
@@ -122,7 +123,7 @@ const ProductOptionTableRow = ({ option, HandTrash, handleStatus }) => {
                         className={option.status === 1 ? "border-0 px-1 text-success" : "border-0 px-1 text-danger"}>
                         {option.status === 1 ? <FaToggleOn /> : <FaToggleOff />}
                     </button>
-                    <Link to={`/admin/product/option-edit/${option.id}`} className='px-1 text-primary'>
+                    <Link to={`/site-admin/product/option-edit/${option.id}`} className='px-1 text-primary'>
                         <FaEdit />
                     </Link>
                     <button

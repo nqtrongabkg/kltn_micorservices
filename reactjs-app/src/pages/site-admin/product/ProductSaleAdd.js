@@ -1,9 +1,10 @@
+import React, { useState, useEffect } from "react";
 import { FaArrowLeft, FaSave } from "react-icons/fa";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import ProductSaleService from "../../../services/ProductSaleService";
-import { useState } from "react";
+import ProductService from "../../../services/ProductService";
 import { toast } from 'react-toastify';
-import { LocalDateTime } from 'js-joda';
+import { LocalDate } from 'js-joda';
 
 const ProductSaleAdd = () => {
     const { id } = useParams();
@@ -15,13 +16,36 @@ const ProductSaleAdd = () => {
     const [description, setDescription] = useState("");
     const [status, setStatus] = useState(1);
 
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const result = await ProductService.getById(id);
+                if(result){
+                    setPriceSale(result.price);
+                }
+            } catch (error) {
+                console.error('Error fetching product sale:', error);
+            }
+        };
+        fetchData();
+    }, [id]);
+
     const handleSubmit = (event) => {
         event.preventDefault();
-        // Convert date strings to LocalDateTime objects
-        const formattedBegin = dateBegin + 'T00:00:00';
-        const formattedEnd = dateEnd + 'T00:00:00';
-        const begin = LocalDateTime.parse(formattedBegin);
-        const end = LocalDateTime.parse(formattedEnd);
+
+        // Convert date strings to LocalDate objects
+        const formattedBegin = LocalDate.parse(dateBegin);
+        const formattedEnd = LocalDate.parse(dateEnd);
+        const today = LocalDate.now();
+
+        // Validation checks
+        if (today.isAfter(formattedBegin) || !formattedBegin.isBefore(formattedEnd) || quantity <= 0 || priceSale < 1000) {
+            toast.error("Vui lòng kiểm tra lại thông tin về thời gian.");
+            return;
+        }
+
+        const begin = formattedBegin.atStartOfDay();
+        const end = formattedEnd.atStartOfDay();
         const productSale = {
             productId: id,
             quantity,
@@ -29,7 +53,7 @@ const ProductSaleAdd = () => {
             description,
             dateBegin: begin,
             dateEnd: end,
-            createdBy: JSON.parse(sessionStorage.getItem('useradmin'))?.userId,
+            createdBy: JSON.parse(sessionStorage.getItem('user'))?.userId,
             status,
         };
 
@@ -38,18 +62,19 @@ const ProductSaleAdd = () => {
 
             const result = await ProductSaleService.create(productSale);
             if (result !== null) {
-                toast.success("Tao giam gia thanh cong");
-                navigate('/admin/product/index', { replace: true });
+                toast.success("Tạo giảm giá thành công");
+                navigate('/site-admin/product/index', { replace: true });
             }
         })();
     }
+
     return (
         <form onSubmit={handleSubmit}>
             <div className="content">
                 <section className="content-header my-2">
                     <h1 className="d-inline">Tạo giảm giá sản phẩm</h1>
                     <div className="mt-1 text-end">
-                        <Link to="/admin/product/index" className="btn btn-sm btn-info mx-1">
+                        <Link to="/site-admin/product/index" className="btn btn-sm btn-info mx-1">
                             <FaArrowLeft /> Về danh sách
                         </Link>
                     </div>
@@ -62,14 +87,13 @@ const ProductSaleAdd = () => {
                                 <input type="number"
                                     value={priceSale}
                                     onChange={(e) => setPriceSale(e.target.value)}
-                                    placeholder="Nhập giá giảm" className="form-control" />
+                                    placeholder="Nhập giá giảm" className="form-control" min="1000" />
                             </div>
                             <div className="mb-3">
                                 <label><strong>Số lượng sản phẩm giảm (*)</strong></label>
                                 <input type="number" value={quantity}
                                     onChange={(e) => setQty(e.target.value)}
-                                    placeholder="Nhập số lượng" rows="1"
-                                    className="form-control" min="1" />
+                                    placeholder="Nhập số lượng" className="form-control" min="1" />
                             </div>
                             <div className="mb-3">
                                 <label><strong>Mô tả</strong></label>

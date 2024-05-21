@@ -11,4 +11,7 @@ public interface ProductSaleRepository extends JpaRepository<ProductSale, UUID> 
 
     List<ProductSale> findByProductId(UUID productId);
 
+    List<ProductSale> findByCreatedBy(UUID id);
+
+    List<ProductSale> findByProductIdAndStatus(UUID productId, int status);
 }

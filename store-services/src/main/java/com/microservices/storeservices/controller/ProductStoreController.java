@@ -65,6 +65,12 @@ public class ProductStoreController {
         return ResponseEntity.noContent().build();
     }
 
+    @DeleteMapping("/delete-by-product/{productId}") 
+    public ResponseEntity<Void> deleteProductStoresByProductId(@PathVariable UUID productId) {
+        productStoreService.deleteByProductId(productId);
+        return ResponseEntity.noContent().build();
+    }
+
     @GetMapping("/get-by-product/{productId}")
     public ResponseEntity<List<ProductStoreResponse>> getProductStoresByProductId(@PathVariable UUID productId) {
         List<ProductStoreResponse> productStores = productStoreService.getByProductId(productId);
@@ -74,7 +80,7 @@ public class ProductStoreController {
     @GetMapping("/get-by-user/{userId}")
     public ResponseEntity<List<ProductStoreResponse>> getProductStoresByUser(@PathVariable UUID userId) {
         List<ProductStoreResponse> productStores = productStoreService.getByCreatedBy(userId);
-        return ResponseEntity.ok(productStores);
+        return ResponseEntity.ok(productStores);    
     }
 
     @GetMapping("/get-by-option-value/{optionValueId}")

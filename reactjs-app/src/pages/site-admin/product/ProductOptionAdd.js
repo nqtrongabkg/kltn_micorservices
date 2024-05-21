@@ -35,7 +35,7 @@ const ProductOptionAdd = () => {
             productId: id,
             name: name,
             description: description,
-            createdBy: JSON.parse(sessionStorage.getItem('useradmin'))?.userId,
+            createdBy: JSON.parse(sessionStorage.getItem('user'))?.userId,
             status: status,
             values: updatedValues
         };
@@ -52,7 +52,7 @@ const ProductOptionAdd = () => {
                         quantity: 0,
                         soldQuantity: 0,
                         price: 0,
-                        createdBy: JSON.parse(sessionStorage.getItem('useradmin'))?.userId
+                        createdBy: JSON.parse(sessionStorage.getItem('user'))?.userId
                     };
                     const store =  await ProductStoreService.create(productStoreData);
                     if(store !== null){
@@ -60,7 +60,7 @@ const ProductOptionAdd = () => {
                     }
                 });
                 toast.success("Tạo lựa chọn sản phẩm thành công");
-                navigate('/admin/product/index', { replace: true });
+                navigate('/site-admin/product/index', { replace: true });
             }
         } catch (error) {
             toast.error("Lỗi khi tạo lựa chọn sản phẩm");
@@ -74,7 +74,7 @@ const ProductOptionAdd = () => {
                 <section className="content-header my-2">
                     <h1 className="d-inline">Tạo lựa chọn sản phẩm</h1>
                     <div className="mt-1 text-end">
-                        <Link to="/admin/product/index" className="btn btn-sm btn-info mx-1">
+                        <Link to="/site-admin/product/index" className="btn btn-sm btn-info mx-1">
                             <FaArrowLeft /> Về danh sách sản phẩm
                         </Link>
                     </div>

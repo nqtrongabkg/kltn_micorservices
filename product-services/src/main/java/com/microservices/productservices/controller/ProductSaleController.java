@@ -42,8 +42,15 @@ public class ProductSaleController {
         return ResponseEntity.ok(productSales);
     }
 
+    @GetMapping("/get-by-user/{userId}")
+    public ResponseEntity<List<ProductSaleResponse>> getByUser(@PathVariable UUID userId) {
+        List<ProductSaleResponse> products = productSaleService.findByUser(userId);
+        return ResponseEntity.ok(products);
+    }
+
     @PutMapping("/update/{id}")
-    public ResponseEntity<ProductSaleResponse> updateProductSale(@RequestBody ProductSaleRequest productSaleRequest, @PathVariable UUID id) {
+    public ResponseEntity<ProductSaleResponse> updateProductSale(@RequestBody ProductSaleRequest productSaleRequest,
+            @PathVariable UUID id) {
         ProductSaleResponse updatedProductSale = productSaleService.update(id, productSaleRequest);
         if (updatedProductSale != null) {
             return ResponseEntity.ok(updatedProductSale);
@@ -71,10 +78,26 @@ public class ProductSaleController {
         productSaleService.switchStatus(id);
         return ResponseEntity.ok().build();
     }
-    
+
     @PutMapping("/trash/{id}")
     public ResponseEntity<Void> trash(@PathVariable UUID id) {
         productSaleService.trash(id);
         return ResponseEntity.ok().build();
-    }  
+    }
+
+    @PutMapping("/export-sale/{productId}/{quantity}")
+    public ResponseEntity<Void> exportSale(@PathVariable UUID productId, @PathVariable int quantity) {
+        try {
+            productSaleService.exportSale(productId, quantity);
+            return ResponseEntity.ok().build();
+        } catch (RuntimeException e) {
+            if (e.getMessage().equals("NOT_FOUND")) {
+                return ResponseEntity.notFound().build();
+            } else if (e.getMessage().equals("INSUFFICIENT_QUANTITY")) {
+                return ResponseEntity.status(HttpStatus.CONFLICT).build();
+            } else {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            }
+        }
+    }
 }

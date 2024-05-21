@@ -5,6 +5,7 @@ import com.microservices.productservices.payload.response.ProductResponse;
 
 import java.util.List;
 import java.util.UUID;
+import org.springframework.data.domain.Page;
 
 public interface ProductService {
     
@@ -21,8 +22,6 @@ public interface ProductService {
     ProductResponse getById(UUID id);
     
     List<ProductResponse> getAll();
-
-    List<ProductResponse> findByUser(UUID id);
     
     ProductResponse update(UUID id, ProductRequest productRequest);
     
@@ -31,5 +30,11 @@ public interface ProductService {
     List<ProductResponse> findByBrandId(UUID brandId);
 
     List<ProductResponse> searchByName(String name);
+
+    void updateProductEvaluate(UUID productId);
+
+    Page<ProductResponse> findByUser(UUID userId, int page, int size);
+
+    Page<ProductResponse> getPage(int page, int size);
     
 }

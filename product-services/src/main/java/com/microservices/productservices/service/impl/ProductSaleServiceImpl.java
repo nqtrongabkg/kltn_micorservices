@@ -9,6 +9,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -44,6 +45,14 @@ public class ProductSaleServiceImpl implements ProductSaleService {
     public List<ProductSaleResponse> getAll() {
         List<ProductSale> productSales = productSaleRepository.findAll();
         return productSales.stream()
+                .map(this::mapProductSaleToResponse)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ProductSaleResponse> findByUser(UUID id) {
+        List<ProductSale> sales = productSaleRepository.findByCreatedBy(id);
+        return sales.stream()
                 .map(this::mapProductSaleToResponse)
                 .collect(Collectors.toList());
     }
@@ -101,6 +110,27 @@ public class ProductSaleServiceImpl implements ProductSaleService {
 
         // Lưu trạng thái đã thay đổi
         productSaleRepository.save(productSale);
+    }
+
+    @Override
+    public void exportSale(UUID productId, int quantity) {
+        List<ProductSale> productSales = productSaleRepository.findByProductIdAndStatus(productId, 1);
+
+        if (productSales.isEmpty()) {
+            throw new RuntimeException("NOT_FOUND");
+        }
+
+        // Get the most recent ProductSale
+        ProductSale mostRecentProductSale = productSales.stream()
+                .max(Comparator.comparing(ProductSale::getCreatedAt))
+                .orElseThrow(() -> new RuntimeException("NOT_FOUND"));
+
+        if (mostRecentProductSale.getQuantity() >= quantity) {
+            mostRecentProductSale.setQuantity(mostRecentProductSale.getQuantity() - quantity);
+            productSaleRepository.save(mostRecentProductSale);
+        } else {
+            throw new RuntimeException("INSUFFICIENT_QUANTITY");
+        }
     }
 
     private ProductSaleResponse mapProductSaleToResponse(ProductSale productSale) {

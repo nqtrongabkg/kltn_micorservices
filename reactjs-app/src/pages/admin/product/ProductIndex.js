@@ -11,32 +11,34 @@ const ProductIndex = () => {
     const [products, setProducts] = useState([]);
     const [reload, setReload] = useState(0);
     const [brandNames, setBrandNames] = useState({});
+    const [page, setPage] = useState(0);
+    const [size] = useState(10);
+    const [totalPages, setTotalPages] = useState(0);
 
     useEffect(() => {
         const fetchProducts = async () => {
             try {
-                let result = await ProductService.getAll();
-                result = result.filter(product => product.status !== 2);
-                const sortedProducts = result.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-                setProducts(sortedProducts);
+                let response = await ProductService.getPageSize(page, size);
+                setProducts(response.content);
+                setTotalPages(response.totalPages);
             } catch (error) {
                 console.error("Error fetching:", error);
             }
         };
         fetchProducts();
-    }, [reload]);
+    }, [page, size, reload]);
 
     useEffect(() => {
         const fetchBrandNames = async () => {
             const names = {};
             for (const product of products) {
                 try {
-                    if(product.brandId !== null){
+                    if (product.brandId !== null) {
                         const brand = await BrandService.getById(product.brandId);
                         names[product.brandId] = brand !== null ? brand.name : "N/A";
-                    }else{
+                    } else {
                         names[product.brandId] = "N/A";
-                    } 
+                    }
                 } catch (error) {
                     console.error("Error fetching brand:", error);
                     names[product.brandId] = "N/A";
@@ -64,19 +66,11 @@ const ProductIndex = () => {
         }
     };
 
-    // const getBrandName = async (id) => {
-    //     try {
-    //         const brand = await BrandService.getById(id);
-    //         if(brand !== null){
-    //             return brand.name;
-    //         }
-    //         return "N/A";
-    //     } catch (error) {
-    //         console.error("Error fetching brand:", error);
-    //         return "N/A";
-    //     }
-    // }
-    
+    const handlePageChange = (newPage) => {
+        if (newPage >= 0 && newPage < totalPages) {
+            setPage(newPage);
+        }
+    };
 
     return (
         <div className="content">
@@ -122,32 +116,32 @@ const ProductIndex = () => {
                                                 </a>
                                             </div>
                                             <div className="function_style">
-                                                    <button
-                                                        onClick={() => handleStatus(product.id, product.status)}
-                                                        className={
-                                                            product.status === 1 ? "border-0 px-1 text-success" : "border-0 px-1 text-danger"
-                                                        }>
-                                                        {product.status === 1 ? <FaToggleOn size={24}/> : <FaToggleOff size={24}/>}
-                                                    </button>
-                                                    <Link to={"/admin/product/edit/" + product.id} className='px-1 text-primary'>
-                                                        <FaEdit size={23}/>
-                                                    </Link>
-                                                    <Link to={'/admin/product/sale-add/' + product.id} className="px-1 text-info">
-                                                        <FaTag size={23}/>
-                                                    </Link>
-                                                    <Link to={'/admin/product/option-add/' + product.id} className="px-1">
-                                                        <FaHandLizard size={24}/>
-                                                    </Link>
-                                                    <Link to={'/admin/product/gallary-index/' + product.id} className="px-1">
-                                                        <MdOutlineCollections size={24}/>
-                                                    </Link>
-                                                    
-                                                    <button
-                                                        onClick={() => HandTrash(product.id)}
-                                                        className="btn-none px-1 text-danger">
-                                                        <FaTrash />
-                                                    </button>
-                                                </div>
+                                                <button
+                                                    onClick={() => handleStatus(product.id, product.status)}
+                                                    className={
+                                                        product.status === 1 ? "border-0 px-1 text-success" : "border-0 px-1 text-danger"
+                                                    }>
+                                                    {product.status === 1 ? <FaToggleOn size={24} /> : <FaToggleOff size={24} />}
+                                                </button>
+                                                <Link to={"/admin/product/edit/" + product.id} className='px-1 text-primary'>
+                                                    <FaEdit size={23} />
+                                                </Link>
+                                                <Link to={'/admin/product/sale-add/' + product.id} className="px-1 text-info">
+                                                    <FaTag size={23} />
+                                                </Link>
+                                                <Link to={'/admin/product/option-add/' + product.id} className="px-1">
+                                                    <FaHandLizard size={24} />
+                                                </Link>
+                                                <Link to={'/admin/product/gallary-index/' + product.id} className="px-1">
+                                                    <MdOutlineCollections size={24} />
+                                                </Link>
+
+                                                <button
+                                                    onClick={() => HandTrash(product.id)}
+                                                    className="btn-none px-1 text-danger">
+                                                    <FaTrash />
+                                                </button>
+                                            </div>
                                         </td>
                                         <td>{brandNames[product.brandId]}</td>
                                         <td>
@@ -161,13 +155,26 @@ const ProductIndex = () => {
                                         <td>{product.evaluate}</td>
                                         <td>{product.createdAt}</td>
                                         <td>{product.createdBy}</td>
-                                        
                                     </tr>
                                 );
                             })
                         }
                     </tbody>
                 </table>
+                <div className="pagination">
+                    <ul className="pagination">
+                        <li className={`page-item ${page === 0 ? 'disabled' : ''}`}>
+                            <button className="page-link" onClick={() => handlePageChange(page - 1)}>Trang trước</button>
+                        </li>
+                        <li className="page-item disabled">
+                            <span className="page-link">Trang {page + 1} trên {totalPages}</span>
+                        </li>
+                        <li className={`page-item ${page === totalPages - 1 ? 'disabled' : ''}`}>
+                            <button className="page-link" onClick={() => handlePageChange(page + 1)}>Trang sau</button>
+                        </li>
+                    </ul>
+                </div>
+
             </section>
         </div>
     );
