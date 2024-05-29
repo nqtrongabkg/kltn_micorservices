@@ -25,4 +25,6 @@ public interface BannerService {
     BannerResponse update(UUID id, BannerRequest BannerRequest);
 
     BannerResponse delete(UUID id);
+
+    List<BannerResponse> getDisplay(); 
 }

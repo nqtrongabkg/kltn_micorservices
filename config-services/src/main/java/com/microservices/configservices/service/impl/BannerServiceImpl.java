@@ -106,6 +106,14 @@ public class BannerServiceImpl implements BannerService {
         return null;
     }
 
+    @Override
+    public List<BannerResponse> getDisplay() {
+        List<Banner> banners = bannerRepository.findByStatus(3);
+        return banners.stream()
+                .map(this::mapBannerToBannerResponse)
+                .collect(Collectors.toList());
+    }
+
     private BannerResponse mapBannerToBannerResponse(Banner banner) {
         if (banner != null) {
             return BannerResponse.builder()

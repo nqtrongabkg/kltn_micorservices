@@ -1,237 +1,145 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react';
+
+import CategoryService from '../../../services/CategoryService';
+import BrandService from '../../../services/BrandService';
+import TagService from '../../../services/TagService';
+import InformationService from '../../../services/InformationService';
+import { urlImageInformation } from '../../../config';
 
 import { IonIcon } from '@ionic/react';
-import { iconName, locationOutline, callOutline , mailOutline,logoLinkedin, logoFacebook, logoTwitter, logoInstagram} from 'ionicons/icons'; // Replace iconName with the specific icon you want to use
-
+import { locationOutline, callOutline, mailOutline, logoLinkedin, logoFacebook, logoTwitter, logoInstagram } from 'ionicons/icons';
 
 export default function Footer() {
+    const [categories, setCategories] = useState([]);
+    const [brands, setBrands] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [tags, setTags] = useState([]);
+    const [information, setInformation] = useState(null);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            setLoading(true);
+            try {
+                const categoriesResult = await CategoryService.getAll();
+                const brandsResult = await BrandService.getAll();
+
+                const filteredCategories = categoriesResult.filter(category => category.status >= 3);
+                const filteredBrands = brandsResult.filter(brand => brand.status >= 3);
+
+                // Sort categories by productQuantity in descending order
+                const sortedCategories = filteredCategories.sort((a, b) => b.productQuantity - a.productQuantity);
+
+                setCategories(sortedCategories);
+                setBrands(filteredBrands);
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            }
+            setLoading(false);
+        };
+        const fetchTags = async () => {
+            try {
+                let result = await TagService.getAll();
+                const sortedtags = result.filter(brand => brand.status >= 3);
+                setTags(sortedtags);
+            } catch (error) {
+                console.error("Error fetching:", error);
+            }
+        };
+        const fetchInfor = async () => {
+            try {
+                let result = await InformationService.getDisplay();
+                if(result){
+                    // console.log("infor:", result);
+                    setInformation(result);
+                }
+            } catch (error) {
+                console.error("Error fetching:", error);
+            }
+        };
+        fetchInfor();
+        fetchTags();
+        fetchData();
+    }, []);
+
+    if (loading) {
+        return <div>Loading...</div>;
+    }
+
+    function formatDateToLocalDate(datetimeString) {
+        const date = new Date(datetimeString);
+        const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
+        return date.toLocaleDateString('en-US', options);
+    }
+
     return (
         <>
             <footer>
-
-                <div className="footer-category">
-
-                    <div className="container">
-
-                        <h2 className="footer-category-title">Brand directory</h2>
-
-                        <div className="footer-category-box">
-
-                            <h3 className="category-box-title">Fashion :</h3>
-
-                            <a href="#tag" className="footer-category-link">T-shirt</a>
-                            <a href="#tag" className="footer-category-link">Shirts</a>
-                            <a href="#tag" className="footer-category-link">shorts &amp; jeans</a>
-                            <a href="#tag" className="footer-category-link">jacket</a>
-                            <a href="#tag" className="footer-category-link">dress &amp; frock</a>
-                            <a href="#tag" className="footer-category-link">innerwear</a>
-                            <a href="#tag" className="footer-category-link">hosiery</a>
-
-                        </div>
-
-                        <div className="footer-category-box">
-                            <h3 className="category-box-title">footwear :</h3>
-
-                            <a href="#tag" className="footer-category-link">sport</a>
-                            <a href="#tag" className="footer-category-link">formal</a>
-                            <a href="#tag" className="footer-category-link">Boots</a>
-                            <a href="#tag" className="footer-category-link">casual</a>
-                            <a href="#tag" className="footer-category-link">cowboy shoes</a>
-                            <a href="#tag" className="footer-category-link">safety shoes</a>
-                            <a href="#tag" className="footer-category-link">Party wear shoes</a>
-                            <a href="#tag" className="footer-category-link">Branded</a>
-                            <a href="#tag" className="footer-category-link">Firstcopy</a>
-                            <a href="#tag" className="footer-category-link">Long shoes</a>
-                        </div>
-
-                        <div className="footer-category-box">
-                            <h3 className="category-box-title">jewellery :</h3>
-
-                            <a href="#tag" className="footer-category-link">Necklace</a>
-                            <a href="#tag" className="footer-category-link">Earrings</a>
-                            <a href="#tag" className="footer-category-link">Couple rings</a>
-                            <a href="#tag" className="footer-category-link">Pendants</a>
-                            <a href="#tag" className="footer-category-link">Crystal</a>
-                            <a href="#tag" className="footer-category-link">Bangles</a>
-                            <a href="#tag" className="footer-category-link">bracelets</a>
-                            <a href="#tag" className="footer-category-link">nosepin</a>
-                            <a href="#tag" className="footer-category-link">chain</a>
-                            <a href="#tag" className="footer-category-link">Earrings</a>
-                            <a href="#tag" className="footer-category-link">Couple rings</a>
-                        </div>
-
-                        <div className="footer-category-box">
-                            <h3 className="category-box-title">cosmetics :</h3>
-
-                            <a href="#tag" className="footer-category-link">Shampoo</a>
-                            <a href="#tag" className="footer-category-link">Bodywash</a>
-                            <a href="#tag" className="footer-category-link">Facewash</a>
-                            <a href="#tag" className="footer-category-link">makeup kit</a>
-                            <a href="#tag" className="footer-category-link">liner</a>
-                            <a href="#tag" className="footer-category-link">lipstick</a>
-                            <a href="#tag" className="footer-category-link">prefume</a>
-                            <a href="#tag" className="footer-category-link">Body soap</a>
-                            <a href="#tag" className="footer-category-link">scrub</a>
-                            <a href="#tag" className="footer-category-link">hair gel</a>
-                            <a href="#tag" className="footer-category-link">hair colors</a>
-                            <a href="#tag" className="footer-category-link">hair dye</a>
-                            <a href="#tag" className="footer-category-link">sunscreen</a>
-                            <a href="#tag" className="footer-category-link">skin loson</a>
-                            <a href="#tag" className="footer-category-link">liner</a>
-                            <a href="#tag" className="footer-category-link">lipstick</a>
-                        </div>
-
-                    </div>
-
-                </div>
-
                 <div className="footer-nav">
-
                     <div className="container">
-
+                        <ul className="footer-nav-list">
+                            <li className="footer-nav-item">
+                                <h2 className="nav-title">Danh mục phổ biến</h2>
+                            </li>
+                            {categories.map(category => (
+                                <li key={category.id} className="footer-nav-item">
+                                    <a href={`/product-of-category/${category.id}`} className="footer-nav-link">{category.name}</a>
+                                </li>
+                            ))}
+                        </ul>
                         <ul className="footer-nav-list">
 
                             <li className="footer-nav-item">
-                                <h2 className="nav-title">Popular Categories</h2>
+                                <h2 className="nav-title">Thương hiệu nổi bật</h2>
                             </li>
+
+                            {brands.map(brand => (
+                                <li key={brand.id} className="footer-nav-item">
+                                    <a href={`/product-of-brand/${brand.id}`} className="footer-nav-link">{brand.name}</a>
+                                </li>
+                            ))}
+                        </ul>
+                        <ul className="footer-nav-list">
 
                             <li className="footer-nav-item">
-                                <a href="#tag" className="footer-nav-link">Fashion</a>
+                                <h2 className="nav-title">Xu hướng</h2>
                             </li>
-
-                            <li className="footer-nav-item">
-                                <a href="#tag" className="footer-nav-link">Electronic</a>
-                            </li>
-
-                            <li className="footer-nav-item">
-                                <a href="#tag" className="footer-nav-link">Cosmetic</a>
-                            </li>
-
-                            <li className="footer-nav-item">
-                                <a href="#tag" className="footer-nav-link">Health</a>
-                            </li>
-
-                            <li className="footer-nav-item">
-                                <a href="#tag" className="footer-nav-link">Watches</a>
-                            </li>
-
+                            {tags.map(tag => (
+                                <li key={tag.id} className="footer-nav-item">
+                                    <a href={`/product-of-tag/${tag.id}`} className="footer-nav-link">{tag.name}</a>
+                                </li>
+                            ))}
                         </ul>
 
                         <ul className="footer-nav-list">
 
                             <li className="footer-nav-item">
-                                <h2 className="nav-title">Products</h2>
-                            </li>
-
-                            <li className="footer-nav-item">
-                                <a href="#tag" className="footer-nav-link">Prices drop</a>
-                            </li>
-
-                            <li className="footer-nav-item">
-                                <a href="#tag" className="footer-nav-link">New products</a>
-                            </li>
-
-                            <li className="footer-nav-item">
-                                <a href="#tag" className="footer-nav-link">Best sales</a>
-                            </li>
-
-                            <li className="footer-nav-item">
-                                <a href="#tag" className="footer-nav-link">Contact us</a>
-                            </li>
-
-                            <li className="footer-nav-item">
-                                <a href="#tag" className="footer-nav-link">Sitemap</a>
-                            </li>
-
-                        </ul>
-
-                        <ul className="footer-nav-list">
-
-                            <li className="footer-nav-item">
-                                <h2 className="nav-title">Our Company</h2>
-                            </li>
-
-                            <li className="footer-nav-item">
-                                <a href="#tag" className="footer-nav-link">Delivery</a>
-                            </li>
-
-                            <li className="footer-nav-item">
-                                <a href="#tag" className="footer-nav-link">Legal Notice</a>
-                            </li>
-
-                            <li className="footer-nav-item">
-                                <a href="#tag" className="footer-nav-link">Terms and conditions</a>
-                            </li>
-
-                            <li className="footer-nav-item">
-                                <a href="#tag" className="footer-nav-link">About us</a>
-                            </li>
-
-                            <li className="footer-nav-item">
-                                <a href="#tag" className="footer-nav-link">Secure payment</a>
-                            </li>
-
-                        </ul>
-
-                        <ul className="footer-nav-list">
-
-                            <li className="footer-nav-item">
-                                <h2 className="nav-title">Services</h2>
-                            </li>
-
-                            <li className="footer-nav-item">
-                                <a href="#tag" className="footer-nav-link">Prices drop</a>
-                            </li>
-
-                            <li className="footer-nav-item">
-                                <a href="#tag" className="footer-nav-link">New products</a>
-                            </li>
-
-                            <li className="footer-nav-item">
-                                <a href="#tag" className="footer-nav-link">Best sales</a>
-                            </li>
-
-                            <li className="footer-nav-item">
-                                <a href="#tag" className="footer-nav-link">Contact us</a>
-                            </li>
-
-                            <li className="footer-nav-item">
-                                <a href="#tag" className="footer-nav-link">Sitemap</a>
-                            </li>
-
-                        </ul>
-
-                        <ul className="footer-nav-list">
-
-                            <li className="footer-nav-item">
-                                <h2 className="nav-title">Contact</h2>
+                                <h2 className="nav-title">Liên hệ</h2>
                             </li>
 
                             <li className="footer-nav-item flex">
                                 <div className="icon-box">
-                                <IonIcon icon={locationOutline}  role="img" className="md hydrated" aria-label="location outline"/>
+                                    <IonIcon icon={locationOutline} role="img" className="md hydrated" aria-label="location outline" />
                                 </div>
 
                                 <address className="content">
-                                    419 State 414 Rte
-                                    Beaver Dams, New York(NY), 14812, USA
+                                    {information.address}
                                 </address>
                             </li>
 
                             <li className="footer-nav-item flex">
                                 <div className="icon-box">
-                                <IonIcon icon={callOutline} role="img" className="md hydrated" aria-label="call outline"/>
+                                    <IonIcon icon={callOutline} role="img" className="md hydrated" aria-label="call outline" />
                                 </div>
 
-                                <a href="tel:+607936-8058" className="footer-nav-link">(607) 936-8058</a>
+                                <a href="tel:+607936-8058" className="footer-nav-link">{information.phone}</a>
                             </li>
 
                             <li className="footer-nav-item flex">
                                 <div className="icon-box">
-                                <IonIcon icon={mailOutline} role="img" className="md hydrated" aria-label="mail outline"/>
+                                    <IonIcon icon={mailOutline} role="img" className="md hydrated" aria-label="mail outline" />
                                 </div>
 
-                                <a href="mailto:example@gmail.com" className="footer-nav-link">example@gmail.com</a>
+                                <a href="mailto:nqtrong68@gmail.com" className="">{information.email}</a>
                             </li>
 
                         </ul>
@@ -247,25 +155,25 @@ export default function Footer() {
 
                                     <li className="footer-nav-item">
                                         <a href="#tag" className="footer-nav-link">
-                                        <IonIcon icon={logoFacebook} role="img" className="md hydrated" aria-label="logo facebook"/>
+                                            <IonIcon icon={logoFacebook} role="img" className="md hydrated" aria-label="logo facebook" />
                                         </a>
                                     </li>
 
                                     <li className="footer-nav-item">
                                         <a href="#tag" className="footer-nav-link">
-                                        <IonIcon icon={logoTwitter} role="img" className="md hydrated" aria-label="logo twitter"/>
+                                            <IonIcon icon={logoTwitter} role="img" className="md hydrated" aria-label="logo twitter" />
                                         </a>
                                     </li>
 
                                     <li className="footer-nav-item">
                                         <a href="#tag" className="footer-nav-link">
-                                        <IonIcon icon={logoLinkedin} role="img" className="md hydrated" aria-label="logo linkedin"/>
+                                            <IonIcon icon={logoLinkedin} role="img" className="md hydrated" aria-label="logo linkedin" />
                                         </a>
                                     </li>
 
                                     <li className="footer-nav-item">
                                         <a href="#tag" className="footer-nav-link">
-                                        <IonIcon icon={logoInstagram} role="img" className="md hydrated" aria-label="logo instagram"/>
+                                            <IonIcon icon={logoInstagram} role="img" className="md hydrated" aria-label="logo instagram" />
                                         </a>
                                     </li>
 
@@ -279,14 +187,17 @@ export default function Footer() {
                 </div>
 
                 <div className="footer-bottom">
-
                     <div className="container">
-
-                        <img src="./assets/images/payment.png" alt="payment method" className="payment-img" />
-
-                        <p className="copyright">
-                            Copyright © <a href="#tag">Anon</a> all rights reserved.
-                        </p>
+                        <img src={urlImageInformation + information.logo} alt="payment method" className="payment-img" />
+                        <div className="container" style={{ color: 'white', lineHeight: '0.7', marginBottom: '5px' }}>
+                            <p className="copyright">Địa chỉ: {information.address}</p>
+                            <p className="copyright">Email: {information.email}</p>
+                            <p className="copyright">Điện thoại: {information.phone}</p>
+                            <p className="copyright">Chịu Trách Nhiệm Quản Lý Nội Dung: {information.repersent} - Điện thoại liên hệ: {information.repersentPhone}</p>
+                            <p className="copyright">Mã số doanh nghiệp: {information.businessNumber} được cấp bởi CQCGP vào ngày {formatDateToLocalDate(information.createdAt)}</p>
+                            <p className="copyright">Giấy phép kinh doanh: {information.license} được cấp bởi CQCGP vào ngày {formatDateToLocalDate(information.createdAt)}</p>
+                            <p className="copyright">Copyright © 2024 - Bản quyền thuộc về {information.name}</p>
+                        </div>
 
                     </div>
 
@@ -294,5 +205,5 @@ export default function Footer() {
 
             </footer>
         </>
-    )
+    );
 }

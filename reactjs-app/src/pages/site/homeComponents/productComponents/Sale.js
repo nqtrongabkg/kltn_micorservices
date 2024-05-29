@@ -7,33 +7,45 @@ import { urlImageProduct } from '../../../../config';
 import ProductService from '../../../../services/ProductService';
 import FavoriteService from '../../../../services/FavoriteService';
 import { toast } from 'react-toastify';
+import Pagination from './Pagination';
+
 const Sale = () => {
     const [sales, setSales] = useState([]);
-
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 12;
 
     useEffect(() => {
         (async () => {
             const result = await ProductSaleService.getAll();
-            // Filter out sales with status 2
             const filteredSales = result.filter(sale => sale.status !== 2);
-            // Sort the filtered sales array by createdAt property from newest to oldest
             filteredSales.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
             setSales(filteredSales);
         })();
     }, []);
+
+    const totalPages = Math.ceil(sales.length / itemsPerPage);
+    const indexOfLastProduct = currentPage * itemsPerPage;
+    const indexOfFirstProduct = indexOfLastProduct - itemsPerPage;
+    const currentProducts = sales.slice(indexOfFirstProduct, indexOfLastProduct);
+
+    const handlePageChange = (pageNumber) => {
+        setCurrentPage(pageNumber);
+        window.scrollTo(0, 0);
+    };
+
     return (
-        <div className="product-main">
-            <h2 className="title">Sản phẩm giảm giá</h2>
+        <div className="product-main border-top border-4 border-dark">
+            <h2 className="title text-center" style={{ fontSize: '30px', marginTop: '10px' }}>Sản phẩm giảm giá</h2>
             <div className="product-grid">
-                {sales && sales.length > 0 &&
-                    sales.map((sale, index) => (
+                {currentProducts && currentProducts.length > 0 &&
+                    currentProducts.map((sale, index) => (
                         <ProductSaleTableRow key={sale.id} sale={sale} />
                     ))
                 }
             </div>
+            <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
         </div>
     );
-
 };
 
 const ProductSaleTableRow = ({ sale }) => {

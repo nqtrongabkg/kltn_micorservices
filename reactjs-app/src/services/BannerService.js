@@ -14,7 +14,9 @@ const BannerService = {
     getAll: () => {
         return httpAxios.get(`config-services/api/banners/get-all`);
     },
-    
+    getDisplay: () => {
+        return httpAxios.get(`config-services/api/banners/get-display`);
+    },
     update: (id, brand) => { 
         return httpAxios.put(`config-services/api/banners/update/${id}`, brand);
     },

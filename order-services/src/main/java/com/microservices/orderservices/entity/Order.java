@@ -25,6 +25,8 @@ public class Order {
 
     private Double totalPrice;
 
+    private String payment;
+
     private String deliveryAddress;
 
     private String deliveryPhone;

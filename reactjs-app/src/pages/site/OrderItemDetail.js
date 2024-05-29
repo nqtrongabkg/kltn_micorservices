@@ -77,6 +77,7 @@ const OrderItemDetail = () => {
                                             </div>
                                             <h5 className="bold">{product ? product.name : ""}</h5>
                                             <p className="text-muted"> Số lượng: {item ? item.quantity : ""}</p>
+                                            <h4 className="mb-3"> Thanh toán: {item.payment === "COD" ? "Ship COD" : `Số hóa đơn: ${item.payment}`} <span className="small text-muted"> VND </span></h4>
                                             <h4 className="mb-3"> Tổng thanh toán: {item ? item.totalPrice : ""} <span className="small text-muted"> VND </span></h4>
                                             <div className='row'>
                                                 <div className='col-md-6'>

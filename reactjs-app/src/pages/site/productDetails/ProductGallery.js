@@ -208,6 +208,10 @@ const ProductGallery = () => {
         );
     };
 
+    const formatPrice = (price) => {
+        return price.toLocaleString('vi-VN');
+    };
+
     return (
         <section className="py-5">
             <div className="container">
@@ -234,7 +238,7 @@ const ProductGallery = () => {
                                 </div>
                             </div>
                             <div className="mb-3">
-                                <span className="h5">Giá bán: {priceToDisplay}.VND</span>
+                                <span className="h5">Giá bán: {formatPrice(priceToDisplay)}</span>
                             </div>
                             <p>{product.description}</p>
                             <main className="col-lg-6">

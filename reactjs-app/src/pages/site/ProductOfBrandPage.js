@@ -1,17 +1,15 @@
-
 import React, { useState, useEffect, useMemo } from 'react';
 import '../../assets/styles/productfortune.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHeart, faStar } from '@fortawesome/free-solid-svg-icons';
 import ProductService from '../../services/ProductService';
-import { useParams, useNavigate } from 'react-router-dom';
-import { Link } from 'react-router-dom'; // Import Link
+import { useParams, useNavigate, Link } from 'react-router-dom'; // Combined imports
 import { urlImageProduct } from '../../config';
 import BrandService from '../../services/BrandService';
 import FavoriteService from '../../services/FavoriteService';
 import { toast } from 'react-toastify';
 import { IonIcon } from '@ionic/react';
-import { star, starOutline} from 'ionicons/icons';
+import { star, starOutline } from 'ionicons/icons';
 
 const ProductOfBrandPage = () => {
     const navigate = useNavigate();
@@ -31,11 +29,10 @@ const ProductOfBrandPage = () => {
                 const brandFortunes = await ProductService.getByBrand(id);
                 setProducts(brandFortunes.filter(product => product.status !== 2));
                 const maxPrice = Math.max(...brandFortunes.map(product => parseFloat(product.price)));
-                    setFilters(prevFilters => ({
-                        ...prevFilters,
-                        priceRange: { ...prevFilters.priceRange, max: maxPrice }
-                    }));
-                
+                setFilters(prevFilters => ({
+                    ...prevFilters,
+                    priceRange: { ...prevFilters.priceRange, max: maxPrice }
+                }));
             } catch (error) {
                 console.error("Error fetching products:", error);
             }
@@ -51,6 +48,7 @@ const ProductOfBrandPage = () => {
         };
         fetchBrands();
         fetchProducts();
+        window.scrollTo(0, 0); // Scroll to top when id changes
     }, [id]);
 
     const handlePriceRangeFilterChange = (value) => {
@@ -108,7 +106,10 @@ const ProductOfBrandPage = () => {
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
     const currentItems = filteredProducts.slice(indexOfFirstItem, indexOfLastItem);
 
-    const paginate = (pageNumber) => setCurrentPage(pageNumber);
+    const paginate = (pageNumber) => {
+        setCurrentPage(pageNumber);
+        window.scrollTo(0, 0); // Scroll to top when page changes
+    };
 
     const pageNumbers = [];
     for (let i = 1; i <= Math.ceil(filteredProducts.length / itemsPerPage); i++) {
@@ -132,7 +133,6 @@ const ProductOfBrandPage = () => {
                                     <Link key={brand.id} to={`/product-of-brand/${brand.id}`} className="d-block mb-2">
                                         {brand.name}
                                     </Link>
-
                                 ))}
                             </div>
 
@@ -171,7 +171,6 @@ const ProductOfBrandPage = () => {
                                         {Array(rating).fill(<FontAwesomeIcon icon={faStar} />, 0, rating)}
                                     </label>
                                 </div>
-
                             ))}
                         </div>
                     </div>
@@ -187,16 +186,16 @@ const ProductOfBrandPage = () => {
                                             <h5 className="card-title">{formatPrice(product.price)} VND</h5>
                                             <p className="card-text">{product.description || 'No description available.'}</p>
                                             <div className="d-flex align-items-center">
-                                            {Array(product.evaluate)
-                                                .fill()
-                                                .map((_, index) => (
-                                                    <IonIcon key={index} icon={star} />
-                                                ))}
-                                            {Array(5 - product.evaluate)
-                                                .fill()
-                                                .map((_, index) => (
-                                                    <IonIcon key={product.evaluate + index} icon={starOutline} />
-                                                ))}
+                                                {Array(product.evaluate)
+                                                    .fill()
+                                                    .map((_, index) => (
+                                                        <IonIcon key={index} icon={star} />
+                                                    ))}
+                                                {Array(5 - product.evaluate)
+                                                    .fill()
+                                                    .map((_, index) => (
+                                                        <IonIcon key={product.evaluate + index} icon={starOutline} />
+                                                    ))}
                                             </div>
                                             <div className="card-footer d-flex align-items-end pt-3 px-0 pb-0 mt-auto">
                                                 <a href={`/product-detail/${product.id}`} className="btn btn-primary shadow-0 me-1">Xem sản phẩm</a>
@@ -221,7 +220,6 @@ const ProductOfBrandPage = () => {
                             ))}
                         </ul>
                     </nav>
-
                 </div>
             </div>
         </div>

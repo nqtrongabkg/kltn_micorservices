@@ -27,4 +27,6 @@ public interface InformationService {
     InfomationsResponse delete(UUID id);
 
     void isDisplay(UUID id);
+
+    InfomationsResponse getInformationDisplay();
 }

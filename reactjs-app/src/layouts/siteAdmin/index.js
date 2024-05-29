@@ -68,7 +68,7 @@ const SiteAdmin = () => {
                                 </a>
                             </li>
                             <li className="text-phai">
-                                <a href="#nqt" onClick={logout}>
+                                <a href="/">
                                     <MdExitToApp />
                                     Thoát
                                 </a>

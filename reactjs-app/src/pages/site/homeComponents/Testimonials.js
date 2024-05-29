@@ -1,40 +1,54 @@
-import React from 'react';
-import { IonIcon } from '@ionic/react';
-import { boatOutline} from 'ionicons/icons';
+import React, { useState, useEffect } from 'react';
+import { urlImageBanner } from '../../../config';
+import BannerService from '../../../services/BannerService';
 
 const Testimonials = () => {
-    return (
-        <div>
-            <div className="container">
-                <div className="testimonials-box">
-                    <div className="cta-container">
-                        <img src={require("../../../assets/images/cta-banner.jpg")} alt="summer collection" className="cta-banner" />
-                        <a href="#nqt" className="cta-content">
-                            <p className="discount">25% Discount</p>
-                            <h2 className="cta-title">Summer collection</h2>
-                            <p className="cta-text">Starting @ $10</p>
-                            <button className="cta-btn">Shop now</button>
-                        </a>
-                    </div>
-                    <div className="service">
-                        <h2 className="title">Our Services</h2>
-                        <div className="service-container">
-                            <a href="#nat" className="service-item">
-                                <div className="service-icon">
-                                    <IonIcon icon={boatOutline} />
-                                </div>
-                                <div className="service-content">
-                                    <h3 className="service-title">Worldwide Delivery</h3>
-                                    <p className="service-desc">For Order Over $100</p>
-                                </div>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+  const [banners, setBanners] = useState([]);
+  const [currentBanner, setCurrentBanner] = useState(null);
 
-    );
+  useEffect(() => {
+    const fetchBanners = async () => {
+      try {
+        const result = await BannerService.getDisplay();
+        setBanners(result);
+        if (result.length > 0) {
+          setCurrentBanner(result[Math.floor(Math.random() * result.length)]);
+        }
+      } catch (error) {
+        console.error("Error fetching banners:", error);
+      }
+    };
+    fetchBanners();
+  }, []);
+
+  useEffect(() => {
+    if (banners.length > 0) {
+      const interval = setInterval(() => {
+        setCurrentBanner(banners[Math.floor(Math.random() * banners.length)]);
+      }, 1000);
+
+      return () => clearInterval(interval);
+    }
+  }, [banners]);
+
+  return (
+    <div>
+      <div className="container">
+        <div className="slider-item">
+          {currentBanner ? (
+            <>
+              <img src={urlImageBanner + currentBanner.image} alt={currentBanner.name} className="cta-banner" />
+              <div className="banner-content">
+                <p className="banner-subtitle">{currentBanner.description}</p>
+              </div>
+            </>
+          ) : (
+            <img src={require("../../../assets/images/cta-banner.jpg")} alt="summer collection" className="cta-banner" />
+          )}
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default Testimonials;

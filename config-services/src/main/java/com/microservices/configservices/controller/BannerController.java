@@ -83,4 +83,10 @@ public class BannerController {
         }
         return ResponseEntity.notFound().build();
     }
+
+    @GetMapping("/get-display")
+    public ResponseEntity<List<BannerResponse>> getDisplayBanners() {
+        List<BannerResponse> banners = bannerService.getDisplay();
+        return ResponseEntity.ok(banners);
+    }
 }

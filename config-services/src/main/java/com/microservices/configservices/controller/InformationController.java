@@ -84,4 +84,12 @@ public class InformationController {
         }
         return ResponseEntity.notFound().build();
     }
+    @GetMapping("/get-display")
+    public ResponseEntity<InfomationsResponse> getInformationDisplay() {
+        InfomationsResponse information = informationService.getInformationDisplay();
+        if (information != null) {
+            return ResponseEntity.ok(information);
+        }
+        return ResponseEntity.notFound().build();
+    }
 }

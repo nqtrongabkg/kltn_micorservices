@@ -157,7 +157,7 @@ const ProductAdd = () => {
                             </div>
                             <div className="mb-3">
                                 <label><strong>Chi tiết</strong></label>
-                                <input type="text" name="detail" className="form-control" placeholder="Chi tiết sản phẩm" value={detail} onChange={e => setDetail(e.target.value)} />
+                                <textarea rows="3" type="text" name="detail" className="form-control" placeholder="Chi tiết sản phẩm" value={detail} onChange={e => setDetail(e.target.value)} />
                             </div>
                             <div className="mb-3">
                                 <label><strong>Giá bán</strong></label>

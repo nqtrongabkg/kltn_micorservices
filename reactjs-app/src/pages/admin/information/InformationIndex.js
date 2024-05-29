@@ -77,7 +77,7 @@ const InformationIndex = () => {
                             <th>Giấy phép</th>
                             <th>Người đại diện</th>
                             <th>Số điện thoại người đại diện</th>
-                            <th>Ngày tạo</th>
+                            {/* <th>Ngày tạo</th> */}
                             <th>Trưng bày</th>
                         </tr>
                     </thead>
@@ -127,7 +127,7 @@ const InformationIndex = () => {
                                         <td>{information.license}</td>
                                         <td>{information.repersent}</td>
                                         <td>{information.repersentPhone}</td>
-                                        <td>{information.createdAt}</td>
+                                        {/* <td>{information.createdAt}</td> */}
                                         <td>
                                             <button
                                                 onClick={() => handleDislay(information.id)}

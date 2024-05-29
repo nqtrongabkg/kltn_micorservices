@@ -71,6 +71,10 @@ const FavoriteProduct = () => {
         navigate(`/product-detail/${productId}`); // Navigate to product detail page using navigate
     };
 
+    const formatPrice = (price) => {
+        return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    };
+
     const indexOfLastProduct = (currentPage + 1) * productsPerPage;
     const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
     const currentProducts = products.slice(indexOfFirstProduct, indexOfLastProduct);
@@ -126,13 +130,13 @@ const FavoriteProduct = () => {
                                             <div className="d-flex flex-row align-items-center mb-1">
                                                 {product.saleInfo ? (
                                                     <>
-                                                        <h4 className="mb-1 me-1">{product.saleInfo.priceSale} VND</h4>
+                                                        <h4 className="mb-1 me-1">{formatPrice(product.saleInfo.priceSale)}</h4>
                                                         <span className="text-danger">
-                                                            <s>{product.price} VND</s>
+                                                            <s>{formatPrice(product.price)}</s>
                                                         </span>
                                                     </>
                                                 ) : (
-                                                    <h4 className="mb-1 me-1">${product.price}</h4>
+                                                    <h4 className="mb-1 me-1">{formatPrice(product.price)}</h4>
                                                 )}
                                             </div>
                                             <div className="d-flex flex-column mt-4">

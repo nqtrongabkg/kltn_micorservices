@@ -12,6 +12,8 @@ const Content = () => {
     const { id } = useParams();
     const navigate = useNavigate();
     const [feedbacks, setFeedbacks] = useState([]);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [feedbacksPerPage] = useState(5);
     const [showModal, setShowModal] = useState(false);
     const [currentImage, setCurrentImage] = useState('');
     const [products, setProducts] = useState([]);
@@ -26,7 +28,7 @@ const Content = () => {
             const getProduct = await ProductService.getById(id);
             if (getProduct) {
                 const getProducts = await ProductService.getByUser(getProduct.createdBy, 0, 5);
-                if (getProducts && getProducts && getProducts.content) {
+                if (getProducts && getProducts.content) {
                     setProducts(getProducts.content);
                 }
             }
@@ -40,7 +42,6 @@ const Content = () => {
     };
 
     const handleProductClick = (productId) => {
-        window.scrollTo(0, 0);
         navigate(`/product-detail/${productId}`);
     };
 
@@ -58,6 +59,13 @@ const Content = () => {
         return price.toLocaleString('vi-VN');
     };
 
+    // Pagination Controls
+    const indexOfLastFeedback = currentPage * feedbacksPerPage;
+    const indexOfFirstFeedback = indexOfLastFeedback - feedbacksPerPage;
+    const currentFeedbacks = feedbacks.slice(indexOfFirstFeedback, indexOfLastFeedback);
+
+    const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
     return (
         <section className="bg-light border-top py-4">
             <div className="container">
@@ -66,8 +74,8 @@ const Content = () => {
                         <div className="card">
                             <div className="card-body">
                                 <h5 className="card-title">Đánh giá sản phẩm</h5>
-                                {feedbacks.length > 0 ? (
-                                    feedbacks.map(feedback => (
+                                {currentFeedbacks.length > 0 ? (
+                                    currentFeedbacks.map(feedback => (
                                         <div key={feedback.id} className="d-flex mb-4 feedback-item">
                                             <div className="me-3" onClick={() => handleImageClick(`${urlImageFeedback}${feedback.image}`)}>
                                                 <img src={`${urlImageFeedback}${feedback.image}`} style={{ width: 96, height: 96, cursor: 'pointer' }} className="img-md img-thumbnail" alt="Hình ảnh đánh giá" />
@@ -75,8 +83,8 @@ const Content = () => {
                                             <div className="info">
                                                 <div className="nav-link mb-1">
                                                     <div>Đánh giá: {renderStars(feedback.evaluate)}</div>
-                                                    <strong className="text-dark">{feedback.description}</strong>
-                                                    <div>{feedback.detail}</div>
+                                                    <div >{feedback.description}</div>
+                                                    <strong className="text-dark">{feedback.detail}</strong>
                                                 </div>
                                             </div>
                                         </div>
@@ -84,6 +92,18 @@ const Content = () => {
                                 ) : (
                                     <p>Chưa có đánh giá</p>
                                 )}
+                                {/* Pagination */}
+                                <nav>
+                                    <ul className='pagination'>
+                                        {Array.from({ length: Math.ceil(feedbacks.length / feedbacksPerPage) }, (_, i) => (
+                                            <li key={i} className='page-item'>
+                                                <p onClick={() => paginate(i + 1)} className='page-link'>
+                                                    {i + 1}
+                                                </p>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </nav>
                             </div>
                         </div>
                     </div>

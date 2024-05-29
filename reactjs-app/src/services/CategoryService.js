@@ -1,8 +1,8 @@
 import httpAxios from '../httpAxios';
 
 const CategoryService = {
-    create: (brandData) => {
-        return httpAxios.post(`product-services/api/categories/create`, brandData);
+    create: (data) => {
+        return httpAxios.post(`product-services/api/categories/create`, data);
     },
     setImage: (data) => {
         return httpAxios.put(`product-services/api/categories/set-image`, data);
@@ -16,8 +16,8 @@ const CategoryService = {
     getAll: () => {
         return httpAxios.get(`product-services/api/categories/get-all`);
     },
-    update: (id, brand) => { 
-        return httpAxios.put(`product-services/api/categories/update/${id}`, brand);
+    update: (id, data) => { 
+        return httpAxios.put(`product-services/api/categories/update/${id}`, data);
     },
     sitchStatus: (id) => {
         return httpAxios.put(`product-services/api/categories/switch-status/${id}`);

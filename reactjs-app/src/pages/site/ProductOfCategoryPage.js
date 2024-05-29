@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHeart, faStar } from '@fortawesome/free-solid-svg-icons';
 import ProductService from '../../services/ProductService';
@@ -7,7 +7,6 @@ import ProductCategoryService from '../../services/ProductCategory';
 import FavoriteService from '../../services/FavoriteService';
 import { urlImageProduct } from '../../config';
 import CategoryService from '../../services/CategoryService';
-import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { IonIcon } from '@ionic/react';
 import { star, starOutline } from 'ionicons/icons';
@@ -59,6 +58,7 @@ const ProductOfCategoryPage = () => {
         };
         fetchCategories();
         fetchProducts();
+        window.scrollTo(0, 0); // Scroll to top when id changes
     }, [id]);
 
     const handlePriceRangeFilterChange = (value) => {
@@ -94,7 +94,10 @@ const ProductOfCategoryPage = () => {
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
     const currentItems = filteredProducts.slice(indexOfFirstItem, indexOfLastItem);
 
-    const paginate = (pageNumber) => setCurrentPage(pageNumber);
+    const paginate = (pageNumber) => {
+        setCurrentPage(pageNumber);
+        window.scrollTo(0, 0); // Scroll to top when page changes
+    };
 
     const pageNumbers = [];
     for (let i = 1; i <= Math.ceil(filteredProducts.length / itemsPerPage); i++) {
@@ -121,8 +124,7 @@ const ProductOfCategoryPage = () => {
                 toast.success("Đã thêm sản phẩm vào yêu thích");
             }
         }
-
-    }
+    };
 
     return (
         <div className="container">
@@ -137,7 +139,6 @@ const ProductOfCategoryPage = () => {
                                     <Link key={index} to={`/product-of-category/${category.id}`} className="d-block mb-2">
                                         {category.name}
                                     </Link>
-
                                 ))}
                             </div>
                             <h6 className="fw-bold mt-3">Lọc theo giá</h6>

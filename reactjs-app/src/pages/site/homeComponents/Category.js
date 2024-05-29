@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import CategoryService from '../../../services/CategoryService';
 import { urlImageCategory } from '../../../config';
 
 const Category = () => {
+    const navigate = useNavigate();
     const [categories, setCategories] = useState([]);
     const [reload] = useState(0);
 
@@ -32,10 +33,10 @@ const Category = () => {
                     {categories && categories.length > 0 &&
                         categories.map((category, index) => {
                             return (
-                                <div className="category-item" key={category.id} >
+                                <div className="category-item border" key={category.id} onClick={() => navigate(`/product-of-category/${category.id}`)}>
                                     <div className="category-img-box">
                                         {category.image ? (
-                                            <img src={urlImageCategory + category.image} width={40}  alt="Hinh anh" />
+                                            <img src={urlImageCategory + category.image} width={40} alt="Hinh anh" />
                                         ) : (
                                             <p>Không có ảnh</p>
                                         )}
@@ -45,8 +46,7 @@ const Category = () => {
                                             <h3 className="category-item-title">{category.name}</h3>
                                             <p className="category-item-amount">({category.productQuantity})</p>
                                         </div>
-                                        {/* Replace <a> with <Link> */}
-                                        <Link to={'/product-of-category/' + category.id} className="category-btn">Show all</Link>
+                                        <Link to={'/product-of-category/' + category.id} className="category-btn">Xem tất cả</Link>
                                     </div>
                                 </div>
                             );

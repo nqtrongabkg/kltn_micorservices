@@ -41,6 +41,10 @@ const MyUser = () => {
         }
     }, [user.userId]);
 
+    const formatPrice = (price) => {
+        return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    };
+
     useEffect(() => {
         const renderOrderItems = async () => {
             if (!orders) return;
@@ -55,24 +59,25 @@ const MyUser = () => {
                             renderedItems.push(
                                 <div key={item.id} className="card mb-4 mb-md-2" onClick={() => navigate(`/order-item-detail/${item.id}`)}>
                                     <div className="row mb-4 d-flex justify-content-between align-items-center">
-                                        <div className="col-md-2 col-lg-2 col-xl-2">
+                                        <div className="col-md-2 col-lg-2 col-xl-2 d-flex align-items-center justify-content-center">
                                             <img src={urlImageProduct + product.image} className="img-fluid rounded-3" alt={product.name} />
                                         </div>
                                         <div className="col-md-3 col-lg-3 col-xl-3">
                                             <h6 className="text-muted">Sản phẩm</h6>
                                             <h6 className="text-black mb-0">{product.name}</h6>
                                         </div>
-                                        <div className="col-md-2 col-lg-2 col-xl-2 d-flex">
+                                        <div className="col-md-2 col-lg-2 col-xl-2 d-flex align-items-center justify-content-center">
                                             <p className="mb-0">Số lượng: {item.quantity}</p>
                                         </div>
-                                        <div className="col-md-3 col-lg-2 col-xl-2 offset-lg-1">
-                                            <h6 className="mb-0">Giá:{item.totalPrice}</h6>
+                                        <div className="col-md-3 col-lg-2 col-xl-2 offset-lg-1 d-flex align-items-center justify-content-center">
+                                            <h6 className="mb-0">Giá: {formatPrice(item.totalPrice)}</h6>
                                         </div>
-                                        <div className="col-md-2 col-lg-2 col-xl-2 d-flex">
+                                        <div className="col-md-2 col-lg-2 col-xl-2 d-flex align-items-center justify-content-center">
                                             <p className="mb-0">Ngày đặt: {formatDateToLocalDate(item.createdAt)}</p>
                                         </div>
                                     </div>
                                 </div>
+
                             );
                         }
                     }

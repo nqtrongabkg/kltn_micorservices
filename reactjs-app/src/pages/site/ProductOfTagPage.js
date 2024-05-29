@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom'; // Combined imports
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHeart, faStar } from '@fortawesome/free-solid-svg-icons';
 import ProductService from '../../services/ProductService';
@@ -7,7 +7,6 @@ import ProductTagService from '../../services/ProductTagService';
 import FavoriteService from '../../services/FavoriteService';
 import { urlImageProduct } from '../../config';
 import TagService from '../../services/TagService';
-import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { IonIcon } from '@ionic/react';
 import { star, starOutline } from 'ionicons/icons';
@@ -59,6 +58,7 @@ const ProductOfTagPage = () => {
         };
         fetchTags();
         fetchProducts();
+        window.scrollTo(0, 0); // Scroll to top when id changes
     }, [id]);
 
     const handlePriceRangeFilterChange = (value) => {
@@ -94,7 +94,10 @@ const ProductOfTagPage = () => {
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
     const currentItems = filteredProducts.slice(indexOfFirstItem, indexOfLastItem);
 
-    const paginate = (pageNumber) => setCurrentPage(pageNumber);
+    const paginate = (pageNumber) => {
+        setCurrentPage(pageNumber);
+        window.scrollTo(0, 0); // Scroll to top when page changes
+    };
 
     const pageNumbers = [];
     for (let i = 1; i <= Math.ceil(filteredProducts.length / itemsPerPage); i++) {
@@ -137,7 +140,6 @@ const ProductOfTagPage = () => {
                                     <Link key={index} to={`/product-of-tag/${category.id}`} className="d-block mb-2">
                                         {category.name}
                                     </Link>
-
                                 ))}
                             </div>
                             <h6 className="fw-bold mt-3">Lọc theo giá</h6>
@@ -188,7 +190,7 @@ const ProductOfTagPage = () => {
                                         <h5 className="card-title">{formatPrice(product.price)} VND</h5>
                                         <p className="card-text">{product.description || 'No description available.'}</p>
                                         <div className="d-flex align-items-center">
-                                        {Array(product.evaluate)
+                                            {Array(product.evaluate)
                                                 .fill()
                                                 .map((_, index) => (
                                                     <IonIcon key={index} icon={star} />
@@ -198,7 +200,7 @@ const ProductOfTagPage = () => {
                                                 .map((_, index) => (
                                                     <IonIcon key={product.evaluate + index} icon={starOutline} />
                                                 ))}
-                                            </div>
+                                        </div>
                                         <div className="card-footer d-flex align-items-end pt-3 px-0 pb-0 mt-auto">
                                             <a href={`/product-detail/${product.id}`} className="btn btn-primary shadow-0 me-1">Xem sản phẩm</a>
                                             <div onClick={() => addProductToFavorite(product.id)} className="btn btn-light border icon-hover px-2 pt-2">

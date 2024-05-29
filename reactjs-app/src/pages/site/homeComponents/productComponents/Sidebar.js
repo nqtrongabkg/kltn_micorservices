@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import CategoryService from '../../../../services/CategoryService';
 import BrandService from '../../../../services/BrandService';
 import { urlImageCategory, urlImageBrand } from '../../../../config';
@@ -6,6 +7,7 @@ import { urlImageCategory, urlImageBrand } from '../../../../config';
 const Sidebar = () => {
     const [categories, setCategories] = useState([]);
     const [brands, setBrands] = useState([]);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchData = async () => {
@@ -26,7 +28,11 @@ const Sidebar = () => {
     const renderCategories = () => {
         return categories.map(category => (
             <li key={category.id} className="dropdown-item">
-                <button className="sidebar-accordion-menu" data-accordion-btn>
+                <button 
+                    className="sidebar-accordion-menu" 
+                    data-accordion-btn
+                    onClick={() => navigate(`/product-of-category/${category.id}`)}
+                >
                     <div className="menu-title-flex">
                         <img src={urlImageCategory + category.image} className="img-fluid user-avatar" alt="Hình ảnh" />
                         <p className="menu-title">{category.name}</p>
@@ -39,9 +45,12 @@ const Sidebar = () => {
     const renderBrands = () => {
         return brands.map(brand => (
             <li key={brand.id} className="dropdown-item">
-                <button className="sidebar-accordion-menu" data-accordion-btn>
+                <button 
+                    className="sidebar-accordion-menu" 
+                    data-accordion-btn
+                    onClick={() => navigate(`/product-of-brand/${brand.id}`)}
+                >
                     <div className="menu-title-flex">
-                        {/* Assuming the brands also have images similar to categories */}
                         <img src={urlImageBrand + brand.image} className="img-fluid user-avatar" alt="Hình ảnh thương hiệu" />
                         <p className="menu-title">{brand.name}</p>
                     </div>
@@ -66,9 +75,7 @@ const Sidebar = () => {
                 </ul>
             </div>
         </div>
-        
         </>
-       
     );
 };
 

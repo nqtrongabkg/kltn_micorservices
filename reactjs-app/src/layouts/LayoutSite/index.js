@@ -7,7 +7,6 @@ import Header from './components/Header';
 import Footer from './components/Footer';
 import UserService from '../../services/UserService';
 
-
 const UserContext = createContext();
 
 export const useUserContext = () => useContext(UserContext);
@@ -44,7 +43,6 @@ const LayoutSite = () => {
             toast.error('Thất bại, Vui lòng kiểm tra lại thông tin!');
         }
     };
-    
 
     const logout = () => {
         sessionStorage.removeItem('user');

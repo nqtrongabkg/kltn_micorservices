@@ -14,6 +14,9 @@ const InformationService = {
     getAll: () => {
         return httpAxios.get(`config-services/api/informations/get-all`);
     },
+    getDisplay: () => {
+        return httpAxios.get(`config-services/api/informations/get-display`);
+    },
     update: (id, brand) => { 
         return httpAxios.put(`config-services/api/informations/update/${id}`, brand);
     },

@@ -10,6 +10,7 @@ import ProductStoreService from '../../services/ProductStoreService';
 import ProductSaleService from '../../services/ProductSaleService';
 import { urlImageProduct } from '../../config';
 import { toast } from 'react-toastify';
+import { useLocation } from 'react-router-dom';
 
 const CartItem = ({ item, reload, setReload }) => {
     const [product, setProduct] = useState(null);
@@ -75,6 +76,7 @@ const CartItem = ({ item, reload, setReload }) => {
 const Cart = () => {
     const user = JSON.parse(sessionStorage.getItem('user'));
     // console.log("user in cart", user);
+    const location = useLocation();
 
     const [orderItems, setOrderItems] = useState(null);
     const [cart, setCart] = useState(null);
@@ -117,6 +119,33 @@ const Cart = () => {
 
         fetchCartItems();
     }, [user.userId, reload]);
+
+    useEffect(() => {
+        const searchParams = new URLSearchParams(location.search);
+        const responseCode = searchParams.get("vnp_ResponseCode");
+        const txnRef = searchParams.get("vnp_TxnRef");
+
+        if (responseCode === "00" && txnRef) {
+            handleSuccessfulPayment(txnRef);
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [location]);
+
+    const handleSuccessfulPayment = async (txnRef) => {
+        if (!cart) {
+            console.error("Cart is null");
+            return;
+        }
+
+        try {
+            await OrderService.setPay(cart.id, txnRef);
+            await submitOrderInCart();
+            toast.success("Thanh toán thành công và đơn hàng đã được cập nhật!");
+        } catch (error) {
+            console.error('Error handling successful payment:', error);
+            toast.error("Đã xảy ra lỗi khi xử lý thanh toán.");
+        }
+    };
 
     const submitOrderInCart = async () => {
         const dataUpdateCart = {
@@ -184,8 +213,20 @@ const Cart = () => {
             toast.success("Đặt hàng thành công");
         }
     };
-    
 
+    const submitOrderInCartPay = async (amount) => {
+        try {
+            const response = await OrderService.payVNPAY(amount);
+            console.log("Response from VNPAY:", response);
+            if (response && response) {
+                window.location.href = response;
+            }
+        } catch (error) {
+            console.error('Error calling VNPAY payment:', error);
+            toast.error("Đã xảy ra lỗi khi gọi thanh toán VNPAY.");
+        }
+    };  
+    
     return (
         <section className="h-100 h-custom" style={{ backgroundColor: '#d2c9ff' }}>
             <div className="container py-5 h-100">
@@ -245,8 +286,21 @@ const Cart = () => {
                                                     data-mdb-ripple-color="dark"
                                                     disabled={!orderItems || orderItems.length === 0} // Kiểm tra và vô hiệu hóa nút nếu không có sản phẩm trong giỏ hàng
                                                 >
-                                                    Đặt hàng
+                                                    Ship COD
                                                 </button>
+
+                                                <button
+                                                    type="button"
+                                                    onClick={() => submitOrderInCartPay(cart.totalPrice)}
+                                                    data-mdb-button-init
+                                                    data-mdb-ripple-init
+                                                    className="btn btn-dark btn-block btn-lg"
+                                                    data-mdb-ripple-color="dark"
+                                                    disabled={!orderItems || orderItems.length === 0} // Kiểm tra và vô hiệu hóa nút nếu không có sản phẩm trong giỏ hàng
+                                                >
+                                                    Thanh toán VNPAY
+                                                </button>
+
 
                                             </div>
                                         )}
