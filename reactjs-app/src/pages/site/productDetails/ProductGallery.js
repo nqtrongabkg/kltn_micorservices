@@ -44,7 +44,7 @@ const ProductGallery = () => {
             fetchStockAvailability();
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [options]); // Ensure this runs whenever options are updated
+    }, [options]);
 
 
     useEffect(() => {
@@ -166,45 +166,45 @@ const ProductGallery = () => {
     const ThumbnailsCarousel = ({ galleries, handleThumbnailClick }) => {
         const [visibleStart, setVisibleStart] = useState(0);
         const maxVisible = 4; // Number of thumbnails visible at any time
-    
+
         const handlePrevClick = () => {
             setVisibleStart(Math.max(0, visibleStart - maxVisible));
         };
-    
+
         const handleNextClick = () => {
             setVisibleStart(Math.min(galleries.length - maxVisible, visibleStart + maxVisible));
         };
-    
+
         return (
             <div className="thumbnail-carousel d-flex align-items-center justify-content-center">
-            <button className="btn btn-outline-secondary me-2" onClick={handlePrevClick} disabled={visibleStart === 0}>
-                &lt;
-            </button>
-            <div className="thumbnails d-flex overflow-auto" style={{ width: 'calc(100% - 100px)' }}>
-                {galleries.slice(visibleStart, visibleStart + maxVisible).map((gallery, index) => (
-                    <a key={index}
-                        className="border mx-1"
-                        target="_blank"
-                        data-type="image"
-                        href={gallery.image}
-                        rel="noopener noreferrer"
-                        onClick={(e) => {
-                            e.preventDefault();
-                            handleThumbnailClick(gallery.image);
-                        }}>
-                        <img width="120"
-                             height="120"
-                             className="img-fluid rounded"
-                             src={urlImageProductGallary + gallery.image}
-                             alt={`Thumbnail ${index + 1}`} />
-                    </a>
-                ))}
+                <button className="btn btn-outline-secondary me-2" onClick={handlePrevClick} disabled={visibleStart === 0}>
+                    &lt;
+                </button>
+                <div className="thumbnails d-flex overflow-auto" style={{ width: 'calc(100% - 100px)' }}>
+                    {galleries.slice(visibleStart, visibleStart + maxVisible).map((gallery, index) => (
+                        <a key={index}
+                            className="border mx-1"
+                            target="_blank"
+                            data-type="image"
+                            href={gallery.image}
+                            rel="noopener noreferrer"
+                            onClick={(e) => {
+                                e.preventDefault();
+                                handleThumbnailClick(gallery.image);
+                            }}>
+                            <img width="120"
+                                height="120"
+                                className="img-fluid rounded"
+                                src={urlImageProductGallary + gallery.image}
+                                alt={`Thumbnail ${index + 1}`} />
+                        </a>
+                    ))}
+                </div>
+                <button className="btn btn-outline-secondary ms-2" onClick={handleNextClick} disabled={visibleStart + maxVisible >= galleries.length}>
+                    &gt;
+                </button>
             </div>
-            <button className="btn btn-outline-secondary ms-2" onClick={handleNextClick} disabled={visibleStart + maxVisible >= galleries.length}>
-                &gt;
-            </button>
-        </div>
-        
+
         );
     };
 
@@ -241,6 +241,7 @@ const ProductGallery = () => {
                                 <span className="h5">Giá bán: {formatPrice(priceToDisplay)}</span>
                             </div>
                             <p>{product.description}</p>
+                            <p>{product.detail}</p>
                             <main className="col-lg-6">
                                 <div className="product-options" style={{ margin: '10px 0', padding: '10px' }}>
                                     <h2>Chọn sản phẩm</h2>
@@ -270,20 +271,19 @@ const ProductGallery = () => {
                                 </div>
                             </main>
                             <hr />
-                            <div className="row mb-4">
-                                <div className="col-md-4 col-6 mb-3">
-                                    <label className="mb-2 d-block">Số lượng</label>
-                                    <div className="input-group mb-3" style={{ width: 170 }}>
-                                        <button className="btn btn-white border border-secondary px-3" type="button" onClick={handleQuantityDecrease}>
-                                            <FontAwesomeIcon icon={faMinus} />
-                                        </button>
-                                        <input type="text" className="form-control text-center border border-secondary" placeholder="1" aria-label="Example text with button addon" value={quantity} readOnly />
-                                        <button className="btn btn-white border border-secondary px-3" type="button" onClick={handleQuantityIncrease}>
-                                            <FontAwesomeIcon icon={faPlus} />
-                                        </button>
-                                    </div>
+                            <div className="col-md-4 col-6 mb-3">
+                                <label className="mb-2 d-block">Số lượng</label>
+                                <div className="input-group quantity-input">
+                                    <button className="btn btn-decrease" type="button" onClick={handleQuantityDecrease}>
+                                        <FontAwesomeIcon icon={faMinus} />
+                                    </button>
+                                    <input type="text" className="form-control text-center quantity-display" value={quantity} readOnly />
+                                    <button className="btn btn-increase" type="button" onClick={handleQuantityIncrease}>
+                                        <FontAwesomeIcon icon={faPlus} />
+                                    </button>
                                 </div>
                             </div>
+
                             <div className="row">
                                 <button
                                     className="btn btn-primary shadow-0"

@@ -31,5 +31,8 @@ const CategoryService = {
     delete: (id) => {
         return httpAxios.delete(`product-services/api/categories/delete/${id}`);
     },
+    search: (name) => {
+        return httpAxios.get(`product-services/api/categories/search/${name}`);
+    },
 }
 export default CategoryService;

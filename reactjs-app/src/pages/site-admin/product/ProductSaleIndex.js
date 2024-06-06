@@ -6,10 +6,18 @@ import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { urlImageProduct } from '../../../config';
 import { LocalDateTime, DateTimeFormatter } from 'js-joda';
+import Pagination from '../../site/homeComponents/productComponents/Pagination';
 
 const ProductSaleIndex = () => {
     const [sales, setSales] = useState([]);
     const [reload, setReload] = useState(0);
+
+    const [currentPage, setCurrentPage] = useState(1);
+    const [salesPerPage] = useState(10); // Số lượng giảm giá hiển thị trên mỗi trang
+    const indexOfLastSale = currentPage * salesPerPage;
+    const indexOfFirstSale = indexOfLastSale - salesPerPage;
+    const currentSales = sales.slice(indexOfFirstSale, indexOfLastSale);
+
 
     useEffect(() => {
         (async () => {
@@ -70,13 +78,19 @@ const ProductSaleIndex = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {sales && sales.length > 0 &&
-                            sales.map((sale, index) => (
+                        {currentSales && currentSales.length > 0 &&
+                            currentSales.map((sale, index) => (
                                 <ProductSaleTableRow key={sale.id} sale={sale} HandTrash={HandTrash} handleStatus={handleStatus} />
                             ))
                         }
                     </tbody>
                 </table>
+                <Pagination
+                    currentPage={currentPage}
+                    totalPages={Math.ceil(sales.length / salesPerPage)}
+                    onPageChange={setCurrentPage}
+                />
+
             </section>
         </div>
     );

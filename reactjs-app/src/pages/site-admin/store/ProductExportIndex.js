@@ -4,17 +4,25 @@ import ProductService from '../../../services/ProductService';
 // import { FaEye } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import { urlImageProduct } from '../../../config';
+import Pagination from '../../site/homeComponents/productComponents/Pagination';
 
 const ProductExportIndex = () => {
     const [exports, setExports] = useState([]);
     const [reload] = useState(0);
+
+    const [currentPage, setCurrentPage] = useState(1);
+    const [exportsPerPage] = useState(5); // Số lượng lịch sử xuất hàng hiển thị trên mỗi trang
+    const indexOfLastExport = currentPage * exportsPerPage;
+    const indexOfFirstExport = indexOfLastExport - exportsPerPage;
+    const currentExports = exports.slice(indexOfFirstExport, indexOfLastExport);
+
 
     useEffect(() => {
         const fetchExports = async () => {
             try {
                 const sessionUser = JSON.parse(sessionStorage.getItem('user'));
                 const result = await ProductStoreService.getExportsByUser(sessionUser.userId);
-                if(result){
+                if (result) {
                     result.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
                     setExports(result);
                 }
@@ -44,13 +52,19 @@ const ProductExportIndex = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {exports && exports.length > 0 &&
-                            exports.map((exportItem, index) => (
+                        {currentExports && currentExports.length > 0 &&
+                            currentExports.map((exportItem, index) => (
                                 <ProductExportTableRow key={exportItem.id} exportItem={exportItem} />
                             ))
                         }
                     </tbody>
                 </table>
+                <Pagination
+                    currentPage={currentPage}
+                    totalPages={Math.ceil(exports.length / exportsPerPage)}
+                    onPageChange={setCurrentPage}
+                />
+
             </section>
         </div>
     );

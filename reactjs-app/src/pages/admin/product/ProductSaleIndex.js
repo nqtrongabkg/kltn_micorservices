@@ -6,21 +6,33 @@ import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { urlImageProduct } from '../../../config';
 import { LocalDateTime, DateTimeFormatter } from 'js-joda';
+import Pagination from '../../site/homeComponents/productComponents/Pagination';
 
 const ProductSaleIndex = () => {
     const [sales, setSales] = useState([]);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [salesPerPage] = useState(10); // Số lượng sản phẩm trên mỗi trang
     const [reload, setReload] = useState(0);
 
     useEffect(() => {
-        (async () => {
+        const fetchSales = async () => {
             const result = await ProductSaleService.getAll();
             // Filter out sales with status 2
             const filteredSales = result.filter(sale => sale.status !== 2);
             // Sort the filtered sales array by createdAt property from newest to oldest
             filteredSales.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
             setSales(filteredSales);
-        })();
+        };
+
+        fetchSales();
     }, [reload]);
+
+    // Lấy index của sản phẩm đầu tiên trên trang hiện tại
+    const indexOfLastSale = currentPage * salesPerPage;
+    const indexOfFirstSale = indexOfLastSale - salesPerPage;
+    const currentSales = sales.slice(indexOfFirstSale, indexOfLastSale);
+
+    const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
     const HandTrash = async (id) => {
         await ProductSaleService.trash(id);
@@ -30,7 +42,7 @@ const ProductSaleIndex = () => {
 
     const handleStatus = async (id, currentStatus) => {
         try {
-            await ProductSaleService.sitchStatus(id);
+            await ProductSaleService.switchStatus(id);
             setReload(Date.now());
             toast.success("Thành công");
         } catch (error) {
@@ -68,13 +80,18 @@ const ProductSaleIndex = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {sales && sales.length > 0 &&
-                            sales.map((sale, index) => (
+                        {currentSales && currentSales.length > 0 &&
+                            currentSales.map((sale, index) => (
                                 <ProductSaleTableRow key={sale.id} sale={sale} HandTrash={HandTrash} handleStatus={handleStatus} />
                             ))
                         }
                     </tbody>
                 </table>
+                <Pagination
+                    currentPage={currentPage}
+                    totalPages={Math.ceil(sales.length / salesPerPage)}
+                    onPageChange={paginate}
+                />
             </section>
         </div>
     );

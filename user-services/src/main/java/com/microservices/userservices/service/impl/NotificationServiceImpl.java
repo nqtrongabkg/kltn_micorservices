@@ -10,6 +10,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -67,21 +68,31 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Override
     public List<NotificationResponse> getByUser(UUID userId) {
-        List<Notification> notifications = notificationRepository.findByUserId(userId);
+        List<Notification> notifications = notificationRepository.findByUserIdAndStatusNot(userId, 0);
         return notifications.stream()
+                .sorted(Comparator.comparing(Notification::getCreatedAt).reversed())
                 .map(this::mapEntityToResponse)
                 .collect(Collectors.toList());
     }
 
-     @Override
+    @Override
     public void switchStatus(UUID id) {
         Notification notification = notificationRepository.findById(id)
-                .orElseThrow(() -> new CustomException("Role not found", "ROLE_NOT_FOUND"));
+                .orElseThrow(() -> new CustomException("not found", "NOT_FOUND"));
 
         // Chuyển đổi giá trị của status
         int currentStatus = notification.getStatus();
         int newStatus = (currentStatus == 1) ? 0 : 1;
         notification.setStatus(newStatus);
+        // Lưu trạng thái đã chuyển đổi
+        notificationRepository.save(notification);
+    }
+
+    @Override
+    public void seen(UUID id) {
+        Notification notification = notificationRepository.findById(id)
+                .orElseThrow(() -> new CustomException("not found", "NOT_FOUND"));
+        notification.setStatusOfSee(1);
         // Lưu trạng thái đã chuyển đổi
         notificationRepository.save(notification);
     }
@@ -96,6 +107,11 @@ public class NotificationServiceImpl implements NotificationService {
 
         // Lưu trạng thái đã thay đổi
         notificationRepository.save(notification);
+    }
+
+    @Override
+    public int countUnseenByUser(UUID userId) {
+        return notificationRepository.countByUserIdAndStatusOfSee(userId, 0);
     }
 
     private void mapRequestToEntity(NotificationRequest notificationRequest, Notification notification) {

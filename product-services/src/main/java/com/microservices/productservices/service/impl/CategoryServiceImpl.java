@@ -127,6 +127,14 @@ public class CategoryServiceImpl implements CategoryService {
         return null;
     }
 
+    @Override
+    public List<CategoryResponse> searchByName(String name) {
+        List<Category> categories = categoryRepository.findByNameContainingIgnoreCase(name);
+        return categories.stream()
+                .map(this::mapCategoryToCategoryResponse)
+                .collect(Collectors.toList());
+    }
+
     private CategoryResponse mapCategoryToCategoryResponse(Category category) {
         if (category != null) {
             return CategoryResponse.builder()

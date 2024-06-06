@@ -5,17 +5,28 @@ import ProductOptionService from '../../../services/ProductOptionService';
 import { FaEdit, FaDollyFlatbed } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import { urlImageProduct } from '../../../config';
+import Pagination from '../../site/homeComponents/productComponents/Pagination';
 
 const ProductStoreIndex = () => {
     const [stores, setStores] = useState([]);
     const [reload] = useState(0);
+
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(0);
+    const itemsPerPage = 10; // Số sản phẩm mỗi trang
+    const handlePageChange = (pageNumber) => {
+        setCurrentPage(pageNumber);
+    };
+    const indexOfLastItem = currentPage * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+    const currentItems = stores.slice(indexOfFirstItem, indexOfLastItem);
 
     useEffect(() => {
         (async () => {
             const result = await ProductStoreService.getAll();
             result.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
             setStores(result);
-            // console.log("stores is:", result);
+            setTotalPages(Math.ceil(result.length / itemsPerPage));
         })();
     }, [reload]);
 
@@ -48,13 +59,12 @@ const ProductStoreIndex = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {stores && stores.length > 0 &&
-                            stores.map((store, index) => (
-                                <ProductTableRow key={store.id} store={store} />
-                            ))
-                        }
+                        {currentItems.map((store, index) => (
+                            <ProductTableRow key={store.id} store={store} />
+                        ))}
                     </tbody>
                 </table>
+                <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
             </section>
         </div>
     );
@@ -68,7 +78,6 @@ const ProductTableRow = ({ store }) => {
     useEffect(() => {
         const fetchProduct = async () => {
             try {
-                // console.log("store:", store);
                 const fetchedProduct = await ProductService.getById(store.productId);
                 setProduct(fetchedProduct);
             } catch (error) {
@@ -82,8 +91,6 @@ const ProductTableRow = ({ store }) => {
                 if (fetched !== null) {
                     const option = await ProductOptionService.getById(fetched.optionId);
                     setOption(option);
-                    // console.log("option: ", option);
-                    // console.log("value: ", fetched);
                 }
                 setOptionValue(fetched);
             } catch (error) {
@@ -108,7 +115,6 @@ const ProductTableRow = ({ store }) => {
                     )}
                 </div>
                 <div className="function_style">
-
                     <Link to={`/admin/product/store/edit/${store.id}`} className='px-1 text-primary'>
                         <FaEdit size={24}/>
                     </Link>

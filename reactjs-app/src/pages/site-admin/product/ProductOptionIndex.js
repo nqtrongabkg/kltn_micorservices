@@ -6,17 +6,25 @@ import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { urlImageProduct } from '../../../config';
 import { LocalDateTime, DateTimeFormatter } from 'js-joda';
+import Pagination from '../../site/homeComponents/productComponents/Pagination';
 
 const ProductOptionIndex = () => {
     const [options, setOptions] = useState([]);
     const [reload, setReload] = useState(0);
 
+    const [currentPage, setCurrentPage] = useState(1);
+    const [optionsPerPage] = useState(5); // Số lượng lựa chọn hiển thị trên mỗi trang
+    const indexOfLastOption = currentPage * optionsPerPage;
+    const indexOfFirstOption = indexOfLastOption - optionsPerPage;
+    const currentOptions = options.slice(indexOfFirstOption, indexOfLastOption);
+
+
     useEffect(() => {
         (async () => {
             const sessionUser = JSON.parse(sessionStorage.getItem('user'));
             const result = await ProductOptionService.getByUser(sessionUser.userId);
-            if(result !== null){
-                console.log("option list: ",result);
+            if (result !== null) {
+                console.log("option list: ", result);
             }
             // Filter out sales with status 2
             const filteredSales = result.filter(sale => sale.status !== 2);
@@ -63,7 +71,7 @@ const ProductOptionIndex = () => {
                                 <input type="checkbox" id="checkAll" />
                             </th>
                             <th>Tên sản phẩm</th>
-                            <th>Ảnh</th> 
+                            <th>Ảnh</th>
                             <th>Tên lựa chọn</th>
                             <th>Mô tả</th>
                             <th>Các lựa chọn</th>
@@ -71,13 +79,19 @@ const ProductOptionIndex = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {options && options.length > 0 &&
-                            options.map((option, index) => (
+                        {currentOptions && currentOptions.length > 0 &&
+                            currentOptions.map((option, index) => (
                                 <ProductOptionTableRow key={option.id} option={option} HandTrash={HandTrash} handleStatus={handleStatus} />
                             ))
                         }
                     </tbody>
                 </table>
+                <Pagination
+                    currentPage={currentPage}
+                    totalPages={Math.ceil(options.length / optionsPerPage)}
+                    onPageChange={setCurrentPage}
+                />
+
             </section>
         </div>
     );

@@ -2,17 +2,18 @@ import React, { useEffect, useState } from 'react';
 import { IonIcon } from '@ionic/react';
 import { Link, useNavigate } from 'react-router-dom';
 import { star, starOutline, bagAddOutline, repeatOutline, eyeOutline, heartOutline } from 'ionicons/icons';
+// import { FaChevronDown } from 'react-icons/fa';
 import ProductService from '../../../../services/ProductService';
 import ProductSaleService from '../../../../services/ProductSaleService';
 import FavoriteService from '../../../../services/FavoriteService';
 import { toast } from 'react-toastify';
 import { urlImageProduct } from '../../../../config';
-import Pagination from './Pagination';
+import '../../../../assets/styles/newProduct.css';
 
 const NewProducts = () => {
     const [allProducts, setAllProducts] = useState([]);
-    const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 12;
+    const [displayedProducts, setDisplayedProducts] = useState([]);
+    const [itemsToShow, setItemsToShow] = useState(12);
 
     useEffect(() => {
         (async () => {
@@ -29,28 +30,29 @@ const NewProducts = () => {
                 return product;
             }));
             setAllProducts(productsWithSale);
+            setDisplayedProducts(productsWithSale.slice(0, itemsToShow));
         })();
-    }, []);
+    }, [itemsToShow]);
 
-    const totalPages = Math.ceil(allProducts.length / itemsPerPage);
-    const indexOfLastProduct = currentPage * itemsPerPage;
-    const indexOfFirstProduct = indexOfLastProduct - itemsPerPage;
-    const currentProducts = allProducts.slice(indexOfFirstProduct, indexOfLastProduct);
-
-    const handlePageChange = (pageNumber) => {
-        setCurrentPage(pageNumber);
-        // window.scrollTo(0, 0);
+    const handleLoadMore = () => {
+        setItemsToShow(prev => prev + 12);
     };
 
     return (
         <div className="product-main border-top border-4 border-dark">
             <h2 className="title text-center" style={{ fontSize: '30px', marginTop: '10px' }}>Sản phẩm mới nhất</h2>
             <div className="product-grid">
-                {currentProducts.map((product) => (
+                {displayedProducts.map((product) => (
                     <ProductCard key={product.id} product={product} />
                 ))}
             </div>
-            <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
+            {displayedProducts.length < allProducts.length && (
+                <div className="text-center">
+                    <button onClick={handleLoadMore} className="btn-load-more">
+                        Xem Thêm
+                    </button>
+                </div>
+            )}
         </div>
     );
 };

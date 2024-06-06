@@ -5,10 +5,21 @@ import ProductOptionService from '../../../services/ProductOptionService';
 import { FaEdit, FaDollyFlatbed } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import { urlImageProduct } from '../../../config';
+import Pagination from '../../site/homeComponents/productComponents/Pagination';
 
 const ProductStoreIndex = () => {
     const [stores, setStores] = useState([]);
     const [reload] = useState(0);
+
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(0);
+    const itemsPerPage = 10; // Số sản phẩm mỗi trang
+    const handlePageChange = (pageNumber) => {
+        setCurrentPage(pageNumber);
+    };
+    const indexOfLastItem = currentPage * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+    const currentItems = stores.slice(indexOfFirstItem, indexOfLastItem);
 
     useEffect(() => {
         (async () => {
@@ -16,6 +27,7 @@ const ProductStoreIndex = () => {
             const result = await ProductStoreService.getbyUserId(sessionUser.userId);
             result.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
             setStores(result);
+            setTotalPages(Math.ceil(result.length / itemsPerPage));
             // console.log("stores is:", result);
         })();
     }, [reload]);
@@ -48,13 +60,14 @@ const ProductStoreIndex = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {stores && stores.length > 0 &&
-                            stores.map((store, index) => (
+                        {currentItems && currentItems.length > 0 &&
+                            currentItems.map((store, index) => (
                                 <ProductTableRow key={store.id} store={store} />
                             ))
                         }
                     </tbody>
                 </table>
+                <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
             </section>
         </div>
     );

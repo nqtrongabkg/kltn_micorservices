@@ -6,12 +6,13 @@ import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { urlImageProduct } from '../../../config';
 import { MdOutlineCollections } from "react-icons/md";
+import Pagination from '../../site/homeComponents/productComponents/Pagination';
 
 const ProductIndex = () => {
     const [products, setProducts] = useState([]);
     const [reload, setReload] = useState(0);
     const [brandNames, setBrandNames] = useState({});
-    const [page, setPage] = useState(0);
+    const [page, setPage] = useState(1); // Page starts from 1
     const [size] = useState(10);
     const [totalPages, setTotalPages] = useState(0);
 
@@ -19,12 +20,12 @@ const ProductIndex = () => {
         const fetchProducts = async () => {
             try {
                 const sessionUser = JSON.parse(sessionStorage.getItem('user'));
-                const response = await ProductService.getByUser(sessionUser.userId, page, size);
+                const response = await ProductService.getByUser(sessionUser.userId, page - 1, size); // Page index is 0-based
                 setProducts(response.content);
                 setTotalPages(response.totalPages);
             } catch (error) {
                 console.error("Error fetching:", error);
-            }
+            };
         };
         fetchProducts();
     }, [page, size, reload]);
@@ -64,20 +65,18 @@ const ProductIndex = () => {
         } catch (error) {
             console.error('Error switching status:', error);
             toast.error("Đã xảy ra lỗi khi thay đổi trạng thái.");
-        }
+        };
     };
 
     const handlePageChange = (newPage) => {
-        if (newPage >= 0 && newPage < totalPages) {
-            setPage(newPage);
-        }
+        setPage(newPage);
     };
 
     function formatDateToLocalDate(datetimeString) {
         const date = new Date(datetimeString);
         const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
         return date.toLocaleDateString('en-US', options);
-    }
+    };
 
     return (
         <div className="content">
@@ -162,26 +161,17 @@ const ProductIndex = () => {
                                         <td>{product.description}</td>
                                         <td>{product.evaluate}</td>
                                         <td>{formatDateToLocalDate(product.createdAt)}</td>
-                                        
                                     </tr>
                                 );
                             })
                         }
                     </tbody>
                 </table>
-                <div className="pagination">
-                    <ul className="pagination">
-                        <li className={`page-item ${page === 0 ? 'disabled' : ''}`}>
-                            <button className="page-link" onClick={() => handlePageChange(page - 1)}>Trang trước</button>
-                        </li>
-                        <li className="page-item disabled">
-                            <span className="page-link">Trang {page + 1} trên {totalPages}</span>
-                        </li>
-                        <li className={`page-item ${page === totalPages - 1 ? 'disabled' : ''}`}>
-                            <button className="page-link" onClick={() => handlePageChange(page + 1)}>Trang sau</button>
-                        </li>
-                    </ul>
-                </div>
+                <Pagination
+                    currentPage={page}
+                    totalPages={totalPages}
+                    onPageChange={handlePageChange}
+                />
             </section>
         </div>
     );

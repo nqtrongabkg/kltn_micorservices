@@ -27,4 +27,6 @@ public interface CategoryService {
     CategoryResponse delete(UUID id);
 
     void addProductQty(UUID id);
+
+    List<CategoryResponse> searchByName(String name);
 }

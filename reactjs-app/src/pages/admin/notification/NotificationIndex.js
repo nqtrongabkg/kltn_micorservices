@@ -3,17 +3,31 @@ import NotificationService from '../../../services/NotificationService';
 import { FaTrash, FaEdit, FaToggleOn, FaToggleOff } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import { Link } from 'react-router-dom';
+import Pagination from '../../site/homeComponents/productComponents/Pagination';
 
 const NotificationIndex = () => {
     const [notifications, setNotifications] = useState([]);
     const [reload, setReload] = useState(0);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const notificationsPerPage = 10; // Số thông báo trên mỗi trang
 
     useEffect(() => {
-        (async () => {
-            const result = await NotificationService.getAll();
-            setNotifications(result);
-        })();
+        const fetchNotifications = async () => {
+            try {
+                const result = await NotificationService.getAll();
+                setNotifications(result);
+                setTotalPages(Math.ceil(result.length / notificationsPerPage));
+            } catch (error) {
+                console.error("Error fetching notifications:", error);
+            }
+        };
+        fetchNotifications();
     }, [reload]);
+
+    const handlePageChange = (pageNumber) => {
+        setCurrentPage(pageNumber);
+    };
 
     const HandTrash = async (id) => {
         await NotificationService.trash(id);
@@ -31,6 +45,10 @@ const NotificationIndex = () => {
             toast.error("Đã xảy ra lỗi khi thay đổi trạng thái.");
         }
     };
+
+    const indexOfLastNotification = currentPage * notificationsPerPage;
+    const indexOfFirstNotification = indexOfLastNotification - notificationsPerPage;
+    const currentNotifications = notifications.slice(indexOfFirstNotification, indexOfLastNotification);
 
     return (
         <div className="content">
@@ -59,8 +77,8 @@ const NotificationIndex = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {notifications && notifications.length > 0 &&
-                            notifications.map((notification, index) => {
+                        {currentNotifications && currentNotifications.length > 0 &&
+                            currentNotifications.map((notification, index) => {
                                 // Chỉ hiển thị notification có status khác 2
                                 if (notification.status !== 2) {
                                     return (
@@ -105,6 +123,7 @@ const NotificationIndex = () => {
                         }
                     </tbody>
                 </table>
+                <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
             </section>
         </div>
     );

@@ -7,6 +7,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faStar } from '@fortawesome/free-solid-svg-icons';
 import ImageModal from './ImageModal';
 import '../../../assets/styles/content.css';
+import UserService from '../../../services/UserService';
+import Pagination from '../homeComponents/productComponents/Pagination';
 
 const Content = () => {
     const { id } = useParams();
@@ -17,6 +19,7 @@ const Content = () => {
     const [showModal, setShowModal] = useState(false);
     const [currentImage, setCurrentImage] = useState('');
     const [products, setProducts] = useState([]);
+    const [shop, setShop] = useState(null);
 
     useEffect(() => {
         const getData = async (id) => {
@@ -28,8 +31,12 @@ const Content = () => {
             const getProduct = await ProductService.getById(id);
             if (getProduct) {
                 const getProducts = await ProductService.getByUser(getProduct.createdBy, 0, 5);
+                const getShop = await UserService.getUserById(getProduct.createdBy);
                 if (getProducts && getProducts.content) {
                     setProducts(getProducts.content);
+                }
+                if(getShop){
+                    setShop(getShop);
                 }
             }
         };
@@ -93,17 +100,11 @@ const Content = () => {
                                     <p>Chưa có đánh giá</p>
                                 )}
                                 {/* Pagination */}
-                                <nav>
-                                    <ul className='pagination'>
-                                        {Array.from({ length: Math.ceil(feedbacks.length / feedbacksPerPage) }, (_, i) => (
-                                            <li key={i} className='page-item'>
-                                                <p onClick={() => paginate(i + 1)} className='page-link'>
-                                                    {i + 1}
-                                                </p>
-                                            </li>
-                                        ))}
-                                    </ul>
-                                </nav>
+                                <Pagination 
+                                    currentPage={currentPage} 
+                                    totalPages={Math.ceil(feedbacks.length / feedbacksPerPage)} 
+                                    onPageChange={paginate} 
+                                />
                             </div>
                         </div>
                     </div>
@@ -111,7 +112,7 @@ const Content = () => {
                         <div className="px-0 border rounded-2 shadow-0">
                             <div className="card">
                                 <div className="card-body">
-                                    <h5 className="card-title">Các sản phẩm khác của shop</h5>
+                                    <h5 className="card-title">Các sản phẩm khác của {shop ? shop.name : ""} shop</h5>
                                     {products.map(product => (
                                         <div 
                                             key={product.id} 

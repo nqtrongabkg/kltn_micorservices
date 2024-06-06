@@ -3,7 +3,7 @@ import { Outlet, useNavigate } from "react-router-dom";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './layoutAdmin.css';
 import { FaProductHunt, FaClone, FaRegUser } from "react-icons/fa";
-import { MdExitToApp, MdContactSupport } from "react-icons/md";
+import { MdExitToApp } from "react-icons/md";
 import { RiArticleFill } from "react-icons/ri";
 import { SiSellfy } from "react-icons/si";
 import { BiSolidUserRectangle } from "react-icons/bi";
@@ -200,11 +200,11 @@ const LayoutAdmin = () => {
                                                         {/* <i className="fa-regular fa-circle icon-left"></i> */}
                                                         <a href="/admin/user/index">Khách hàng</a>
                                                     </li>
-                                                    <li className="hdlitem">
+                                                    {/* <li className="hdlitem">
                                                         <MdContactSupport className="icon-left" />
-                                                        {/* <i className="fa-regular fa-circle icon-left"></i> */}
+                                                        <i className="fa-regular fa-circle icon-left"></i>
                                                         <a href="/admin/contact/index">Liên hệ</a>
-                                                    </li>
+                                                    </li> */}
                                                     <li className="hdlitem item-sub" id={'item4'} onClick={() => handleItemClick('item4')}>
                                                         <BsDisplay className="icon-left" />
                                                         {/* <i className="fa-brands fa-product-hunt icon-left"></i> */}

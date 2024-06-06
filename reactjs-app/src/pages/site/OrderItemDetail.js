@@ -4,12 +4,14 @@ import '../../assets/styles/OrderDetail.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faClipboardList, faShippingFast, faHome } from '@fortawesome/free-solid-svg-icons';
 import OrderItemService from '../../services/OrderItemService';
+import OrderService from '../../services/OrderService';
 import ProductService from '../../services/ProductService';
 import { urlImageProduct } from '../../config';
 
 const OrderItemDetail = () => {
     const { id } = useParams();
     const [item, setItem] = useState(null);
+    const [order, setOrder] = useState(null)
     const [product, setProduct] = useState(null);
     const navigate = useNavigate();
 
@@ -24,6 +26,11 @@ const OrderItemDetail = () => {
                     if (getProduct) {
                         console.log("product: ", getProduct);
                         setProduct(getProduct);
+                    }
+                    const orderResult = await OrderService.getById(result.orderId);
+                    if (orderResult) {
+                        console.log("order in detail item:", orderResult);
+                        setOrder(orderResult);
                     }
                 }
             } catch (error) {
@@ -77,7 +84,11 @@ const OrderItemDetail = () => {
                                             </div>
                                             <h5 className="bold">{product ? product.name : ""}</h5>
                                             <p className="text-muted"> Số lượng: {item ? item.quantity : ""}</p>
-                                            <h4 className="mb-3"> Thanh toán: {item.payment === "COD" ? "Ship COD" : `Số hóa đơn: ${item.payment}`} <span className="small text-muted"> VND </span></h4>
+                                            {order && (
+                                                <h4 className="mb-3">
+                                                    {order.payment === "COD" ? "Ship COD" : `Đã thanh toán, Số hóa đơn: ${order.payment}`}
+                                                </h4>
+                                            )}
                                             <h4 className="mb-3"> Tổng thanh toán: {item ? item.totalPrice : ""} <span className="small text-muted"> VND </span></h4>
                                             <div className='row'>
                                                 <div className='col-md-6'>

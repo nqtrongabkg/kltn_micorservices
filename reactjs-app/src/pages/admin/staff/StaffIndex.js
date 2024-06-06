@@ -4,26 +4,35 @@ import { FaToggleOn, FaTrash, FaEdit, FaToggleOff } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { urlImageUser } from '../../../config';
+import Pagination from '../../site/homeComponents/productComponents/Pagination';
 
 const StaffIndex = () => {
     const [users, setUsers] = useState([]);
     const [reload, setReload] = useState(0);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const usersPerPage = 10; // Số thành viên trên mỗi trang
 
     useEffect(() => {
         const fetchUsers = async () => {
             try {
                 let result = await UserService.getStaffs();
-                // Filter out users with status 2
-                result = result.filter(user => user.status !== 2 && user.userName !== "admin");// status == 2 la thung rac
+                // Filter out users with status 2 and admin user
+                result = result.filter(user => user.status !== 2 && user.userName !== "admin");
                 // Sort users by createdAt in descending order
                 const sortedUsers = result.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
                 setUsers(sortedUsers);
+                setTotalPages(Math.ceil(sortedUsers.length / usersPerPage));
             } catch (error) {
                 console.error("Error fetching users:", error);
             }
         };
         fetchUsers();
     }, [reload]);
+
+    const handlePageChange = (pageNumber) => {
+        setCurrentPage(pageNumber);
+    };
 
     const HandTrash = async (id) => {
         await UserService.trash(id);
@@ -41,6 +50,11 @@ const StaffIndex = () => {
             toast.error("Đã xảy ra lỗi khi thay đổi trạng thái.");
         }
     };
+
+    const indexOfLastUser = currentPage * usersPerPage;
+    const indexOfFirstUser = indexOfLastUser - usersPerPage;
+    const currentUsers = users.slice(indexOfFirstUser, indexOfLastUser);
+
     return (
         <div className="content">
             <section className="content-header my-2">
@@ -71,8 +85,8 @@ const StaffIndex = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {users && users.length > 0 &&
-                            users.map((user, index) => {
+                        {currentUsers && currentUsers.length > 0 &&
+                            currentUsers.map((user, index) => {
                                 return (
                                     <tr key={user.id} className="datarow">
                                         <td className="text-center">
@@ -121,6 +135,7 @@ const StaffIndex = () => {
                         }
                     </tbody>
                 </table>
+                <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
             </section>
         </div>
     );

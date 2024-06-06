@@ -7,12 +7,12 @@ import { urlImageProduct } from '../../../../config';
 import ProductService from '../../../../services/ProductService';
 import FavoriteService from '../../../../services/FavoriteService';
 import { toast } from 'react-toastify';
-import Pagination from './Pagination';
+import '../../../../assets/styles/newProduct.css';
 
 const Sale = () => {
     const [sales, setSales] = useState([]);
-    const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 12;
+    const [displayedSales, setDisplayedSales] = useState([]);
+    const [itemsToShow, setItemsToShow] = useState(12);
 
     useEffect(() => {
         (async () => {
@@ -20,30 +20,31 @@ const Sale = () => {
             const filteredSales = result.filter(sale => sale.status !== 2);
             filteredSales.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
             setSales(filteredSales);
+            setDisplayedSales(filteredSales.slice(0, itemsToShow));
         })();
-    }, []);
+    }, [itemsToShow]);
 
-    const totalPages = Math.ceil(sales.length / itemsPerPage);
-    const indexOfLastProduct = currentPage * itemsPerPage;
-    const indexOfFirstProduct = indexOfLastProduct - itemsPerPage;
-    const currentProducts = sales.slice(indexOfFirstProduct, indexOfLastProduct);
-
-    const handlePageChange = (pageNumber) => {
-        setCurrentPage(pageNumber);
-        window.scrollTo(0, 0);
+    const handleLoadMore = () => {
+        setItemsToShow(prev => prev + 12);
     };
 
     return (
         <div className="product-main border-top border-4 border-dark">
             <h2 className="title text-center" style={{ fontSize: '30px', marginTop: '10px' }}>Sản phẩm giảm giá</h2>
             <div className="product-grid">
-                {currentProducts && currentProducts.length > 0 &&
-                    currentProducts.map((sale, index) => (
+                {displayedSales && displayedSales.length > 0 &&
+                    displayedSales.map((sale) => (
                         <ProductSaleTableRow key={sale.id} sale={sale} />
                     ))
                 }
             </div>
-            <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
+            {displayedSales.length < sales.length && (
+                <div className="text-center">
+                    <button onClick={handleLoadMore} className="btn-load-more">
+                        Xem Thêm
+                    </button>
+                </div>
+            )}
         </div>
     );
 };
@@ -51,7 +52,6 @@ const Sale = () => {
 const ProductSaleTableRow = ({ sale }) => {
     const [product, setProduct] = useState(null);
     const navigate = useNavigate();
-
 
     useEffect(() => {
         const fetchProduct = async () => {
@@ -69,10 +69,7 @@ const ProductSaleTableRow = ({ sale }) => {
         return <div>Loading...</div>; // Or any loading indicator you prefer
     }
 
-    // Handle null image property
     const productImage = product.image ? `${urlImageProduct}/${product.image}` : 'placeholder-image.jpg';
-
-    // Calculate discount percentage
     const discountPercentage = ((product.price - sale.priceSale) / product.price) * 100;
 
     const addProductToFavorite = async (productId) => {
@@ -81,36 +78,27 @@ const ProductSaleTableRow = ({ sale }) => {
             navigate("/login", { state: { redirectTo: `/` } });
             return;
         }
-        else {
-            const favoriteAdd = {
-                productId: productId,
-                userId: JSON.parse(sessionStorage.getItem('user'))?.userId
-            };
-            const favoriteaAdded = await FavoriteService.create(favoriteAdd);
-            if (favoriteaAdded !== null) {
-                toast.success("Đã thêm sản phẩm vào yêu thích");
-            }
+        const favoriteAdd = { productId, userId: user.userId };
+        const favoriteAdded = await FavoriteService.create(favoriteAdd);
+        if (favoriteAdded !== null) {
+            toast.success("Đã thêm sản phẩm vào yêu thích");
         }
-
-    }
-
-    const formatPrice = (price) => {
-        return price.toLocaleString('vi-VN');
     };
+
+    const formatPrice = (price) => price.toLocaleString('vi-VN');
 
     return (
         <div className="showcase">
             <div className="showcase-banner">
-                <img src={productImage} className="product-img default" alt='HinhAnh' />
-                <img src={urlImageProduct + product.image} width={300} className="product-img hover" alt='HinhAnh' />
-                <p className="showcase-badge angle black">sale :{discountPercentage.toFixed(0)}%</p>
+                <img src={productImage} className="product-img default" alt={product.name} />
+                <img src={productImage} width={300} className="product-img hover" alt={`${product.name} on hover`} />
+                <p className="showcase-badge angle black">sale : {discountPercentage.toFixed(0)}%</p>
                 <div className="showcase-actions">
                     <button className="btn-action" onClick={() => addProductToFavorite(product.id)}>
                         <IonIcon icon={heartOutline} />
                     </button>
-
                     <button className="btn-action">
-                        <Link to={'/product-detail/' + product.id}>
+                        <Link to={`/product-detail/${product.id}`}>
                             <IonIcon icon={eyeOutline} />
                         </Link>
                     </button>
@@ -127,7 +115,6 @@ const ProductSaleTableRow = ({ sale }) => {
                 <a href="#nqt">
                     <h3 className="showcase-title">{product.description}</h3>
                 </a>
-                {/* Display product rating */}
                 <div className="showcase-rating">
                     {Array(product.evaluate)
                         .fill()
@@ -140,7 +127,6 @@ const ProductSaleTableRow = ({ sale }) => {
                             <IonIcon key={product.evaluate + index} icon={starOutline} />
                         ))}
                 </div>
-                {/* Display product price */}
                 <div className="price-box">
                     <p className="price">{formatPrice(sale.priceSale)}</p>
                     <del>{formatPrice(product.price)}</del>

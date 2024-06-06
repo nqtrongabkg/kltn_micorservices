@@ -5,6 +5,8 @@ import OrderItemService from '../../services/OrderItemService';
 import ProductService from '../../services/ProductService';
 import { urlImageUser, urlImageProduct } from '../../config';
 import { useNavigate } from 'react-router-dom';
+import Pagination from '../site/homeComponents/productComponents/Pagination';
+import userimage from '../../assets/images/logo/user.jpg';
 
 const MyUser = () => {
     const user = JSON.parse(sessionStorage.getItem('user'));
@@ -100,20 +102,7 @@ const MyUser = () => {
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
     const currentItems = renderedOrderItems.slice(indexOfFirstItem, indexOfLastItem);
 
-    // eslint-disable-next-line no-unused-vars
-    const paginate = (pageNumber) => setCurrentPage(pageNumber);
-
-    const nextPage = () => {
-        if (currentPage < Math.ceil(renderedOrderItems.length / itemsPerPage)) {
-            setCurrentPage(currentPage + 1);
-        }
-    };
-
-    const prevPage = () => {
-        if (currentPage > 1) {
-            setCurrentPage(currentPage - 1);
-        }
-    };
+    const handlePageChange = (pageNumber) => setCurrentPage(pageNumber);
 
     return (
         <>
@@ -124,7 +113,7 @@ const MyUser = () => {
                             <div className="card mb-4 align-items-center">
                                 <div className="card-body text-center">
                                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                                        <img src={userInfor && userInfor.avatar ? urlImageUser + userInfor.avatar : ''} alt="avatar" className="rounded-circle img-fluid mb-3" style={{ width: '150px', alignSelf: 'center' }} />
+                                        <img src={userInfor && userInfor.avatar ? urlImageUser + userInfor.avatar : userimage} alt="avatar" className="rounded-circle img-fluid mb-3" style={{ width: '150px', alignSelf: 'center' }} />
                                         <h5 className="my-3">{userInfor && userInfor.name ? userInfor.name : ""}</h5>
                                         <p className="text-muted mb-1">{userInfor && userInfor.role.name === "Buyer" ? "Người mua hàng" : "Người bán hàng"}</p>
                                         <p className="text-muted mb-4">{userInfor && userInfor.address ? userInfor.address : ""}</p>
@@ -170,16 +159,11 @@ const MyUser = () => {
                                 <div className="card-body">
                                     <h5 className="card-title mb-4">Lịch sử đặt hàng</h5>
                                     {currentItems.length > 0 ? currentItems : <p className="text-muted">Chưa có đơn hàng nào được hoàn tất</p>}
-                                    <nav className="mt-4">
-                                        <ul className="pagination justify-content-center">
-                                            <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
-                                                <button className="page-link" onClick={prevPage} disabled={currentPage === 1}>Trang trước</button>
-                                            </li>
-                                            <li className={`page-item ${currentPage === Math.ceil(renderedOrderItems.length / itemsPerPage) ? 'disabled' : ''}`}>
-                                                <button className="page-link" onClick={nextPage} disabled={currentPage === Math.ceil(renderedOrderItems.length / itemsPerPage)}>Trang tiếp theo</button>
-                                            </li>
-                                        </ul>
-                                    </nav>
+                                    <Pagination
+                                        currentPage={currentPage}
+                                        totalPages={Math.ceil(renderedOrderItems.length / itemsPerPage)}
+                                        onPageChange={handlePageChange}
+                                    />
                                 </div>
                             </div>
                         </div>

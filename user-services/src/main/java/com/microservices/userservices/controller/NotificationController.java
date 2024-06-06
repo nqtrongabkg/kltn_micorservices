@@ -65,10 +65,21 @@ public class NotificationController {
         notificationService.switchStatus(id);
         return ResponseEntity.ok().build();
     }   
+    @PutMapping("/seen/{id}")
+    public ResponseEntity<Void> seen(@PathVariable UUID id) {
+        notificationService.seen(id);
+        return ResponseEntity.ok().build();
+    }   
     
     @PutMapping("/trash/{id}")
     public ResponseEntity<Void> trash(@PathVariable UUID id) {
         notificationService.trash(id);
         return ResponseEntity.ok().build();
     }    
+
+    @GetMapping("/count-unseen-by-user/{userId}")
+    public ResponseEntity<Integer> countUnseenByUser(@PathVariable UUID userId) {
+        int count = notificationService.countUnseenByUser(userId);
+        return ResponseEntity.ok(count);
+    }
 }

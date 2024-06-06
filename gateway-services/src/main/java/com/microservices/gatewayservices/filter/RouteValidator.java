@@ -43,6 +43,7 @@ public class RouteValidator {
         "/product-services/api/option-values/get-by-option-id/**",
 
         "/product-services/api/product-categories/get-all",
+        "/product-services/api/categories/search/**",
         "/product-services/api/product-categories/get-by-product-id/**",
         "/product-services/api/product-categories/get-by-category-id/**",
 

@@ -23,4 +23,8 @@ public interface NotificationService {
     void switchStatus(UUID id);
 
     void trash(UUID id);
+
+    void seen(UUID id);
+
+    int countUnseenByUser(UUID userId);
 }

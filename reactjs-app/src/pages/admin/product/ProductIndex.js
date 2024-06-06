@@ -6,19 +6,20 @@ import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { urlImageProduct } from '../../../config';
 import { MdOutlineCollections } from "react-icons/md";
+import Pagination from '../../site/homeComponents/productComponents/Pagination';
 
 const ProductIndex = () => {
     const [products, setProducts] = useState([]);
     const [reload, setReload] = useState(0);
     const [brandNames, setBrandNames] = useState({});
-    const [page, setPage] = useState(0);
-    const [size] = useState(10);
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 10; // Number of items per page
     const [totalPages, setTotalPages] = useState(0);
 
     useEffect(() => {
         const fetchProducts = async () => {
             try {
-                let response = await ProductService.getPageSize(page, size);
+                let response = await ProductService.getPageSize(currentPage - 1, itemsPerPage);
                 setProducts(response.content);
                 setTotalPages(response.totalPages);
             } catch (error) {
@@ -26,7 +27,7 @@ const ProductIndex = () => {
             }
         };
         fetchProducts();
-    }, [page, size, reload]);
+    }, [currentPage, itemsPerPage, reload]);
 
     useEffect(() => {
         const fetchBrandNames = async () => {
@@ -49,7 +50,7 @@ const ProductIndex = () => {
         fetchBrandNames();
     }, [products]);
 
-    const HandTrash = async (id) => {
+    const handleTrash = async (id) => {
         await ProductService.trash(id);
         setReload(Date.now());
         toast.success("Chuyển vào thùng rác");
@@ -57,7 +58,7 @@ const ProductIndex = () => {
 
     const handleStatus = async (id, currentStatus) => {
         try {
-            await ProductService.sitchStatus(id);
+            await ProductService.switchStatus(id);
             setReload(Date.now());
             toast.success("Thành công");
         } catch (error) {
@@ -67,8 +68,8 @@ const ProductIndex = () => {
     };
 
     const handlePageChange = (newPage) => {
-        if (newPage >= 0 && newPage < totalPages) {
-            setPage(newPage);
+        if (newPage >= 1 && newPage <= totalPages) {
+            setCurrentPage(newPage);
         }
     };
 
@@ -132,12 +133,11 @@ const ProductIndex = () => {
                                                 <Link to={'/admin/product/option-add/' + product.id} className="px-1">
                                                     <FaHandLizard size={24} />
                                                 </Link>
-                                                <Link to={'/admin/product/gallary-index/' + product.id} className="px-1">
+                                                <Link to={'/admin/product/gallery-index/' + product.id} className="px-1">
                                                     <MdOutlineCollections size={24} />
                                                 </Link>
-
                                                 <button
-                                                    onClick={() => HandTrash(product.id)}
+                                                    onClick={() => handleTrash(product.id)}
                                                     className="btn-none px-1 text-danger">
                                                     <FaTrash />
                                                 </button>
@@ -161,20 +161,11 @@ const ProductIndex = () => {
                         }
                     </tbody>
                 </table>
-                <div className="pagination">
-                    <ul className="pagination">
-                        <li className={`page-item ${page === 0 ? 'disabled' : ''}`}>
-                            <button className="page-link" onClick={() => handlePageChange(page - 1)}>Trang trước</button>
-                        </li>
-                        <li className="page-item disabled">
-                            <span className="page-link">Trang {page + 1} trên {totalPages}</span>
-                        </li>
-                        <li className={`page-item ${page === totalPages - 1 ? 'disabled' : ''}`}>
-                            <button className="page-link" onClick={() => handlePageChange(page + 1)}>Trang sau</button>
-                        </li>
-                    </ul>
-                </div>
-
+                <Pagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={handlePageChange}
+                />
             </section>
         </div>
     );

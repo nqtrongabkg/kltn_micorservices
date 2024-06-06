@@ -1,23 +1,28 @@
 import React, { useEffect, useState } from 'react';
-import Sliderervice from '../../../services/SliderService';
+import SliderService from '../../../services/SliderService';
 import { FaToggleOn, FaTrash, FaEdit, FaToggleOff } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { urlImageSlider } from '../../../config';
+import Pagination from '../../site/homeComponents/productComponents/Pagination';
 
 const SliderIndex = () => {
     const [sliders, setSliders] = useState([]);
     const [reload, setReload] = useState(0);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const slidersPerPage = 10; // Số sliders trên mỗi trang
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                let result = await Sliderervice.getAll();
-                // Filter out users with status 2
-                result = result.filter(user => user.status !== 2);
-                // Sort users by createdAt in descending order
-                const sortedUsers = result.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-                setSliders(sortedUsers);
+                let result = await SliderService.getAll();
+                // Filter out sliders with status 2
+                result = result.filter(slider => slider.status !== 2);
+                // Sort sliders by createdAt in descending order
+                const sortedSliders = result.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                setSliders(sortedSliders);
+                setTotalPages(Math.ceil(sortedSliders.length / slidersPerPage));
             } catch (error) {
                 console.error("Error fetching:", error);
             }
@@ -25,15 +30,19 @@ const SliderIndex = () => {
         fetchData();
     }, [reload]);
 
+    const handlePageChange = (pageNumber) => {
+        setCurrentPage(pageNumber);
+    };
+
     const HandTrash = async (id) => {
-        await Sliderervice.trash(id);
+        await SliderService.trash(id);
         setReload(Date.now());
         toast.success("Chuyển vào thùng rác");
     };
 
     const handleStatus = async (id, currentStatus) => {
         try {
-            await Sliderervice.sitchStatus(id);
+            await SliderService.sitchStatus(id);
             setReload(Date.now());
             toast.success("Thành công");
         } catch (error) {
@@ -41,11 +50,17 @@ const SliderIndex = () => {
             toast.error("Đã xảy ra lỗi khi thay đổi trạng thái.");
         }
     };
-    const handleDislay = async (id) => {
-        await Sliderervice.display(id);
+
+    const handleDisplay = async (id) => {
+        await SliderService.display(id);
         setReload(Date.now());
         toast.success("Đã chuyển đổi trưng bày");
     };
+
+    const indexOfLastSlider = currentPage * slidersPerPage;
+    const indexOfFirstSlider = indexOfLastSlider - slidersPerPage;
+    const currentSliders = sliders.slice(indexOfFirstSlider, indexOfLastSlider);
+
     return (
         <div className="content">
             <section className="content-header my-2">
@@ -74,8 +89,8 @@ const SliderIndex = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {sliders && sliders.length > 0 &&
-                            sliders.map((slider, index) => {
+                        {currentSliders && currentSliders.length > 0 &&
+                            currentSliders.map((slider, index) => {
                                 return (
                                     <tr key={slider.id} className="datarow">
                                         <td className="text-center">
@@ -116,7 +131,7 @@ const SliderIndex = () => {
                                         <td>{slider.createdAt}</td>
                                         <td>
                                             <button
-                                                onClick={() => handleDislay(slider.id)}
+                                                onClick={() => handleDisplay(slider.id)}
                                                 className={
                                                     slider.status === 3 ? "border-0 px-1 text-success" : "border-0 px-1 text-danger"
                                                 }>
@@ -129,6 +144,7 @@ const SliderIndex = () => {
                         }
                     </tbody>
                 </table>
+                <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
             </section>
         </div>
     );

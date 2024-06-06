@@ -6,14 +6,14 @@ import ProductService from '../../services/ProductService';
 import FavoriteService from '../../services/FavoriteService';
 import ProductSaleService from '../../services/ProductSaleService';
 import { urlImageProduct } from '../../config';
-import ReactPaginate from 'react-paginate';
 import '../../assets/styles/favoriteProduct.css';
+import Pagination from './homeComponents/productComponents/Pagination';
 
 const FavoriteProduct = () => {
     const user = JSON.parse(sessionStorage.getItem('user'));
     const [favorites, setFavorites] = useState([]);
     const [products, setProducts] = useState([]);
-    const [currentPage, setCurrentPage] = useState(0);
+    const [currentPage, setCurrentPage] = useState(1); // Update initial state to 1
     const productsPerPage = 5;
     const navigate = useNavigate(); // Initialize useNavigate
 
@@ -54,8 +54,8 @@ const FavoriteProduct = () => {
         }
     }, [favorites]);
 
-    const handlePageChange = ({ selected }) => {
-        setCurrentPage(selected);
+    const handlePageChange = (pageNumber) => {
+        setCurrentPage(pageNumber);
     };
 
     const handleDelete = async (favoriteId) => {
@@ -75,7 +75,7 @@ const FavoriteProduct = () => {
         return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
     };
 
-    const indexOfLastProduct = (currentPage + 1) * productsPerPage;
+    const indexOfLastProduct = currentPage * productsPerPage;
     const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
     const currentProducts = products.slice(indexOfFirstProduct, indexOfLastProduct);
 
@@ -166,16 +166,10 @@ const FavoriteProduct = () => {
                         </div>
                     </div>
                 ))}
-                <ReactPaginate
-                    previousLabel={'Trang trước'}
-                    nextLabel={'Trang sau'}
-                    pageCount={Math.ceil(products.length / productsPerPage)}
+                <Pagination
+                    currentPage={currentPage}
+                    totalPages={Math.ceil(products.length / productsPerPage)}
                     onPageChange={handlePageChange}
-                    containerClassName={'pagination'}
-                    previousLinkClassName={'pagination__link pagination__link--previous'}
-                    nextLinkClassName={'pagination__link pagination__link--next'}
-                    disabledClassName={'pagination__link--disabled'}
-                    activeClassName={'pagination__link--active'}
                 />
             </div>
         </section>

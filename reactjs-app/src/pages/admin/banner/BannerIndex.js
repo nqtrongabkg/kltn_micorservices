@@ -4,18 +4,21 @@ import { FaToggleOn, FaTrash, FaEdit, FaToggleOff } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { urlImageBanner } from '../../../config';
+import Pagination from '../../site/homeComponents/productComponents/Pagination';
 
 const BannerIndex = () => {
     const [banners, setBanners] = useState([]);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [bannersPerPage] = useState(5); // Số lượng banner trên mỗi trang
     const [reload, setReload] = useState(0);
 
     useEffect(() => {
         const fetchData = async () => {
             try {
                 let result = await BannerService.getAll();
-                // Filter out users with status 2
-                result = result.filter(user => user.status !== 2);
-                // Sort users by createdAt in descending order
+                // Filter out banners with status 2
+                result = result.filter(banner => banner.status !== 2);
+                // Sort banners by createdAt in descending order
                 const sortedData = result.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
                 setBanners(sortedData);
             } catch (error) {
@@ -24,6 +27,13 @@ const BannerIndex = () => {
         };
         fetchData();
     }, [reload]);
+
+    // Lấy index của banner đầu tiên trên trang hiện tại
+    const indexOfLastBanner = currentPage * bannersPerPage;
+    const indexOfFirstBanner = indexOfLastBanner - bannersPerPage;
+    const currentBanners = banners.slice(indexOfFirstBanner, indexOfLastBanner);
+
+    const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
     const HandTrash = async (id) => {
         await BannerService.trash(id);
@@ -41,11 +51,13 @@ const BannerIndex = () => {
             toast.error("Đã xảy ra lỗi khi thay đổi trạng thái.");
         }
     };
+
     const handleDislay = async (id) => {
         await BannerService.display(id);
         setReload(Date.now());
         toast.success("Đã chuyển đổi trưng bày");
     };
+
     return (
         <div className="content">
             <section className="content-header my-2">
@@ -74,8 +86,8 @@ const BannerIndex = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {banners && banners.length > 0 &&
-                            banners.map((banner, index) => {
+                        {currentBanners && currentBanners.length > 0 &&
+                            currentBanners.map((banner, index) => {
                                 return (
                                     <tr key={banner.id} className="datarow">
                                         <td className="text-center">
@@ -88,22 +100,22 @@ const BannerIndex = () => {
                                                 </a>
                                             </div>
                                             <div className="function_style">
-                                                    <button
-                                                        onClick={() => handleStatus(banner.id, banner.status)}
-                                                        className={
-                                                            banner.status === 1 ? "border-0 px-1 text-success" : "border-0 px-1 text-danger"
-                                                        }>
-                                                        {banner.status === 1 ? <FaToggleOn size={24}/> : <FaToggleOff size={24}/>}
-                                                    </button>
-                                                    <Link to={"/admin/banner/edit/" + banner.id} className='px-1 text-primary'>
-                                                        <FaEdit size={20}/>
-                                                    </Link>
-                                                    <button
-                                                        onClick={() => HandTrash(banner.id)}
-                                                        className="btn-none px-1 text-danger">
-                                                        <FaTrash />
-                                                    </button>
-                                                </div>
+                                                <button
+                                                    onClick={() => handleStatus(banner.id, banner.status)}
+                                                    className={
+                                                        banner.status === 1 ? "border-0 px-1 text-success" : "border-0 px-1 text-danger"
+                                                    }>
+                                                    {banner.status === 1 ? <FaToggleOn size={24}/> : <FaToggleOff size={24}/>}
+                                                </button>
+                                                <Link to={"/admin/banner/edit/" + banner.id} className='px-1 text-primary'>
+                                                    <FaEdit size={20}/>
+                                                </Link>
+                                                <button
+                                                    onClick={() => HandTrash(banner.id)}
+                                                    className="btn-none px-1 text-danger">
+                                                    <FaTrash />
+                                                </button>
+                                            </div>
                                         </td>
                                         <td>
                                             {banner.image ? (
@@ -115,13 +127,13 @@ const BannerIndex = () => {
                                         <td>{banner.description}</td>
                                         <td>{banner.createdAt}</td>
                                         <td>
-                                        <button
-                                                        onClick={() => handleDislay(banner.id)}
-                                                        className={
-                                                            banner.status === 3 ? "border-0 px-1 text-success" : "border-0 px-1 text-danger"
-                                                        }>
-                                                        {banner.status === 3 ? <FaToggleOn size={24}/> : <FaToggleOff size={24}/>}
-                                                    </button>
+                                            <button
+                                                onClick={() => handleDislay(banner.id)}
+                                                className={
+                                                    banner.status === 3 ? "border-0 px-1 text-success" : "border-0 px-1 text-danger"
+                                                }>
+                                                {banner.status === 3 ? <FaToggleOn size={24}/> : <FaToggleOff size={24}/>}
+                                            </button>
                                         </td>
                                     </tr>
                                 );
@@ -129,6 +141,11 @@ const BannerIndex = () => {
                         }
                     </tbody>
                 </table>
+                <Pagination
+                    currentPage={currentPage}
+                    totalPages={Math.ceil(banners.length / bannersPerPage)}
+                    onPageChange={paginate}
+                />
             </section>
         </div>
     );

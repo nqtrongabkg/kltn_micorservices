@@ -5,6 +5,7 @@ import RoleService from '../../services/RoleService';
 import { urlImageUser } from '../../config';
 import { toast } from 'react-toastify';
 import { useUserContext } from '../../layouts/LayoutSite';
+import userimage from '../../assets/images/logo/user.jpg';
 
 const UserManager = () => {
     const { logout } = useUserContext();
@@ -195,7 +196,7 @@ const UserManager = () => {
                             <div className="card mb-4">
                                 <div className="card-body text-center d-flex flex-column align-items-center">
                                     <img
-                                        src={userDisplay && userDisplay.avatar ? `${urlImageUser}${userDisplay.avatar}` : ''}
+                                        src={userDisplay && userDisplay.avatar ? `${urlImageUser}${userDisplay.avatar}` : userimage}
                                         alt="Chưa có ảnh"
                                         className="rounded-circle img-fluid mb-3"
                                         style={{ width: '150px' }}

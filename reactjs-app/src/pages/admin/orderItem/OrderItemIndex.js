@@ -7,10 +7,14 @@ import { FaToggleOn, FaTrash, FaToggleOff, FaCheckSquare } from 'react-icons/fa'
 import { toast } from 'react-toastify';
 import { urlImageProduct } from '../../../config';
 import ProductStoreService from '../../../services/ProductStoreService';
+import Pagination from '../../site/homeComponents/productComponents/Pagination';
 
 const OrderItemIndex = () => {
     const [orderItems, setOrderItems] = useState([]);
     const [reload, setReload] = useState(0);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const itemsPerPage = 10; // Define the number of items per page
 
     useEffect(() => {
         const fetchOrderItems = async () => {
@@ -31,18 +35,28 @@ const OrderItemIndex = () => {
                     }
                 }
                 const itemsWithProductFill = itemsWithProduct.filter(item => item.status !== 2);
-                const sorted =  itemsWithProductFill.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-                setOrderItems(sorted);
+                const sorted = itemsWithProductFill.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                
+                // Calculate pagination
+                const totalItems = sorted.length;
+                const totalPages = Math.ceil(totalItems / itemsPerPage);
+                setTotalPages(totalPages);
+                const paginatedItems = sorted.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+
+                setOrderItems(paginatedItems);
             } catch (error) {
                 console.error("Error fetching order items:", error);
             }
         };
-    
+
         fetchOrderItems();
-    }, [reload]);
+    }, [reload, currentPage]);
+
+    const handlePageChange = (pageNumber) => {
+        setCurrentPage(pageNumber);
+    };
 
     const HandTrash = async (id) => {
-        
         await OrderItemService.trash(id);
         setReload(Date.now());
         toast.success("Chuyển vào thùng rác");
@@ -58,11 +72,11 @@ const OrderItemIndex = () => {
                 price: item.totalPrice,
                 description: item.option.name + "/" + item.optionValue.value,
                 createdBy: JSON.parse(sessionStorage.getItem('useradmin'))?.userId
-            }
+            };
             const exportAdd = await ProductStoreService.export(dataExport);
-            if(exportAdd !== null){
+            if (exportAdd !== null) {
                 setReload(Date.now());
-            toast.success("Xác nhận đơn hàng");
+                toast.success("Xác nhận đơn hàng");
             }
         } catch (error) {
             console.error("Error export:", error);
@@ -176,6 +190,11 @@ const OrderItemIndex = () => {
                         }
                     </tbody>
                 </table>
+                <Pagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={handlePageChange}
+                />
             </section>
         </div>
     );

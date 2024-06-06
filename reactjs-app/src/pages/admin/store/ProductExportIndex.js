@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import ProductStoreService from '../../../services/ProductStoreService';
 import ProductService from '../../../services/ProductService';
-// import { FaEye } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import { urlImageProduct } from '../../../config';
+import Pagination from '../../site/homeComponents/productComponents/Pagination';
 
 const ProductExportIndex = () => {
     const [exports, setExports] = useState([]);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [exportsPerPage] = useState(10); // Số lượng xuất hàng trên mỗi trang
     const [reload] = useState(0);
 
     useEffect(() => {
@@ -23,6 +25,14 @@ const ProductExportIndex = () => {
         };
         fetchExports();
     }, [reload]);
+
+    // Lấy index của sản phẩm đầu tiên trên trang hiện tại
+    const indexOfLastExport = currentPage * exportsPerPage;
+    const indexOfFirstExport = indexOfLastExport - exportsPerPage;
+    const currentExports = exports.slice(indexOfFirstExport, indexOfLastExport);
+
+    const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
     return (
         <div className="content">
             <section className="content-header my-2">
@@ -43,13 +53,18 @@ const ProductExportIndex = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {exports && exports.length > 0 &&
-                            exports.map((exportItem, index) => (
+                        {currentExports && currentExports.length > 0 &&
+                            currentExports.map((exportItem, index) => (
                                 <ProductExportTableRow key={exportItem.id} exportItem={exportItem} />
                             ))
                         }
                     </tbody>
                 </table>
+                <Pagination
+                    currentPage={currentPage}
+                    totalPages={Math.ceil(exports.length / exportsPerPage)}
+                    onPageChange={paginate}
+                />
             </section>
         </div>
     );

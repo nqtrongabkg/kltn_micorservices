@@ -8,10 +8,13 @@ import FavoriteService from '../../../services/FavoriteService';
 import ProductCategoryService from '../../../services/ProductCategory';
 import { toast } from 'react-toastify';
 import { urlImageProduct } from '../../../config';
+import '../../../assets/styles/newProduct.css';
 
 const ProductSimilar = () => {
-    const {id} = useParams();
+    const { id } = useParams();
     const [products, setProducts] = useState([]);
+    const [displayedProducts, setDisplayedProducts] = useState([]);
+    const [itemsToShow, setItemsToShow] = useState(12);
 
     useEffect(() => {
         (async () => {
@@ -19,17 +22,14 @@ const ProductSimilar = () => {
             if (id) {
                 const getProductCategory = await ProductCategoryService.getByProductId(id);
                 if (getProductCategory) {
-                    console.log("Product categories:", getProductCategory);
                     const categories = await Promise.all(getProductCategory.map(async (item) => {
                         return ProductCategoryService.getByCategoryId(item.categoryId);
                     }));
                     if (categories) {
-                        console.log("Categories: ", categories);
                         const fetchedProducts = await Promise.all(categories.flat().map(async (categoryItem) => {
                             return ProductService.getById(categoryItem.productId);
                         }));
                         const filteredProducts = fetchedProducts.filter(product => product.id !== id);
-                        console.log("Filtered Products: ", filteredProducts);
 
                         const productsWithSale = await Promise.all(filteredProducts.map(async (product) => {
                             const saleInfoList = await ProductSaleService.getByProduct(product.id);
@@ -42,24 +42,35 @@ const ProductSimilar = () => {
                             return product;
                         }));
 
-                        console.log("Products with Sale: ", productsWithSale);
                         setProducts(productsWithSale);
+                        setDisplayedProducts(productsWithSale.slice(0, itemsToShow));
                     }
                 }
             }
         })();
-    }, [id]);
+    }, [id, itemsToShow]);
+
+    const handleLoadMore = () => {
+        setItemsToShow(prev => prev + 12);
+    };
 
     return (
         <div className="product-main">
             <h2 className="title text-center" style={{ fontSize: '30px', marginTop: '10px' }}>Sản phẩm liên quan</h2>
             <div className="product-grid">
-                {products && products.length > 0 &&
-                    products.map((product) => (
+                {displayedProducts && displayedProducts.length > 0 &&
+                    displayedProducts.map((product) => (
                         <ProductCard key={product.id} product={product} />
                     ))
                 }
             </div>
+            {displayedProducts.length < products.length && (
+                <div className="text-center">
+                    <button onClick={handleLoadMore} className="btn-load-more">
+                        Xem Thêm
+                    </button>
+                </div>
+            )}
         </div>
     );
 };
@@ -67,7 +78,6 @@ const ProductSimilar = () => {
 const ProductCard = ({ product }) => {
     const navigate = useNavigate();
 
-    // Handle null image property
     const productImage = product.image ? `${urlImageProduct}/${product.image}` : 'placeholder-image.jpg';
 
     const addProductToFavorite = async (productId) => {
@@ -75,28 +85,21 @@ const ProductCard = ({ product }) => {
         if (!user) {
             navigate("/login", { state: { redirectTo: `/` } });
             return;
-        } else {
-            const favoriteAdd = {
-                productId: productId,
-                userId: user?.userId
-            };
-            const favoriteAdded = await FavoriteService.create(favoriteAdd);
-            if (favoriteAdded !== null) {
-                toast.success("Đã thêm sản phẩm vào yêu thích");
-            }
+        }
+        const favoriteAdd = { productId, userId: user.userId };
+        const favoriteAdded = await FavoriteService.create(favoriteAdd);
+        if (favoriteAdded !== null) {
+            toast.success("Đã thêm sản phẩm vào yêu thích");
         }
     }
 
-    const formatPrice = (price) => {
-        return price.toLocaleString('vi-VN');
-    };
-
+    const formatPrice = (price) => price.toLocaleString('vi-VN');
 
     return (
         <div className="showcase">
             <div className="showcase-banner">
-                <img src={productImage} className="product-img default" alt='HinhAnh' />
-                <img src={productImage} width={300} className="product-img hover" alt='HinhAnh' />
+                <img src={productImage} className="product-img default" alt={product.name} />
+                <img src={productImage} width={300} className="product-img hover" alt={`${product.name} on hover`} />
                 {product.salePrice && (
                     <p className="showcase-badge angle black">sale :{((product.price - product.salePrice) / product.price * 100).toFixed(0)}%</p>
                 )}
@@ -105,7 +108,7 @@ const ProductCard = ({ product }) => {
                         <IonIcon icon={heartOutline} />
                     </button>
                     <button className="btn-action">
-                        <Link to={'/product-detail/' + product.id}>
+                        <Link to={`/product-detail/${product.id}`}>
                             <IonIcon icon={eyeOutline} />
                         </Link>
                     </button>

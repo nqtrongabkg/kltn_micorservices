@@ -6,24 +6,33 @@ import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { urlImageProduct } from '../../../config';
 import { LocalDateTime, DateTimeFormatter } from 'js-joda';
+import Pagination from '../../site/homeComponents/productComponents/Pagination';
 
 const ProductOptionIndex = () => {
     const [options, setOptions] = useState([]);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [optionsPerPage] = useState(10); // Số lượng lựa chọn trên mỗi trang
     const [reload, setReload] = useState(0);
 
     useEffect(() => {
-        (async () => {
+        const fetchOptions = async () => {
             const result = await ProductOptionService.getAll();
-            if(result !== null){
-                console.log("option list: ",result);
-            }
-            // Filter out sales with status 2
-            const filteredSales = result.filter(sale => sale.status !== 2);
-            // Sort the filtered sales array by createdAt property from newest to oldest
-            filteredSales.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-            setOptions(filteredSales);
-        })();
+            // Filter out options with status 2
+            const filteredOptions = result.filter(option => option.status !== 2);
+            // Sort the filtered options array by createdAt property from newest to oldest
+            filteredOptions.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+            setOptions(filteredOptions);
+        };
+
+        fetchOptions();
     }, [reload]);
+
+    // Lấy index của lựa chọn đầu tiên trên trang hiện tại
+    const indexOfLastOption = currentPage * optionsPerPage;
+    const indexOfFirstOption = indexOfLastOption - optionsPerPage;
+    const currentOptions = options.slice(indexOfFirstOption, indexOfLastOption);
+
+    const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
     const HandTrash = async (id) => {
         await ProductOptionService.trash(id);
@@ -33,7 +42,7 @@ const ProductOptionIndex = () => {
 
     const handleStatus = async (id, currentStatus) => {
         try {
-            await ProductOptionService.sitchStatus(id);
+            await ProductOptionService.switchStatus(id);
             setReload(Date.now());
             toast.success("Thành công");
         } catch (error) {
@@ -62,7 +71,7 @@ const ProductOptionIndex = () => {
                                 <input type="checkbox" id="checkAll" />
                             </th>
                             <th>Tên sản phẩm</th>
-                            <th>Ảnh</th> 
+                            <th>Ảnh</th>
                             <th>Tên lựa chọn</th>
                             <th>Mô tả</th>
                             <th>Các lựa chọn</th>
@@ -70,13 +79,18 @@ const ProductOptionIndex = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {options && options.length > 0 &&
-                            options.map((option, index) => (
+                        {currentOptions && currentOptions.length > 0 &&
+                            currentOptions.map((option, index) => (
                                 <ProductOptionTableRow key={option.id} option={option} HandTrash={HandTrash} handleStatus={handleStatus} />
                             ))
                         }
                     </tbody>
                 </table>
+                <Pagination
+                    currentPage={currentPage}
+                    totalPages={Math.ceil(options.length / optionsPerPage)}
+                    onPageChange={paginate}
+                />
             </section>
         </div>
     );

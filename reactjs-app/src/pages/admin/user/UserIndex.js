@@ -5,9 +5,12 @@ import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { IoIosNotifications } from "react-icons/io";
 import { urlImageUser } from '../../../config';
+import Pagination from '../../site/homeComponents/productComponents/Pagination';
 
 const UserIndex = () => {
     const [users, setUsers] = useState([]);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [usersPerPage] = useState(10); // Số lượng người dùng trên mỗi trang
     const [reload, setReload] = useState(0);
 
     useEffect(() => {
@@ -26,6 +29,13 @@ const UserIndex = () => {
         fetchUsers();
     }, [reload]);
 
+    // Lấy index của người dùng đầu tiên trên trang hiện tại
+    const indexOfLastUser = currentPage * usersPerPage;
+    const indexOfFirstUser = indexOfLastUser - usersPerPage;
+    const currentUsers = users.slice(indexOfFirstUser, indexOfLastUser);
+
+    const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
     const HandTrash = async (id) => {
         await UserService.trash(id);
         setReload(Date.now());
@@ -42,6 +52,7 @@ const UserIndex = () => {
             toast.error("Đã xảy ra lỗi khi thay đổi trạng thái.");
         }
     };
+
     return (
         <div className="content">
             <section className="content-header my-2">
@@ -72,8 +83,8 @@ const UserIndex = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {users && users.length > 0 &&
-                            users.map((user, index) => {
+                        {currentUsers && currentUsers.length > 0 &&
+                            currentUsers.map((user, index) => {
                                 return (
                                     <tr key={user.id} className="datarow">
                                         <td className="text-center">
@@ -86,31 +97,29 @@ const UserIndex = () => {
                                                 </a>
                                             </div>
                                             <div className="function_style">
-                                                    <button
-                                                        onClick={() => handleStatus(user.id, user.status)}
-                                                        className={
-                                                            user.status === 1 ? "border-0 px-1 text-success" : "border-0 px-1 text-danger"
-                                                        }>
-                                                        {user.status === 1 ? <FaToggleOn size={24}/> : <FaToggleOff size={24}/>}
-                                                    </button>
-                                                    <Link to={"/admin/user/edit/" + user.id} className='px-1 text-primary'>
-                                                        <FaEdit size={20}/>
-                                                    </Link>
-                                                    <button
-                                                        onClick={() => HandTrash(user.id)}
-                                                        className="btn-none px-1 text-danger">
-                                                        <FaTrash />
-                                                    </button>
-                                                </div>
+                                                <button
+                                                    onClick={() => handleStatus(user.id, user.status)}
+                                                    className={
+                                                        user.status === 1 ? "border-0 px-1 text-success" : "border-0 px-1 text-danger"
+                                                    }>
+                                                    {user.status === 1 ? <FaToggleOn size={24}/> : <FaToggleOff size={24}/>}
+                                                </button>
+                                                <Link to={"/admin/user/edit/" + user.id} className='px-1 text-primary'>
+                                                    <FaEdit size={20}/>
+                                                </Link>
+                                                <button
+                                                    onClick={() => HandTrash(user.id)}
+                                                    className="btn-none px-1 text-danger">
+                                                    <FaTrash />
+                                                </button>
+                                            </div>
                                         </td>
                                         <td>{user.name}
-                                        <div className="function_style">
-                                                    
-                                                    <Link to={"/admin/notification/add/" + user.id} className='px-1 text-primary border-0'>
-                                                        <IoIosNotifications size={24}/>
-                                                    </Link>
-                    
-                                                </div>
+                                            <div className="function_style">
+                                                <Link to={"/admin/notification/add/" + user.id} className='px-1 text-primary border-0'>
+                                                    <IoIosNotifications size={24}/>
+                                                </Link>
+                                            </div>
                                         </td>
                                         <td>
                                             {user.avatar ? (
@@ -123,13 +132,17 @@ const UserIndex = () => {
                                         <td>{user.phone}</td>
                                         <td>{user.address}</td>
                                         <td>{user.role.role === 3 ? "Nguoi mua" : "Nguoi ban"}</td>
-                                        
                                     </tr>
                                 );
                             })
                         }
                     </tbody>
                 </table>
+                <Pagination
+                    currentPage={currentPage}
+                    totalPages={Math.ceil(users.length / usersPerPage)}
+                    onPageChange={paginate}
+                />
             </section>
         </div>
     );

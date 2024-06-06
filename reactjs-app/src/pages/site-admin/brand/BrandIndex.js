@@ -4,16 +4,24 @@ import { FaToggleOn, FaTrash, FaEdit, FaToggleOff } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { urlImageBrand } from '../../../config';
+import Pagination from '../../site/homeComponents/productComponents/Pagination';
 
 const BrandIndex = () => {
     const [brands, setBrands] = useState([]);
     const [reload, setReload] = useState(0);
 
+    const [currentPage, setCurrentPage] = useState(1);
+    const [brandsPerPage] = useState(10); // Số lượng thương hiệu hiển thị trên mỗi trang
+    const indexOfLastBrand = currentPage * brandsPerPage;
+    const indexOfFirstBrand = indexOfLastBrand - brandsPerPage;
+    const currentBrands = brands.slice(indexOfFirstBrand, indexOfLastBrand);
+
+
     useEffect(() => {
         const fetchBrands = async () => {
             try {
                 const sessionUser = JSON.parse(sessionStorage.getItem('user'));
-                
+
                 let result = await BrandService.getByUserId(sessionUser.userId);
                 result = result.filter(brand => brand.status === 1 || brand.status === 3);
                 const sortedBrands = result.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
@@ -76,8 +84,8 @@ const BrandIndex = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {brands && brands.length > 0 &&
-                            brands.map((brand, index) => {
+                        {currentBrands && currentBrands.length > 0 &&
+                            currentBrands.map((brand, index) => {
                                 return (
                                     <tr key={brand.id} className="datarow">
                                         <td className="text-center">
@@ -123,6 +131,12 @@ const BrandIndex = () => {
                         }
                     </tbody>
                 </table>
+                <Pagination
+                    currentPage={currentPage}
+                    totalPages={Math.ceil(brands.length / brandsPerPage)}
+                    onPageChange={setCurrentPage}
+                />
+
             </section>
         </div>
     );

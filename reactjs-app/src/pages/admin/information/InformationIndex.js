@@ -115,11 +115,12 @@ const InformationIndex = () => {
                                         </td>
                                         <td>
                                             {information.logo ? (
-                                                <img src={urlImageInformation + information.logo} className="img-fluid user-avatar" alt="HinhAnh" />
+                                                <img src={urlImageInformation + information.logo} className="img-fluid user-avatar" alt="HinhAnh" style={{ width: '250px', height: '50px' }} />
                                             ) : (
                                                 <p>Không có ảnh</p>
                                             )}
                                         </td>
+
                                         <td>{information.address}</td>
                                         <td>{information.email}</td>
                                         <td>{information.phone}</td>

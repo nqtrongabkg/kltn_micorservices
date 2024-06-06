@@ -4,10 +4,14 @@ import { FaToggleOn, FaTrash, FaEdit, FaToggleOff } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { urlImageBrand } from '../../../config';
+import Pagination from '../../site/homeComponents/productComponents/Pagination';
 
 const BrandIndex = () => {
     const [brands, setBrands] = useState([]);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(0);
     const [reload, setReload] = useState(0);
+    const itemsPerPage = 10; // Số lượng thương hiệu mỗi trang
 
     useEffect(() => {
         const fetchBrands = async () => {
@@ -15,6 +19,7 @@ const BrandIndex = () => {
                 let result = await BrandService.getAll();
                 result = result.filter(brand => brand.status !== 2);
                 const sortedBrands = result.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                setTotalPages(Math.ceil(sortedBrands.length / itemsPerPage));
                 setBrands(sortedBrands);
             } catch (error) {
                 console.error("Error fetching brands:", error);
@@ -23,11 +28,20 @@ const BrandIndex = () => {
         fetchBrands();
     }, [reload]);
 
+    const handlePageChange = (pageNumber) => {
+        setCurrentPage(pageNumber);
+    };
+
+    const indexOfLastItem = currentPage * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+    const currentItems = brands.slice(indexOfFirstItem, indexOfLastItem);
+
     const HandTrash = async (id) => {
         await BrandService.trash(id);
         setReload(Date.now());
         toast.success("Chuyển vào thùng rác");
     };
+
     const handleDislay = async (id) => {
         await BrandService.display(id);
         setReload(Date.now());
@@ -42,7 +56,7 @@ const BrandIndex = () => {
 
     const handleStatus = async (id, currentStatus) => {
         try {
-            await BrandService.sitchStatus(id);
+            await BrandService.switchStatus(id);
             setReload(Date.now());
             toast.success("Thành công");
         } catch (error) {
@@ -50,6 +64,7 @@ const BrandIndex = () => {
             toast.error("Đã xảy ra lỗi khi thay đổi trạng thái.");
         }
     };
+
     return (
         <div className="content">
             <section className="content-header my-2">
@@ -80,71 +95,74 @@ const BrandIndex = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {brands && brands.length > 0 &&
-                            brands.map((brand, index) => {
-                                return (
-                                    <tr key={brand.id} className="datarow">
-                                        <td className="text-center">
-                                            <input type="checkbox" id={`checkId${index}`} />
-                                        </td>
-                                        <td>
-                                            <div className="name">
-                                                <a href="menu_index.html">
-                                                    {brand.name}
-                                                </a>
-                                            </div>
-                                            <div className="function_style">
-                                                <button
-                                                    onClick={() => handleStatus(brand.id, brand.status)}
-                                                    className={
-                                                        brand.status === 1 ? "border-0 px-1 text-success" : "border-0 px-1 text-danger"
-                                                    }>
-                                                    {brand.status === 1 ? <FaToggleOn size={24} /> : <FaToggleOff size={24} />}
-                                                </button>
-                                                <Link to={"/admin/brand/edit/" + brand.id} className='px-1 text-primary'>
-                                                    <FaEdit size={20} />
-                                                </Link>
-                                                <button
-                                                    onClick={() => HandTrash(brand.id)}
-                                                    className="btn-none px-1 text-danger">
-                                                    <FaTrash />
-                                                </button>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            {brand.image ? (
-                                                <img src={urlImageBrand + brand.image} className="img-fluid user-avatar" alt="Hinh anh" />
-                                            ) : (
-                                                <p>Không có ảnh</p>
-                                            )}
-                                        </td>
-                                        <td>{brand.description}</td>
-                                        <td>{brand.createdAt}</td>
-                                        <td>{brand.createdBy}</td>
-                                        <td>
+                        {currentItems.map((brand, index) => {
+                            return (
+                                <tr key={brand.id} className="datarow">
+                                    <td className="text-center">
+                                        <input type="checkbox" id={`checkId${index}`} />
+                                    </td>
+                                    <td>
+                                        <div className="name">
+                                            <a href="menu_index.html">
+                                                {brand.name}
+                                            </a>
+                                        </div>
+                                        <div className="function_style">
                                             <button
-                                                onClick={() => handleDislay(brand.id)}
+                                                onClick={() => handleStatus(brand.id, brand.status)}
                                                 className={
-                                                    brand.status === 3 ? "border-0 px-1 text-success" : "border-0 px-1 text-danger"
+                                                    brand.status === 1 ? "border-0 px-1 text-success" : "border-0 px-1 text-danger"
                                                 }>
-                                                {brand.status === 3 ? <FaToggleOn size={24} /> : <FaToggleOff size={24} />}
+                                                {brand.status === 1 ? <FaToggleOn size={24} /> : <FaToggleOff size={24} />}
                                             </button>
-                                        </td>
-                                        <td>
+                                            <Link to={"/admin/brand/edit/" + brand.id} className='px-1 text-primary'>
+                                                <FaEdit size={20} />
+                                            </Link>
                                             <button
-                                                onClick={() => handlePublic(brand.id)}
-                                                className={
-                                                    brand.status === 4 ? "border-0 px-1 text-success" : "border-0 px-1 text-danger"
-                                                }>
-                                                {brand.status === 4 ? <FaToggleOn size={24} /> : <FaToggleOff size={24} />}
+                                                onClick={() => HandTrash(brand.id)}
+                                                className="btn-none px-1 text-danger">
+                                                <FaTrash />
                                             </button>
-                                        </td>
-                                    </tr>
-                                );
-                            })
-                        }
+                                        </div>
+                                    </td>
+                                    <td>
+                                        {brand.image ? (
+                                            <img src={urlImageBrand + brand.image} className="img-fluid user-avatar" alt="Hinh anh" />
+                                        ) : (
+                                            <p>Không có ảnh</p>
+                                        )}
+                                    </td>
+                                    <td>{brand.description}</td>
+                                    <td>{brand.createdAt}</td>
+                                    <td>{brand.createdBy}</td>
+                                    <td>
+                                        <button
+                                            onClick={() => handleDislay(brand.id)}
+                                            className={
+                                                brand.status === 3 ? "border-0 px-1 text-success" : "border-0 px-1 text-danger"
+                                            }>
+                                            {brand.status === 3 ? <FaToggleOn size={24} /> : <FaToggleOff size={24} />}
+                                        </button>
+                                    </td>
+                                    <td>
+                                        <button
+                                            onClick={() => handlePublic(brand.id)}
+                                            className={
+                                                brand.status === 4 ? "border-0 px-1 text-success" : "border-0 px-1 text-danger"
+                                            }>
+                                            {brand.status === 4 ? <FaToggleOn size={24} /> : <FaToggleOff size={24} />}
+                                        </button>
+                                    </td>
+                                </tr>
+                            );
+                        })}
                     </tbody>
                 </table>
+                <Pagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={handlePageChange}
+                />
             </section>
         </div>
     );

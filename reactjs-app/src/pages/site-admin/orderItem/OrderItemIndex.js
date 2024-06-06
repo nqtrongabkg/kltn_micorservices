@@ -7,10 +7,15 @@ import { FaToggleOn, FaTrash, FaToggleOff, FaCheckSquare } from 'react-icons/fa'
 import { toast } from 'react-toastify';
 import { urlImageProduct } from '../../../config';
 import ProductStoreService from '../../../services/ProductStoreService';
+import NotificationService from '../../../services/NotificationService';
+import Pagination from '../../site/homeComponents/productComponents/Pagination';
 
 const OrderItemIndex = () => {
     const [orderItems, setOrderItems] = useState([]);
     const [reload, setReload] = useState(0);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const itemsPerPage = 10; // Define the number of items per page
 
     useEffect(() => {
         const fetchOrderItems = async () => {
@@ -22,30 +27,40 @@ const OrderItemIndex = () => {
                     const order = await OrderService.getById(item.orderId);
                     if (order.status !== 3 && order.status !== 2) { // status of order === 3 => cart
                         const product = await ProductService.getById(item.productId);
-                        if(product.createdBy === sessionUser.userId){
+                        if (product.createdBy === sessionUser.userId) {
                             const optionValue = await ProductOptionService.getOptionValue(item.optionValueId);
                             const option = await ProductOptionService.getById(optionValue.optionId);
                             item.order = order;
                             item.product = product;
                             item.option = option;
-                            item.optionValue = optionValue; 
+                            item.optionValue = optionValue;
                             itemsWithProduct.push(item);
                         }
                     }
                 }
                 const itemsWithProductFill = itemsWithProduct.filter(item => item.status !== 2);
-                const sorted =  itemsWithProductFill.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-                setOrderItems(sorted);
+                const sorted = itemsWithProductFill.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                
+                // Calculate pagination
+                const totalItems = sorted.length;
+                const totalPages = Math.ceil(totalItems / itemsPerPage);
+                setTotalPages(totalPages);
+                const paginatedItems = sorted.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+                
+                setOrderItems(paginatedItems);
             } catch (error) {
                 console.error("Error fetching order items:", error);
             }
         };
-    
+
         fetchOrderItems();
-    }, [reload]);
+    }, [reload, currentPage]);
+
+    const handlePageChange = (pageNumber) => {
+        setCurrentPage(pageNumber);
+    };
 
     const HandTrash = async (id) => {
-        
         await OrderItemService.trash(id);
         setReload(Date.now());
         toast.success("Chuyển vào thùng rác");
@@ -54,6 +69,7 @@ const OrderItemIndex = () => {
     const handExport = async (item) => {
         try {
             await OrderItemService.export(item.id);
+
             const dataExport = {
                 orderItemId: item.id,
                 productId: item.productId,
@@ -61,11 +77,26 @@ const OrderItemIndex = () => {
                 price: item.totalPrice,
                 description: item.option.name + "/" + item.optionValue.value,
                 createdBy: JSON.parse(sessionStorage.getItem('user'))?.userId
-            }
+            };
+
             const exportAdd = await ProductStoreService.export(dataExport);
-            if(exportAdd !== null){
+
+            if (exportAdd !== null) {
+                const formattedDate = formatDateToLocalDate(exportAdd.createdAt);
+
+                const dataNotification = {
+                    user: {
+                        id: item.order.userId,
+                    },
+                    description: `Thông báo cho đơn hàng có mã ${item.id}`,
+                    detail: `Đơn hàng ${item.product.name} của bạn đã được xác nhận lúc ${formattedDate} và sẽ sớm được vận chuyển`,
+                    statusOfSee: 0,
+                    linkTo: `/order-item-detail/${item.id}`,
+                    status: 1
+                };
+                await NotificationService.create(dataNotification);
                 setReload(Date.now());
-            toast.success("Xác nhận đơn hàng");
+                toast.success("Xác nhận đơn hàng");
             }
         } catch (error) {
             console.error("Error export:", error);
@@ -92,8 +123,16 @@ const OrderItemIndex = () => {
 
     function formatDateToLocalDate(datetimeString) {
         const date = new Date(datetimeString);
-        const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
-        return date.toLocaleDateString('en-US', options);
+
+        // Get components of the date
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        const hours = String(date.getHours()).padStart(2, '0');
+        const minutes = String(date.getMinutes()).padStart(2, '0');
+
+        // Construct the formatted date string
+        return `${hours}:${minutes}-${month}/${day}/${year}`;
     }
 
     return (
@@ -146,7 +185,6 @@ const OrderItemIndex = () => {
                                                     }>
                                                     {item.status === 0 ? <FaToggleOff size={24} /> : <FaToggleOn size={24} />}
                                                 </button>
-                                                
                                                 <button
                                                     onClick={() => HandTrash(item.id)}
                                                     className="btn-none px-1 text-danger">
@@ -155,7 +193,7 @@ const OrderItemIndex = () => {
                                                 <button
                                                     onClick={() => handExport(item)}
                                                     className="btn-none px-1 text-danger">
-                                                    <FaCheckSquare size={24}/>
+                                                    <FaCheckSquare size={24} />
                                                 </button>
                                             </div>
                                         </td>
@@ -179,6 +217,11 @@ const OrderItemIndex = () => {
                         }
                     </tbody>
                 </table>
+                <Pagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={handlePageChange}
+                />
             </section>
         </div>
     );

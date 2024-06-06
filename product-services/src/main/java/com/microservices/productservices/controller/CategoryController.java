@@ -49,17 +49,18 @@ public class CategoryController {
         categoryService.switchStatus(id);
         return ResponseEntity.ok().build();
     }
-    
+
     @PutMapping("/trash/{id}")
     public ResponseEntity<Void> trash(@PathVariable UUID id) {
         categoryService.trash(id);
         return ResponseEntity.ok().build();
-    }  
+    }
+
     @PutMapping("/display/{id}")
     public ResponseEntity<Void> display(@PathVariable UUID id) {
         categoryService.isDisplay(id);
         return ResponseEntity.ok().build();
-    }  
+    }
 
     @GetMapping("/get-by-id/{id}")
     public ResponseEntity<CategoryResponse> getCategoryById(@PathVariable UUID id) {
@@ -77,7 +78,8 @@ public class CategoryController {
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<CategoryResponse> updateCategory(@RequestBody CategoryRequest categoryRequest, @PathVariable UUID id) {
+    public ResponseEntity<CategoryResponse> updateCategory(@RequestBody CategoryRequest categoryRequest,
+            @PathVariable UUID id) {
         CategoryResponse updatedCategory = categoryService.update(id, categoryRequest);
         if (updatedCategory != null) {
             return ResponseEntity.ok(updatedCategory);
@@ -93,4 +95,11 @@ public class CategoryController {
         }
         return ResponseEntity.notFound().build();
     }
+
+    @GetMapping("/search/{name}")
+    public ResponseEntity<List<CategoryResponse>> searchProductsByName(@PathVariable String name) {
+        List<CategoryResponse> categories = categoryService.searchByName(name);
+        return ResponseEntity.ok(categories);
+    }
+
 }

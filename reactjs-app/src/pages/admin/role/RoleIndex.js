@@ -3,19 +3,33 @@ import RoleService from '../../../services/RoleService';
 import { FaTrash, FaEdit, FaToggleOn, FaToggleOff } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import Pagination from '../../site/homeComponents/productComponents/Pagination';
 
 const RoleIndex = () => {
     const [roles, setRoles] = useState([]);
     const [reload, setReload] = useState(0);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const rolesPerPage = 10; // Số vai trò trên mỗi trang
 
     useEffect(() => {
-        (async () => {
-            const result = await RoleService.getAll();
-            // Sắp xếp mảng roles tăng dần theo giá trị quyền
-            result.sort((a, b) => a.role - b.role);
-            setRoles(result);
-        })();
+        const fetchRoles = async () => {
+            try {
+                const result = await RoleService.getAll();
+                // Sắp xếp mảng roles tăng dần theo giá trị quyền
+                result.sort((a, b) => a.role - b.role);
+                setRoles(result);
+                setTotalPages(Math.ceil(result.length / rolesPerPage));
+            } catch (error) {
+                console.error("Error fetching roles:", error);
+            }
+        };
+        fetchRoles();
     }, [reload]);
+
+    const handlePageChange = (pageNumber) => {
+        setCurrentPage(pageNumber);
+    };
 
     const HandTrash = async (id) => {
         await RoleService.trash(id);
@@ -33,6 +47,10 @@ const RoleIndex = () => {
             toast.error("Đã xảy ra lỗi khi thay đổi trạng thái.");
         }
     };
+
+    const indexOfLastRole = currentPage * rolesPerPage;
+    const indexOfFirstRole = indexOfLastRole - rolesPerPage;
+    const currentRoles = roles.slice(indexOfFirstRole, indexOfLastRole);
 
     return (
         <div className="content">
@@ -60,8 +78,8 @@ const RoleIndex = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {roles && roles.length > 0 &&
-                            roles.map((role, index) => {
+                        {currentRoles && currentRoles.length > 0 &&
+                            currentRoles.map((role, index) => {
                                 // Chỉ hiển thị status khác 2
                                 if (role.status !== 2) {
                                     return (
@@ -103,9 +121,10 @@ const RoleIndex = () => {
                         }
                     </tbody>
                 </table>
-
+                <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
             </section>
         </div>
     );
 };
+
 export default RoleIndex;
