@@ -131,7 +131,7 @@ const ProductOfCategoryPage = () => {
             <div className="row">
                 <div className="col-lg-3">
                     <div className="card">
-                        <div className="card-header bg-primary text-white">Lọc sản phẩm</div>
+                    <div className="card-header bg-info text-white text-wrap badge">Bộ lọc</div>
                         <div className="card-body">
                             <h6 className="fw-bold mt-3">Danh mục sản phẩm</h6>
                             <div className="list-unstyled">
@@ -182,7 +182,7 @@ const ProductOfCategoryPage = () => {
                 <div className="col-lg-9">
                     <div className="row">
                         {currentItems.map((product, index) => (
-                            <div key={index} className="col-lg-4 col-md-6 mb-4 d-flex">
+                            <div key={index} className="col-lg-3 col-md-6 mb-4 d-flex">
                                 <div className="card w-100 my-2 shadow-2-strong">
                                     <img src={urlImageProduct + product.image} className="card-img-top" alt="Hinh anh" />
                                     <div className="card-body d-flex flex-column">

@@ -40,7 +40,7 @@ export default function Header() {
         };
 
         fetchSearchResults();
-    }, [searchTerm]);
+    }, [searchTerm, reload]);
 
     useEffect(() => {
         const fetchCartItemCount = async () => {
@@ -59,7 +59,7 @@ export default function Header() {
         };
 
         fetchCartItemCount();
-    }, []);
+    }, [reload]);
 
     useEffect(() => {
         const fetchFavoriteItemCount = async () => {
@@ -76,7 +76,7 @@ export default function Header() {
         };
 
         fetchFavoriteItemCount();
-    }, []);
+    }, [reload]);
 
     useEffect(() => {
         const user = JSON.parse(sessionStorage.getItem('user'));
@@ -108,6 +108,7 @@ export default function Header() {
     }, [reload]);
 
     const handleGoToMyUserClick = () => {
+        setReload(Date.now());
         const user = JSON.parse(sessionStorage.getItem('user'));
         if (!user) {
             navigate("/login", { state: { redirectTo: `/my-user` } });
@@ -117,6 +118,7 @@ export default function Header() {
     };
 
     const handleGoToCartClick = () => {
+        setReload(Date.now());
         const user = JSON.parse(sessionStorage.getItem('user'));
         if (!user) {
             navigate("/login", { state: { redirectTo: `/shopping-cart` } });
@@ -126,6 +128,7 @@ export default function Header() {
     };
 
     const handleGoToFavoriteClick = () => {
+        setReload(Date.now());
         const user = JSON.parse(sessionStorage.getItem('user'));
         if (!user) {
             navigate("/login", { state: { redirectTo: `/favorite` } });
@@ -135,6 +138,7 @@ export default function Header() {
     };
 
     const handleGoToNotificationsClick = () => {
+        setReload(Date.now());
         const user = JSON.parse(sessionStorage.getItem('user'));
         if (!user) {
             navigate("/login", { state: { redirectTo: `/` } });
@@ -154,6 +158,7 @@ export default function Header() {
     };
 
     const handleGoToOrderItem = (linkTo) => {
+        setReload(Date.now());
         const user = JSON.parse(sessionStorage.getItem('user'));
         if (!user) {
             navigate("/login", { state: { redirectTo: `${linkTo}` } });

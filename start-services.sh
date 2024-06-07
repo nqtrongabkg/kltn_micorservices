@@ -43,6 +43,6 @@ run_service "user-services" &
 run_service "product-services" &
 run_service "store-services" &
 run_service "config-services" &
-# run_service "order-services" &
+run_service "order-services" &
 wait
 echo "Đã khởi động tất cả các dịch vụ và ứng dụng!"

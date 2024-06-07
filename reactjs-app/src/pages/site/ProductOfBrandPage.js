@@ -125,7 +125,7 @@ const ProductOfBrandPage = () => {
             <div className="row">
                 <div className="col-lg-3">
                     <div className="card">
-                        <div className="card-header bg-primary text-white">Filters</div>
+                        <div className="card-header bg-info text-white text-wrap badge">Bộ lọc</div>
                         <div className="card-body">
                             <h6 className="fw-bold mt-3">Thương hiệu</h6>
                             <div className="list-unstyled">
@@ -179,12 +179,12 @@ const ProductOfBrandPage = () => {
                     <div className="row">
                         {currentItems && currentItems.length > 0 &&
                             currentItems.map((product, index) => (
-                                <div key={product.id} className="col-lg-4 col-md-6 mb-4 d-flex">  {/* Key is the product.id */}
+                                <div key={index} className="col-lg-3 col-md-6 mb-4 d-flex">
                                     <div className="card w-100 my-2 shadow-2-strong">
                                         <img src={urlImageProduct + product.image} className="card-img-top" alt="Product" />
                                         <div className="card-body d-flex flex-column">
                                             <h5 className="card-title">{formatPrice(product.price)} VND</h5>
-                                            <p className="card-text">{product.description || 'No description available.'}</p>
+                                            <p className="card-text showcase-category">{product.name || 'No description available.'}</p>
                                             <div className="d-flex align-items-center">
                                                 {Array(product.evaluate)
                                                     .fill()

@@ -52,6 +52,10 @@ const Content = () => {
         navigate(`/product-detail/${productId}`);
     };
 
+    const handleShopClick = (shopId) => {
+        navigate(`/product-of-shop/${shopId}`);
+    };
+
     const renderStars = (count) => {
         return [...Array(5)].map((_, i) => (
             <FontAwesomeIcon 
@@ -111,8 +115,15 @@ const Content = () => {
                     <div className="col-lg-4">
                         <div className="px-0 border rounded-2 shadow-0">
                             <div className="card">
-                                <div className="card-body">
-                                    <h5 className="card-title">Các sản phẩm khác của {shop ? shop.name : ""} shop</h5>
+                                <div className="card-body text-center">
+                                    <h5 className="card-title">
+                                        <button 
+                                            className="shop-button" 
+                                            onClick={() => handleShopClick(shop.id)}
+                                        >
+                                            {shop ? shop.name : ""}
+                                        </button> 
+                                    </h5>
                                     {products.map(product => (
                                         <div 
                                             key={product.id} 

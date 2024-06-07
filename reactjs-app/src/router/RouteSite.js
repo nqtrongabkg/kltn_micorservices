@@ -13,6 +13,7 @@ import CreateFeedback from "../pages/site/CreateFeedback";
 import ProductOfCategoryPage from "../pages/site/ProductOfCategoryPage";
 import ProductOfBrandPage from "../pages/site/ProductOfBrandPage";
 import ProductOfTagPage from "../pages/site/ProductOfTagPage";
+import ProductOfShop from "../pages/site/ProductOfShop";
 
 const RouteSite = [
     { path: '/', component: Home },
@@ -44,5 +45,7 @@ const RouteSite = [
     { path: '/product-of-brand/:id', component: ProductOfBrandPage },
     
     { path: '/product-of-tag/:id', component: ProductOfTagPage },
+
+    { path: '/product-of-shop/:id', component: ProductOfShop },
 ];
 export default RouteSite;
