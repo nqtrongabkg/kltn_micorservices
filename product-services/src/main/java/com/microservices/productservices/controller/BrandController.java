@@ -3,7 +3,6 @@ package com.microservices.productservices.controller;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-// import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 import java.util.UUID;
 import com.microservices.productservices.payload.request.BrandRequest;
@@ -73,13 +72,11 @@ public class BrandController {
         List<BrandResponse> brands = brandService.getBrandForClient(userId);
         return ResponseEntity.ok(brands);
     }
-
     @PutMapping("/switch-status/{id}")
     public ResponseEntity<Void> switchStatus(@PathVariable UUID id) {
         brandService.switchStatus(id);
         return ResponseEntity.ok().build();
     }
-    
     @PutMapping("/trash/{id}")
     public ResponseEntity<Void> trash(@PathVariable UUID id) {
         brandService.trash(id);
@@ -95,4 +92,9 @@ public class BrandController {
         brandService.isPublic(id);
         return ResponseEntity.ok().build();
     }  
+    @GetMapping("/search/{name}")
+    public ResponseEntity<List<BrandResponse>> searchProductsByName(@PathVariable String name) {
+        List<BrandResponse> brands = brandService.searchByName(name);
+        return ResponseEntity.ok(brands);
+    }
 }

@@ -3,14 +3,14 @@ import ProductStoreService from '../../../services/ProductStoreService';
 import ProductService from '../../../services/ProductService';
 import ProductOptionService from '../../../services/ProductOptionService';
 import { FaEdit, FaDollyFlatbed } from 'react-icons/fa';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { urlImageProduct } from '../../../config';
 import Pagination from '../../site/homeComponents/productComponents/Pagination';
 
 const ProductStoreIndex = () => {
     const [stores, setStores] = useState([]);
     const [reload] = useState(0);
-
+    const navigate = useNavigate();
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(0);
     const itemsPerPage = 10; // Số sản phẩm mỗi trang
@@ -23,10 +23,18 @@ const ProductStoreIndex = () => {
 
     useEffect(() => {
         (async () => {
-            const result = await ProductStoreService.getAll();
-            result.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-            setStores(result);
-            setTotalPages(Math.ceil(result.length / itemsPerPage));
+            try {
+                const result = await ProductStoreService.getAll();
+                result.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                setStores(result);
+                setTotalPages(Math.ceil(result.length / itemsPerPage));
+            }catch (error) {
+                if (error.response && error.response.status === 503) {
+                    navigate('/admin/404');
+                } else {
+                    console.error("Error fetching data:", error);
+                }
+            }
         })();
     }, [reload]);
 

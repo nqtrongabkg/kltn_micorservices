@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { urlImageSlider } from '../../../config';
 import Pagination from '../../site/homeComponents/productComponents/Pagination';
+import { useNavigate } from 'react-router-dom';
 
 const SliderIndex = () => {
     const [sliders, setSliders] = useState([]);
@@ -12,7 +13,8 @@ const SliderIndex = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const slidersPerPage = 10; // Số sliders trên mỗi trang
-
+    const navigate = useNavigate();
+    
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -24,7 +26,11 @@ const SliderIndex = () => {
                 setSliders(sortedSliders);
                 setTotalPages(Math.ceil(sortedSliders.length / slidersPerPage));
             } catch (error) {
-                console.error("Error fetching:", error);
+                if (error.response && error.response.status === 503) {
+                    navigate('/admin/404');
+                } else {
+                    console.error("Error fetching data:", error);
+                }
             }
         };
         fetchData();
@@ -64,7 +70,7 @@ const SliderIndex = () => {
     return (
         <div className="content">
             <section className="content-header my-2">
-                <h1 className="d-inline">Danh sách người dùng</h1>
+                <h1 className="d-inline">Danh sách Slider</h1>
                 <Link to="/admin/slider/add" className="btn-add">Thêm mới</Link>
                 <div className="row mt-3 align-items-center">
                     <div className="col-12">

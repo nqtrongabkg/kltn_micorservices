@@ -2,13 +2,14 @@ import React, { useEffect, useState } from 'react';
 import ProductService from '../../../services/ProductService';
 import BrandService from '../../../services/BrandService';
 import { FaToggleOn, FaTrash, FaEdit, FaToggleOff, FaTag, FaHandLizard } from 'react-icons/fa';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { urlImageProduct } from '../../../config';
 import { MdOutlineCollections } from "react-icons/md";
 import Pagination from '../../site/homeComponents/productComponents/Pagination';
 
 const ProductIndex = () => {
+    const navigate = useNavigate();
     const [products, setProducts] = useState([]);
     const [reload, setReload] = useState(0);
     const [brandNames, setBrandNames] = useState({});
@@ -23,7 +24,11 @@ const ProductIndex = () => {
                 setProducts(response.content);
                 setTotalPages(response.totalPages);
             } catch (error) {
-                console.error("Error fetching:", error);
+                if (error.response && error.response.status === 503) {
+                    navigate('/admin/404');
+                } else {
+                    console.error("Error fetching data:", error);
+                }
             }
         };
         fetchProducts();

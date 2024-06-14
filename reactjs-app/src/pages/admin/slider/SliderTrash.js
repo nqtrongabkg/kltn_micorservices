@@ -3,12 +3,14 @@ import SliderService from '../../../services/SliderService';
 import UserService from '../../../services/UserService';
 import { FaArrowAltCircleLeft, FaTrash } from 'react-icons/fa';
 import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
 
 import { urlImageSlider } from '../../../config';
 
 const SliderTrash = () => {
     const [sliders, setSliders] = useState([]);
     const [reload, setReload] = useState(0);
+    const navigate = useNavigate();
 
     useEffect(() => {
         fetchTrashedUsers();
@@ -19,8 +21,11 @@ const SliderTrash = () => {
             const result = await SliderService.getAll(); // Ensure this fetches trashed users
             setSliders(result.filter(slider => slider.status === 2)); // Assuming status 2 is for trashed users
         } catch (error) {
-            console.error('Error fetching trashed users:', error);
-            toast.error('Đã xảy ra lỗi khi tải danh sách đã xóa.');
+            if (error.response && error.response.status === 503) {
+                navigate('/admin/404');
+            } else {
+                console.error("Error fetching data:", error);
+            }
         }
     };
 

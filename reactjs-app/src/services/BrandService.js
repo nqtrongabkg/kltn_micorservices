@@ -35,5 +35,8 @@ const BrandService = {
     delete: (id) => {
         return httpAxios.delete(`product-services/api/brands/delete/${id}`);
     },
+    search: (name) => {
+        return httpAxios.get(`product-services/api/brands/search/${name}`);
+    },
 }
 export default BrandService;

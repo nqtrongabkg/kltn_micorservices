@@ -44,7 +44,11 @@ const ProductOfCategoryPage = () => {
                     }));
                 }
             } catch (error) {
-                console.error("Error fetching:", error);
+                if (error.response && error.response.status === 503) {
+                    navigate('/404');
+                } else {
+                    console.error("Error fetching data:", error);
+                }
             }
         };
         const fetchCategories = async () => {
@@ -53,7 +57,11 @@ const ProductOfCategoryPage = () => {
                 const sortedbrands = result.filter(brand => brand.status !== 0 && brand.status !== 2);
                 setCategories(sortedbrands);
             } catch (error) {
-                console.error("Error fetching:", error);
+                if (error.response && error.response.status === 503) {
+                    navigate('/404');
+                } else {
+                    console.error("Error fetching data:", error);
+                }
             }
         };
         fetchCategories();

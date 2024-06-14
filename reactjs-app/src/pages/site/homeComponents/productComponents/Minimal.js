@@ -30,7 +30,11 @@ const Minimal = () => {
 
                 setTagsWithProducts(tagsWithProductData);
             } catch (error) {
-                console.error("Error fetching:", error);
+                if (error.response && error.response.status === 503) {
+                    navigate('/404');
+                } else {
+                    console.error("Error fetching data:", error);
+                }
             }
         };
 

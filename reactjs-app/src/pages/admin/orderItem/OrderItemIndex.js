@@ -8,6 +8,7 @@ import { toast } from 'react-toastify';
 import { urlImageProduct } from '../../../config';
 import ProductStoreService from '../../../services/ProductStoreService';
 import Pagination from '../../site/homeComponents/productComponents/Pagination';
+import { useNavigate } from 'react-router-dom';
 
 const OrderItemIndex = () => {
     const [orderItems, setOrderItems] = useState([]);
@@ -15,6 +16,7 @@ const OrderItemIndex = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const itemsPerPage = 10; // Define the number of items per page
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchOrderItems = async () => {
@@ -45,7 +47,11 @@ const OrderItemIndex = () => {
 
                 setOrderItems(paginatedItems);
             } catch (error) {
-                console.error("Error fetching order items:", error);
+                if (error.response && error.response.status === 503) {
+                    navigate('/admin/404');
+                } else {
+                    console.error("Error fetching data:", error);
+                }
             }
         };
 

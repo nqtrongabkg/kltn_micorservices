@@ -6,10 +6,12 @@ import ProductOptionService from '../../../services/ProductOptionService';
 import { FaArrowAltCircleLeft, FaTrash } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import { urlImageProduct } from '../../../config';
+import { useNavigate } from 'react-router-dom';
 
 const OrderItemTrash = () => {
     const [orderItems, setOrderItems] = useState([]);
     const [reload, setReload] = useState(0);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchOrderItems = async () => {
@@ -36,7 +38,11 @@ const OrderItemTrash = () => {
                 const sorted = itemsWithProductFill.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
                 setOrderItems(sorted);
             } catch (error) {
-                console.error("Error fetching order items:", error);
+                if (error.response && error.response.status === 503) {
+                    navigate('/site-admin/404');
+                } else {
+                    console.error("Error fetching data:", error);
+                }
             }
         };
 

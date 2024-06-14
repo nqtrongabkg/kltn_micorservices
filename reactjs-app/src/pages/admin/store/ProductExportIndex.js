@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import ProductStoreService from '../../../services/ProductStoreService';
 import ProductService from '../../../services/ProductService';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { urlImageProduct } from '../../../config';
 import Pagination from '../../site/homeComponents/productComponents/Pagination';
 
@@ -10,6 +10,7 @@ const ProductExportIndex = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [exportsPerPage] = useState(10); // Số lượng xuất hàng trên mỗi trang
     const [reload] = useState(0);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchExports = async () => {
@@ -20,7 +21,11 @@ const ProductExportIndex = () => {
                     setExports(result);
                 }
             } catch (error) {
-                console.error("Error fetching exports:", error);
+                if (error.response && error.response.status === 503) {
+                    navigate('/admin/404');
+                } else {
+                    console.error("Error fetching data:", error);
+                }
             }
         };
         fetchExports();

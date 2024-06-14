@@ -28,8 +28,10 @@ import OrderItemIndex from "../pages/site-admin/orderItem/OrderItemIndex";
 import OrderItemTrash from "../pages/site-admin/orderItem/OrderItemTrash";
 import ProductExportIndex from "../pages/site-admin/store/ProductExportIndex";
 
+import ErrorPage from "../pages/site/ErrorPage";
 
 const SiteAdmin = [
+    { path: '/site-admin/*', component: ErrorPage },
     //brand
     { path: '/site-admin/brand/index', component: BrandIndex },
     { path: '/site-admin/brand/trash', component: BrandTrash },

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import NotificationService from '../../../services/NotificationService';
 import { FaTrash, FaEdit, FaToggleOn, FaToggleOff } from 'react-icons/fa';
 import { toast } from 'react-toastify';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Pagination from '../../site/homeComponents/productComponents/Pagination';
 
 const NotificationIndex = () => {
@@ -11,6 +11,7 @@ const NotificationIndex = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const notificationsPerPage = 10; // Số thông báo trên mỗi trang
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchNotifications = async () => {
@@ -19,7 +20,11 @@ const NotificationIndex = () => {
                 setNotifications(result);
                 setTotalPages(Math.ceil(result.length / notificationsPerPage));
             } catch (error) {
-                console.error("Error fetching notifications:", error);
+                if (error.response && error.response.status === 503) {
+                    navigate('/admin/404');
+                } else {
+                    console.error("Error fetching data:", error);
+                }
             }
         };
         fetchNotifications();

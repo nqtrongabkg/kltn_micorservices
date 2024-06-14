@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import BannerService from '../../../services/BannerService';
 import { FaToggleOn, FaTrash, FaEdit, FaToggleOff } from 'react-icons/fa';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { urlImageBanner } from '../../../config';
 import Pagination from '../../site/homeComponents/productComponents/Pagination';
@@ -11,6 +11,7 @@ const BannerIndex = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [bannersPerPage] = useState(5); // Số lượng banner trên mỗi trang
     const [reload, setReload] = useState(0);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchData = async () => {
@@ -22,7 +23,11 @@ const BannerIndex = () => {
                 const sortedData = result.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
                 setBanners(sortedData);
             } catch (error) {
-                console.error("Error fetching:", error);
+                if (error.response && error.response.status === 503) {
+                    navigate('/admin/404');
+                } else {
+                    console.error("Error fetching data:", error);
+                }
             }
         };
         fetchData();

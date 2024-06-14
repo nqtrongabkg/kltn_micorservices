@@ -150,6 +150,14 @@ public class BrandServiceImpl implements BrandService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public List<BrandResponse> searchByName(String name) {
+        List<Brand> brands = brandRepository.findByNameContainingIgnoreCase(name);
+        return brands.stream()
+                .map(this::mapBrandToBrandResponse)
+                .collect(Collectors.toList());
+    }
+
     private BrandResponse mapBrandToBrandResponse(Brand brand) {
         if (brand != null) {
             return BrandResponse.builder()

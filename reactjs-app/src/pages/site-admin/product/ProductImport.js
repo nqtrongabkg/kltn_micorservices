@@ -39,7 +39,11 @@ const ProductImport = () => {
                 const filteredTags = tagResponse.filter(tag => tag.status === 1 || tag.status === 3);
                 setTags(filteredTags);
             } catch (error) {
-                console.error("Error fetching data:", error);
+                if (error.response && error.response.status === 503) {
+                    navigate('/site-admin/404');
+                } else {
+                    console.error("Error fetching data:", error);
+                }
             }
         }
     

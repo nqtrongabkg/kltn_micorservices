@@ -17,7 +17,6 @@ const ProductImportEdit = () => {
     const [createdBy, setCreatedBy] = useState('');
     const [createdAt, setCreatedAt] = useState('');
 
-
     const [productId, setProductId] = useState('');
     const [optionValueId, setPOptionValueId] = useState('');
     const [soldQuantity, setSoldQuantity] = useState(0);
@@ -46,7 +45,11 @@ const ProductImportEdit = () => {
                 }
 
             } catch (error) {
-                console.error('Error fetching data:', error);
+                if (error.response && error.response.status === 503) {
+                    navigate('/site-admin/404');
+                } else {
+                    console.error("Error fetching data:", error);
+                }
             }
         };
         fetchData();

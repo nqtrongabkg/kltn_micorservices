@@ -25,7 +25,11 @@ const Content = () => {
         const getData = async (id) => {
             const result = await FeedbackService.getByProductId(id);
             if (result) {
-                setFeedbacks(result);
+                const feedbacksWithUser = await Promise.all(result.map(async (feedback) => {
+                    const user = await UserService.getUserById(feedback.createdBy);
+                    return { ...feedback, userName: user ? user.name : 'Unknown' };
+                }));
+                setFeedbacks(feedbacksWithUser);
             }
 
             const getProduct = await ProductService.getById(id);
@@ -35,7 +39,7 @@ const Content = () => {
                 if (getProducts && getProducts.content) {
                     setProducts(getProducts.content);
                 }
-                if(getShop){
+                if (getShop) {
                     setShop(getShop);
                 }
             }
@@ -58,10 +62,10 @@ const Content = () => {
 
     const renderStars = (count) => {
         return [...Array(5)].map((_, i) => (
-            <FontAwesomeIcon 
-                key={i} 
-                icon={faStar} 
-                className={i < count ? 'text-warning' : 'text-muted'} 
+            <FontAwesomeIcon
+                key={i}
+                icon={faStar}
+                className={i < count ? 'text-warning' : 'text-muted'}
             />
         ));
     };
@@ -93,9 +97,11 @@ const Content = () => {
                                             </div>
                                             <div className="info">
                                                 <div className="nav-link mb-1">
+                                                <div className="text-muted">Người đánh giá: {feedback.userName ? feedback.userName : "Unknown"}</div>
                                                     <div>Đánh giá: {renderStars(feedback.evaluate)}</div>
-                                                    <div >{feedback.description}</div>
+                                                    <div>{feedback.description}</div>
                                                     <strong className="text-dark">{feedback.detail}</strong>
+                                                    
                                                 </div>
                                             </div>
                                         </div>
@@ -104,10 +110,10 @@ const Content = () => {
                                     <p>Chưa có đánh giá</p>
                                 )}
                                 {/* Pagination */}
-                                <Pagination 
-                                    currentPage={currentPage} 
-                                    totalPages={Math.ceil(feedbacks.length / feedbacksPerPage)} 
-                                    onPageChange={paginate} 
+                                <Pagination
+                                    currentPage={currentPage}
+                                    totalPages={Math.ceil(feedbacks.length / feedbacksPerPage)}
+                                    onPageChange={paginate}
                                 />
                             </div>
                         </div>
@@ -117,18 +123,18 @@ const Content = () => {
                             <div className="card">
                                 <div className="card-body text-center">
                                     <h5 className="card-title">
-                                        <button 
-                                            className="shop-button" 
+                                        <button
+                                            className="shop-button"
                                             onClick={() => handleShopClick(shop.id)}
                                         >
                                             {shop ? shop.name : ""}
-                                        </button> 
+                                        </button>
                                     </h5>
                                     {products.map(product => (
-                                        <div 
-                                            key={product.id} 
-                                            className="d-flex mb-3 product-card" 
-                                            style={{ textDecoration: 'none', color: 'inherit', cursor: 'pointer' }} 
+                                        <div
+                                            key={product.id}
+                                            className="d-flex mb-3 product-card"
+                                            style={{ textDecoration: 'none', color: 'inherit', cursor: 'pointer' }}
                                             onClick={() => handleProductClick(product.id)}
                                         >
                                             <div className="me-3">

@@ -72,7 +72,10 @@ import OrderItemIndex from "../pages/admin/orderItem/OrderItemIndex";
 import OrderItemTrash from "../pages/admin/orderItem/OrderItemTrash";
 import ProductExportIndex from "../pages/admin/store/ProductExportIndex";
 
+import ErrorPage from "../pages/site/ErrorPage";
+
 const RouteAdmin = [
+    { path: '/admin/*', component: ErrorPage },
     //user
     { path: '/admin/user/index', component: UserIndex },
     { path: '/admin/user/trash', component: UserTrash },

@@ -14,8 +14,12 @@ import ProductOfCategoryPage from "../pages/site/ProductOfCategoryPage";
 import ProductOfBrandPage from "../pages/site/ProductOfBrandPage";
 import ProductOfTagPage from "../pages/site/ProductOfTagPage";
 import ProductOfShop from "../pages/site/ProductOfShop";
+import ErrorPage from "../pages/site/ErrorPage";
 
 const RouteSite = [
+
+    { path: '*', component: ErrorPage },
+
     { path: '/', component: Home },
 
     { path: '/my-user', component: MyUser },

@@ -31,7 +31,11 @@ const ProductSaleEdit = () => {
                 setCreateBy(result.createdBy);
                 setStatus(result.status);
             } catch (error) {
-                console.error('Error fetching product sale:', error);
+                if (error.response && error.response.status === 503) {
+                    navigate('/site-admin/404');
+                } else {
+                    console.error("Error fetching data:", error);
+                }
             }
         };
         fetchData();

@@ -3,8 +3,10 @@ import CategoryService from '../../../services/CategoryService';
 import BrandService from '../../../services/BrandService';
 import TagService from '../../../services/TagService';
 import '../../../assets/styles/menu.css';
+import { useNavigate } from 'react-router-dom';
 
 const Menu = () => {
+    const navigate = useNavigate();
     const [categories, setCategories] = useState([]);
     const [brands, setBrands] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -26,7 +28,11 @@ const Menu = () => {
                 setCategories(sortedCategories);
                 setBrands(filteredBrands);
             } catch (error) {
-                console.error("Error fetching data:", error);
+                if (error.response && error.response.status === 503) {
+                    navigate('/404');
+                } else {
+                    console.error("Error fetching data:", error);
+                }
             }
             setLoading(false);
         };

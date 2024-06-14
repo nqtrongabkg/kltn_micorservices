@@ -31,4 +31,6 @@ public interface BrandService {
     public void isPublic(UUID id);
 
     List<BrandResponse> getBrandForClient(UUID id);
+
+    List<BrandResponse> searchByName(String name);
 }

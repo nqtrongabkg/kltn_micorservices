@@ -12,7 +12,7 @@ const Home = () => {
         <Category></Category>
         <ProductsAtHome></ProductsAtHome>
         <Testimonials></Testimonials>  
-        <Blog></Blog>  
+        {/* <Blog></Blog>   */}
         </>
     );
 };

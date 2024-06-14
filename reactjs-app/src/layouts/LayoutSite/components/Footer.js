@@ -190,13 +190,13 @@ export default function Footer() {
                     <div className="container">
                         <img src={urlImageInformation + information.logo} alt="payment method" className="payment-img" />
                         <div className="container" style={{ color: 'white', lineHeight: '0.7', marginBottom: '5px' }}>
-                            <p className="copyright">Địa chỉ: {information.address}</p>
-                            <p className="copyright">Email: {information.email}</p>
-                            <p className="copyright">Điện thoại: {information.phone}</p>
-                            <p className="copyright">Chịu Trách Nhiệm Quản Lý Nội Dung: {information.repersent} - Điện thoại liên hệ: {information.repersentPhone}</p>
-                            <p className="copyright">Mã số doanh nghiệp: {information.businessNumber} được cấp bởi CQCGP vào ngày {formatDateToLocalDate(information.createdAt)}</p>
-                            <p className="copyright">Giấy phép kinh doanh: {information.license} được cấp bởi CQCGP vào ngày {formatDateToLocalDate(information.createdAt)}</p>
-                            <p className="copyright">Copyright © 2024 - Bản quyền thuộc về {information.name}</p>
+                            <p className="copyright">Địa chỉ: {information.address ? information.address : "Not found"}</p>
+                            <p className="copyright">Email: {information.email ? information.email : "Not found"}</p>
+                            <p className="copyright">Điện thoại: {information.phone ? information.phone : "Not found"}</p>
+                            <p className="copyright">Chịu Trách Nhiệm Quản Lý Nội Dung: {information.repersent ? information.repersent : "Not found"} - Điện thoại liên hệ: {information.repersentPhone ? information.repersentPhone : "Not found"}</p>
+                            <p className="copyright">Mã số doanh nghiệp: {information.businessNumber ? information.businessNumber : "Not found"} được cấp bởi CQCGP vào ngày {formatDateToLocalDate(information.createdAt ? information.createdAt : "Not found")}</p>
+                            <p className="copyright">Giấy phép kinh doanh: {information.license ? information.license : "Not found"} được cấp bởi CQCGP vào ngày {formatDateToLocalDate(information.createdAt ? information.createdAt : "Not found")}</p>
+                            <p className="copyright">Copyright © 2024 - Bản quyền thuộc về {information.name ? information.name : "Not found"}</p>
                         </div>
 
                     </div>

@@ -22,7 +22,11 @@ const RoleEdit = () => {
                 setRole(result.role);
                 setStatus(result.status)
             } catch (error) {
-                console.error('Error fetching role:', error);
+                if (error.response && error.response.status === 503) {
+                    navigate('/admin/404');
+                } else {
+                    console.error("Error fetching data:", error);
+                }
             }
         })();
     }, [id]);

@@ -6,10 +6,11 @@ import { toast } from 'react-toastify';
 import { Button } from 'react-bootstrap';
 import { FaSave, FaTrash } from 'react-icons/fa';
 import { urlImageProductGallary } from '../../../config';
+import { useNavigate } from 'react-router-dom';
 
 const ProductGallaryIndex = () => {
     const { id } = useParams();
-
+    const navigate = useNavigate();
     const [gallaries, setGallaries] = useState([]);
     const [image, setImage] = useState(null);
 
@@ -22,7 +23,11 @@ const ProductGallaryIndex = () => {
                 }
                 setGallaries(result);
             } catch (error) {
-                console.error('Error fetching:', error);
+                if (error.response && error.response.status === 503) {
+                    navigate('/admin/404');
+                } else {
+                    console.error("Error fetching data:", error);
+                }
             }
         };
         fetchData();

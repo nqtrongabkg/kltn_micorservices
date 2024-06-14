@@ -11,26 +11,36 @@ import { urlImageProduct } from '../../../../config';
 import '../../../../assets/styles/newProduct.css';
 
 const NewProducts = () => {
+    const navigate = useNavigate();
     const [allProducts, setAllProducts] = useState([]);
     const [displayedProducts, setDisplayedProducts] = useState([]);
     const [itemsToShow, setItemsToShow] = useState(12);
 
     useEffect(() => {
         (async () => {
-            const result = await ProductService.getAll();
-            const sortedProducts = result.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-            const productsWithSale = await Promise.all(sortedProducts.map(async (product) => {
-                const saleInfoList = await ProductSaleService.getByProduct(product.id);
-                if (saleInfoList && saleInfoList.length > 0) {
-                    const latestSaleInfo = saleInfoList.reduce((latestSale, currentSale) => {
-                        return new Date(currentSale.createdAt) > new Date(latestSale.createdAt) ? currentSale : latestSale;
-                    });
-                    product.salePrice = latestSaleInfo.priceSale;
+            try {
+                const result = await ProductService.getAll();
+                const sortedProducts = result.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                const productsWithSale = await Promise.all(sortedProducts.map(async (product) => {
+                    const saleInfoList = await ProductSaleService.getByProduct(product.id);
+                    if (saleInfoList && saleInfoList.length > 0) {
+                        const latestSaleInfo = saleInfoList.reduce((latestSale, currentSale) => {
+                            return new Date(currentSale.createdAt) > new Date(latestSale.createdAt) ? currentSale : latestSale;
+                        });
+                        product.salePrice = latestSaleInfo.priceSale;
+                    }
+                    return product;
+                }));
+                setAllProducts(productsWithSale);
+                setDisplayedProducts(productsWithSale.slice(0, itemsToShow));
+            }catch (error) {
+                if (error.response && error.response.status === 503) {
+                    navigate('/404');
+                } else {
+                    console.error("Error fetching data:", error);
                 }
-                return product;
-            }));
-            setAllProducts(productsWithSale);
-            setDisplayedProducts(productsWithSale.slice(0, itemsToShow));
+            }
+            
         })();
     }, [itemsToShow]);
 

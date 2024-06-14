@@ -16,7 +16,11 @@ const Category = () => {
                 const finalCategories = sortedCategories.sort((a, b) => b.productQuantity - a.productQuantity);
                 setCategories(finalCategories);
             } catch (error) {
-                console.error("Error fetching:", error);
+                if (error.response && error.response.status === 503) {
+                    navigate('/404');
+                } else {
+                    console.error("Error fetching data:", error);
+                }
             }
         };
         fetchCategories();

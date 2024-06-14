@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import ProductOptionService from '../../../services/ProductOptionService';
 import ProductService from '../../../services/ProductService';
 import { FaTrash, FaEdit, FaToggleOn, FaToggleOff } from 'react-icons/fa';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { urlImageProduct } from '../../../config';
 import { LocalDateTime, DateTimeFormatter } from 'js-joda';
@@ -11,7 +11,7 @@ import Pagination from '../../site/homeComponents/productComponents/Pagination';
 const ProductOptionIndex = () => {
     const [options, setOptions] = useState([]);
     const [reload, setReload] = useState(0);
-
+    const navigate = useNavigate();
     const [currentPage, setCurrentPage] = useState(1);
     const [optionsPerPage] = useState(5); // Số lượng lựa chọn hiển thị trên mỗi trang
     const indexOfLastOption = currentPage * optionsPerPage;
@@ -21,16 +21,24 @@ const ProductOptionIndex = () => {
 
     useEffect(() => {
         (async () => {
-            const sessionUser = JSON.parse(sessionStorage.getItem('user'));
-            const result = await ProductOptionService.getByUser(sessionUser.userId);
-            if (result !== null) {
-                console.log("option list: ", result);
+            try {
+                const sessionUser = JSON.parse(sessionStorage.getItem('user'));
+                const result = await ProductOptionService.getByUser(sessionUser.userId);
+                if (result !== null) {
+                    console.log("option list: ", result);
+                }
+                // Filter out sales with status 2
+                const filteredSales = result.filter(sale => sale.status !== 2);
+                // Sort the filtered sales array by createdAt property from newest to oldest
+                filteredSales.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                setOptions(filteredSales);
+            }catch (error) {
+                if (error.response && error.response.status === 503) {
+                    navigate('/site-admin/404');
+                } else {
+                    console.error("Error fetching data:", error);
+                }
             }
-            // Filter out sales with status 2
-            const filteredSales = result.filter(sale => sale.status !== 2);
-            // Sort the filtered sales array by createdAt property from newest to oldest
-            filteredSales.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-            setOptions(filteredSales);
         })();
     }, [reload]);
 

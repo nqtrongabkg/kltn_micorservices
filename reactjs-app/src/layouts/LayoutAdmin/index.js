@@ -167,7 +167,7 @@ const LayoutAdmin = () => {
                                                             </li>
                                                         </ul>
                                                     </li>
-                                                    <li className="hdlitem item-sub" id="item2" onClick={() => handleItemClick('item2')}>
+                                                    {/* <li className="hdlitem item-sub" id="item2" onClick={() => handleItemClick('item2')}>
                                                         <RiArticleFill className="icon-left" />
                                                         <a href="#nqt">Bài viết</a>
                                                         <i className="fa-solid fa-plus icon-right"></i>
@@ -179,7 +179,7 @@ const LayoutAdmin = () => {
                                                                 <a href="/admin/topic/index">Chủ đề</a>
                                                             </li>
                                                         </ul>
-                                                    </li>
+                                                    </li> */}
 
                                                     <li className="hdlitem item-sub" id="item3" onClick={() => handleItemClick('item3')}>
                                                         <SiSellfy className="icon-left" />

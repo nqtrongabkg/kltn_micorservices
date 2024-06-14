@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import ProductSaleService from '../../../services/ProductSaleService';
 import ProductService from '../../../services/ProductService';
 import { FaTrash, FaEdit, FaToggleOn, FaToggleOff } from 'react-icons/fa';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { urlImageProduct } from '../../../config';
 import { LocalDateTime, DateTimeFormatter } from 'js-joda';
@@ -13,15 +13,25 @@ const ProductSaleIndex = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [salesPerPage] = useState(10); // Số lượng sản phẩm trên mỗi trang
     const [reload, setReload] = useState(0);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchSales = async () => {
-            const result = await ProductSaleService.getAll();
-            // Filter out sales with status 2
-            const filteredSales = result.filter(sale => sale.status !== 2);
-            // Sort the filtered sales array by createdAt property from newest to oldest
-            filteredSales.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-            setSales(filteredSales);
+            try {
+                const result = await ProductSaleService.getAll();
+                // Filter out sales with status 2
+                const filteredSales = result.filter(sale => sale.status !== 2);
+                // Sort the filtered sales array by createdAt property from newest to oldest
+                filteredSales.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                setSales(filteredSales);
+            }catch (error) {
+                if (error.response && error.response.status === 503) {
+                    navigate('/admin/404');
+                } else {
+                    console.error("Error fetching data:", error);
+                }
+            }
+            
         };
 
         fetchSales();

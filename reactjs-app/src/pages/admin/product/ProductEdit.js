@@ -75,13 +75,15 @@ const ProductEdit = () => {
                 setCurrentCategories(selectedCategoryIds);
                 setCurrentTags(selectedTagIds);
             } catch (error) {
-                toast.error("Failed to fetch data.");
+                if (error.response && error.response.status === 503) {
+                    navigate('/admin/404');
+                } else {
+                    console.error("Error fetching data:", error);
+                }
             }
         };
         fetchData();
     }, [id]);
-
-
 
     // Xử lý sự kiện khi thay đổi chọn tag và category
     const handleTagChange = (tagId, checked) => {

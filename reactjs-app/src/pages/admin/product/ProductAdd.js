@@ -29,7 +29,7 @@ const ProductAdd = () => {
                 const brandResponse = await BrandService.getAll();
                 const filteredBrands = brandResponse.filter(brand => brand.status === 1 || brand.status === 3);
                 setBrands(filteredBrands);
-    
+
                 const categoryResponse = await CategoryService.getAll();
                 const filteredCategories = categoryResponse.filter(category => category.status === 1 || category.status === 3);
                 setCategories(filteredCategories);
@@ -41,10 +41,10 @@ const ProductAdd = () => {
                 console.error("Error fetching data:", error);
             }
         }
-    
+
         fetchData();
     }, []);
-    
+
 
     const handleFormSubmit = async (e) => {
         e.preventDefault();
@@ -163,8 +163,16 @@ const ProductAdd = () => {
                             </div>
                             <div className="mb-3">
                                 <label><strong>Chi tiết</strong></label>
-                                <input type="text" name="detail" className="form-control" placeholder="Chi tiết sản phẩm" value={detail} onChange={e => setDetail(e.target.value)} />
+                                <textarea
+                                    name="detail"
+                                    className="form-control"
+                                    placeholder="Chi tiết sản phẩm"
+                                    rows="3"
+                                    value={detail}
+                                    onChange={e => setDetail(e.target.value)}
+                                />
                             </div>
+
                             <div className="mb-3">
                                 <label><strong>Giá bán</strong></label>
                                 <input type="number" name="price" className="form-control" placeholder="Giá bán" value={price} onChange={e => setPrice(e.target.value)} />
@@ -176,7 +184,7 @@ const ProductAdd = () => {
                         </div>
                         <div className="col-md-6">
                             <div className="mb-3">
-                            <label><strong>Thương hiệu</strong></label>
+                                <label><strong>Thương hiệu</strong></label>
                                 {brands && brands.length > 0 && (
                                     <select
                                         name="brand"

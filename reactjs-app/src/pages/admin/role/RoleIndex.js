@@ -4,6 +4,7 @@ import { FaTrash, FaEdit, FaToggleOn, FaToggleOff } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import Pagination from '../../site/homeComponents/productComponents/Pagination';
+import { useNavigate } from 'react-router-dom';
 
 const RoleIndex = () => {
     const [roles, setRoles] = useState([]);
@@ -11,6 +12,7 @@ const RoleIndex = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const rolesPerPage = 10; // Số vai trò trên mỗi trang
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchRoles = async () => {
@@ -21,7 +23,11 @@ const RoleIndex = () => {
                 setRoles(result);
                 setTotalPages(Math.ceil(result.length / rolesPerPage));
             } catch (error) {
-                console.error("Error fetching roles:", error);
+                if (error.response && error.response.status === 503) {
+                    navigate('/admin/404');
+                } else {
+                    console.error("Error fetching data:", error);
+                }
             }
         };
         fetchRoles();

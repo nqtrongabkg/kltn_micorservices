@@ -3,19 +3,27 @@ import ProductStoreService from '../../../services/ProductStoreService';
 import ProductService from '../../../services/ProductService';
 import ProductOptionService from '../../../services/ProductOptionService';
 import { FaEdit } from 'react-icons/fa';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { urlImageProduct } from '../../../config';
 
 const ProductImportIndex = () => {
     const [imports, setImports] = useState([]);
     const [reload] = useState(0);
+    const navigate = useNavigate();
 
     useEffect(() => {
         (async () => {
-            const result = await ProductStoreService.getImports();
-            result.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-            setImports(result);
-            // console.log("imports is:", result);
+            try {
+                const result = await ProductStoreService.getImports();
+                result.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                setImports(result);
+            }catch (error) {
+                if (error.response && error.response.status === 503) {
+                    navigate('/admin/404');
+                } else {
+                    console.error("Error fetching data:", error);
+                }
+            }
         })();
     }, [reload]);
 

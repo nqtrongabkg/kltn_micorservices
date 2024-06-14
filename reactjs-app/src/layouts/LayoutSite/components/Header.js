@@ -4,35 +4,43 @@ import logo from '../../../assets/images/logo/logo.svg';
 import Menu from '../../../pages/site/header/menu';
 import '../../../assets/styles/searchResult.css';
 import { useNavigate } from 'react-router-dom';
-// import ProductService from '../../../services/ProductService';
 import CategoryService from '../../../services/CategoryService';
+import BrandService from '../../../services/BrandService';
+import ProductService from '../../../services/ProductService';
 import OrderService from '../../../services/OrderService';
 import OrderItemService from '../../../services/OrderItemService';
-import FavoriteService from '../../../services/FavoriteService'; // Import FavoriteService
-import NotificationService from '../../../services/NotificationService'; // Import NotificationService
-import { urlImageCategory } from '../../../config';
+import FavoriteService from '../../../services/FavoriteService';
+import NotificationService from '../../../services/NotificationService';
+import { urlImageCategory, urlImageBrand, urlImageProduct } from '../../../config';
 
 export default function Header() {
     const user = JSON.parse(sessionStorage.getItem('user'));
     const navigate = useNavigate();
     const [searchTerm, setSearchTerm] = useState("");
-    const [searchResults, setSearchResults] = useState([]);
+    const [searchResults, setSearchResults] = useState({ categories: [], brands: [], products: [] });
     const [cartItemCount, setCartItemCount] = useState(0);
     const [favoriteItemCount, setFavoriteItemCount] = useState(0);
     const [notificationCount, setNotificationCount] = useState(0);
     const [notifications, setNotifications] = useState([]);
     const [showNotifications, setShowNotifications] = useState(false);
-
     const [reload, setReload] = useState(null);
 
     useEffect(() => {
         const fetchSearchResults = async () => {
             try {
                 if (searchTerm.trim() !== "") {
-                    const results = await CategoryService.search(searchTerm);
-                    setSearchResults(results);
+                    const [categoryResults, brandResults, productResults] = await Promise.all([
+                        CategoryService.search(searchTerm),
+                        BrandService.search(searchTerm),
+                        ProductService.search(searchTerm)
+                    ]);
+                    setSearchResults({
+                        categories: categoryResults,
+                        brands: brandResults,
+                        products: productResults
+                    });
                 } else {
-                    setSearchResults([]);
+                    setSearchResults({ categories: [], brands: [], products: [] });
                 }
             } catch (error) {
                 console.error('Error fetching search results:', error);
@@ -80,7 +88,7 @@ export default function Header() {
 
     useEffect(() => {
         const user = JSON.parse(sessionStorage.getItem('user'));
-        if (user) { // Check if user is defined
+        if (user) {
             const fetchNotificationCount = async () => {
                 try {
                     const count = await NotificationService.countUnseen(user.userId);
@@ -101,7 +109,7 @@ export default function Header() {
                     console.error('Error fetching notifications:', error);
                 }
             };
-    
+
             fetchNotifications();
             fetchNotificationCount();
         }
@@ -152,8 +160,14 @@ export default function Header() {
         setSearchTerm(value);
     };
 
-    const handleSearchItemClick = (productId) => {
-        navigate(`/product-of-category/${productId}`);
+    const handleSearchItemClick = (type, id) => {
+        if (type === 'category') {
+            navigate(`/product-of-category/${id}`);
+        } else if (type === 'brand') {
+            navigate(`/product-of-brand/${id}`);
+        } else if (type === 'product') {
+            navigate(`/product-detail/${id}`);
+        }
         setSearchTerm("");
     };
 
@@ -167,6 +181,7 @@ export default function Header() {
         setShowNotifications(!showNotifications);
         navigate(`${linkTo}`);
     };
+
     const seen = async (id) => {
         await NotificationService.seen(id);
         setReload(Date.now());
@@ -194,24 +209,68 @@ export default function Header() {
                                 <IonIcon name="search-outline" role="img" className="md hydrated" aria-label="search outline"></IonIcon>
                             </button>
 
-                            {searchResults.length > 0 && (
+                            {(searchResults.categories.length > 0 || searchResults.brands.length > 0 || searchResults.products.length > 0) && (
                                 <div className="search-results">
-                                    {searchResults.slice(0, 8).map((category) => (
-                                        <div
-                                            key={category.id}
-                                            className="search-result-item"
-                                            onClick={() => handleSearchItemClick(category.id)}
-                                        >
-                                            <img src={urlImageCategory + category.image} alt='HinhAnh' />
-                                            <div>
-                                                <h5>{category.name}</h5>
-                                                <p>{category.description}</p>
-                                            </div>
-                                            <div className="product-price">
-                                                <span>{category.productQuantity} Sản phẩm</span>
-                                            </div>
+                                    {searchResults.categories.length > 0 && (
+                                        <div>
+                                            <h6>Danh mục</h6>
+                                            {searchResults.categories.slice(0, 8).map((category) => (
+                                                <div
+                                                    key={category.id}
+                                                    className="search-result-item"
+                                                    onClick={() => handleSearchItemClick('category', category.id)}
+                                                >
+                                                    <img src={urlImageCategory + category.image} alt='HinhAnh' />
+                                                    <div>
+                                                        <h5>{category.name}</h5>
+                                                        <p>{category.description}</p>
+                                                    </div>
+                                                    <div className="product-price">
+                                                        <span>{category.productQuantity} Sản phẩm</span>
+                                                    </div>
+                                                </div>
+                                            ))}
                                         </div>
-                                    ))}
+                                    )}
+                                    {searchResults.brands.length > 0 && (
+                                        <div>
+                                            <h6>Thương hiệu</h6>
+                                            {searchResults.brands.slice(0, 8).map((brand) => (
+                                                <div
+                                                    key={brand.id}
+                                                    className="search-result-item"
+                                                    onClick={() => handleSearchItemClick('brand', brand.id)}
+                                                >
+                                                    <img src={urlImageBrand + brand.image} alt='HinhAnh' />
+                                                    <div>
+                                                        <h5>{brand.name}</h5>
+                                                        <p>{brand.description}</p>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
+                                    {searchResults.products.length > 0 && (
+                                        <div>
+                                            <h6>Sản phẩm</h6>
+                                            {searchResults.products.slice(0, 8).map((product) => (
+                                                <div
+                                                    key={product.id}
+                                                    className="search-result-item"
+                                                    onClick={() => handleSearchItemClick('product', product.id)}
+                                                >
+                                                    <img src={urlImageProduct + product.image} alt='HinhAnh' />
+                                                    <div>
+                                                        <h5>{product.name}</h5>
+                                                        <p>{product.description}</p>
+                                                    </div>
+                                                    <div className="product-price">
+                                                        <span>{product.price} VND</span>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
                                 </div>
                             )}
                         </div>

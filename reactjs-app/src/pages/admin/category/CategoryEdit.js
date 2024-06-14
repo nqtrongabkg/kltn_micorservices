@@ -29,8 +29,11 @@ const CategoryEdit = () => {
                 setProductQuantity(categoryData.productQuantity)
                 setStringImageDefault(categoryData.image);
             } catch (error) {
-                console.error('Error fetching data:', error);
-                toast.error("Failed to fetch data.");
+                if (error.response && error.response.status === 503) {
+                    navigate('/admin/404');
+                } else {
+                    console.error("Error fetching data:", error);
+                }
             }
         };
         fetchData();

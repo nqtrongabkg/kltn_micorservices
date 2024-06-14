@@ -12,4 +12,6 @@ public interface BrandRepository extends JpaRepository<Brand, UUID>{
     List<Brand> findByCreatedBy(UUID createdBy);
 
     List<Brand> findByStatusOrCreatedBy(int i, UUID id);
+
+    List<Brand> findByNameContainingIgnoreCase(String name);
 }

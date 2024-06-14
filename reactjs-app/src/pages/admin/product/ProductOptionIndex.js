@@ -2,13 +2,14 @@ import React, { useEffect, useState } from 'react';
 import ProductOptionService from '../../../services/ProductOptionService';
 import ProductService from '../../../services/ProductService';
 import { FaTrash, FaEdit, FaToggleOn, FaToggleOff } from 'react-icons/fa';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { urlImageProduct } from '../../../config';
 import { LocalDateTime, DateTimeFormatter } from 'js-joda';
 import Pagination from '../../site/homeComponents/productComponents/Pagination';
 
 const ProductOptionIndex = () => {
+    const navigate = useNavigate();
     const [options, setOptions] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [optionsPerPage] = useState(10); // Số lượng lựa chọn trên mỗi trang
@@ -16,12 +17,20 @@ const ProductOptionIndex = () => {
 
     useEffect(() => {
         const fetchOptions = async () => {
-            const result = await ProductOptionService.getAll();
-            // Filter out options with status 2
-            const filteredOptions = result.filter(option => option.status !== 2);
-            // Sort the filtered options array by createdAt property from newest to oldest
-            filteredOptions.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-            setOptions(filteredOptions);
+            try {
+                const result = await ProductOptionService.getAll();
+                // Filter out options with status 2
+                const filteredOptions = result.filter(option => option.status !== 2);
+                // Sort the filtered options array by createdAt property from newest to oldest
+                filteredOptions.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                setOptions(filteredOptions);
+            }catch (error) {
+                if (error.response && error.response.status === 503) {
+                    navigate('/admin/404');
+                } else {
+                    console.error("Error fetching data:", error);
+                }
+            }
         };
 
         fetchOptions();

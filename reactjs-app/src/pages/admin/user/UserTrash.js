@@ -2,10 +2,11 @@ import React, { useEffect, useState } from 'react';
 import UserService from '../../../services/UserService';
 import { FaArrowAltCircleLeft, FaTrash } from 'react-icons/fa';
 import { toast } from 'react-toastify';
-
+import { useNavigate } from 'react-router-dom';
 import { urlImageUser } from '../../../config';
 
 const UserTrash = () => {
+    const navigate = useNavigate();
     const [users, setUsers] = useState([]);
     const [reload, setReload] = useState(0);
 
@@ -18,8 +19,11 @@ const UserTrash = () => {
             const result = await UserService.getCustomer(); // Ensure this fetches trashed users
             setUsers(result.filter(user => user.status === 2)); // Assuming status 2 is for trashed users
         } catch (error) {
-            console.error('Error fetching trashed users:', error);
-            toast.error('Đã xảy ra lỗi khi tải danh sách người dùng đã xóa.');
+            if (error.response && error.response.status === 503) {
+                navigate('/admin/404');
+            } else {
+                console.error("Error fetching data:", error);
+            }
         }
     };
 

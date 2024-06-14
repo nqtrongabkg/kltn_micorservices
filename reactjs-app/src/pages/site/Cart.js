@@ -10,18 +10,22 @@ import ProductStoreService from '../../services/ProductStoreService';
 import ProductSaleService from '../../services/ProductSaleService';
 import { urlImageProduct } from '../../config';
 import { toast } from 'react-toastify';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const CartItem = ({ item, reload, setReload }) => {
     const [product, setProduct] = useState(null);
-
+    const navigate = useNavigate();
     useEffect(() => {
         const fetchProduct = async () => {
             try {
                 const product = await ProductService.getById(item.productId);
                 setProduct(product);
             } catch (error) {
-                console.error('Error fetching product:', error);
+                if (error.response && error.response.status === 503) {
+                    navigate('/404');
+                } else {
+                    console.error("Error fetching data:", error);
+                }
             }
         };
 
@@ -76,7 +80,7 @@ const CartItem = ({ item, reload, setReload }) => {
 const Cart = () => {
     const user = JSON.parse(sessionStorage.getItem('user'));
     const location = useLocation();
-
+    const navigate = useNavigate();
     const [orderItems, setOrderItems] = useState([]);
     const [cart, setCart] = useState(null);
     const [deliveryAddress, setDeliveryAddress] = useState("");
@@ -108,7 +112,11 @@ const Cart = () => {
                     }
                 }
             } catch (error) {
-                console.error('Error fetching cart items:', error);
+                if (error.response && error.response.status === 503) {
+                    navigate('/404');
+                } else {
+                    console.error("Error fetching data:", error);
+                }
             }
         };
         const handleSuccessfulPayment = async () => {

@@ -2,10 +2,12 @@ import React, { useEffect, useState } from 'react';
 import RoleService from '../../../services/RoleService';
 import { FaTrash, FaArrowAltCircleLeft } from 'react-icons/fa';
 import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
 
 const RoleTrash = () => {
     const [roles, setRoles] = useState([]);
     const [reload, setReload] = useState(0);
+    const navigate = useNavigate();
 
     useEffect(() => {
         fetchTrashedRoles();
@@ -16,8 +18,11 @@ const RoleTrash = () => {
             const result = await RoleService.getAll();
             setRoles(result.filter(role => role.status === 2)); // Filter trashed roles
         } catch (error) {
-            console.error('Error fetching trashed roles:', error);
-            toast.error('Đã xảy ra lỗi khi tải danh sách các quyền đã xóa.');
+            if (error.response && error.response.status === 503) {
+                navigate('/admin/404');
+            } else {
+                console.error("Error fetching data:", error);
+            }
         }
     };
 

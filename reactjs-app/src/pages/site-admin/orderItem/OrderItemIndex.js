@@ -9,8 +9,10 @@ import { urlImageProduct } from '../../../config';
 import ProductStoreService from '../../../services/ProductStoreService';
 import NotificationService from '../../../services/NotificationService';
 import Pagination from '../../site/homeComponents/productComponents/Pagination';
+import { useNavigate } from 'react-router-dom';
 
 const OrderItemIndex = () => {
+    const navigate = useNavigate();
     const [orderItems, setOrderItems] = useState([]);
     const [reload, setReload] = useState(0);
     const [currentPage, setCurrentPage] = useState(1);
@@ -49,7 +51,11 @@ const OrderItemIndex = () => {
                 
                 setOrderItems(paginatedItems);
             } catch (error) {
-                console.error("Error fetching order items:", error);
+                if (error.response && error.response.status === 503) {
+                    navigate('/site-admin/404');
+                } else {
+                    console.error("Error fetching data:", error);
+                }
             }
         };
 

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import ProductStoreService from '../../../services/ProductStoreService';
 import ProductService from '../../../services/ProductService';
-// import { FaEye } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import { urlImageProduct } from '../../../config';
 import Pagination from '../../site/homeComponents/productComponents/Pagination';
@@ -9,13 +9,12 @@ import Pagination from '../../site/homeComponents/productComponents/Pagination';
 const ProductExportIndex = () => {
     const [exports, setExports] = useState([]);
     const [reload] = useState(0);
-
+    const navigate = useNavigate();
     const [currentPage, setCurrentPage] = useState(1);
     const [exportsPerPage] = useState(5); // Số lượng lịch sử xuất hàng hiển thị trên mỗi trang
     const indexOfLastExport = currentPage * exportsPerPage;
     const indexOfFirstExport = indexOfLastExport - exportsPerPage;
     const currentExports = exports.slice(indexOfFirstExport, indexOfLastExport);
-
 
     useEffect(() => {
         const fetchExports = async () => {
@@ -27,7 +26,11 @@ const ProductExportIndex = () => {
                     setExports(result);
                 }
             } catch (error) {
-                console.error("Error fetching exports:", error);
+                if (error.response && error.response.status === 503) {
+                    navigate('/site-admin/404');
+                } else {
+                    console.error("Error fetching data:", error);
+                }
             }
         };
         fetchExports();

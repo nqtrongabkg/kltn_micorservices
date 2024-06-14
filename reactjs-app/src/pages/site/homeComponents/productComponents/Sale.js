@@ -10,17 +10,27 @@ import { toast } from 'react-toastify';
 import '../../../../assets/styles/newProduct.css';
 
 const Sale = () => {
+    const navigate = useNavigate();
     const [sales, setSales] = useState([]);
     const [displayedSales, setDisplayedSales] = useState([]);
     const [itemsToShow, setItemsToShow] = useState(12);
 
     useEffect(() => {
         (async () => {
-            const result = await ProductSaleService.getAll();
-            const filteredSales = result.filter(sale => sale.status !== 2);
-            filteredSales.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-            setSales(filteredSales);
-            setDisplayedSales(filteredSales.slice(0, itemsToShow));
+            try {
+                const result = await ProductSaleService.getAll();
+                const filteredSales = result.filter(sale => sale.status !== 2);
+                filteredSales.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                setSales(filteredSales);
+                setDisplayedSales(filteredSales.slice(0, itemsToShow));
+            }catch (error) {
+                if (error.response && error.response.status === 503) {
+                    navigate('/404');
+                } else {
+                    console.error("Error fetching data:", error);
+                }
+            }
+            
         })();
     }, [itemsToShow]);
 

@@ -41,7 +41,11 @@ const UserManager = () => {
                 setStatus(userData.status || 1);
                 setStringImageDefault(userData.avatar || "");
             } catch (error) {
-                console.error('Error fetching data:', error);
+                if (error.response && error.response.status === 503) {
+                    navigate('/404');
+                } else {
+                    console.error("Error fetching data:", error);
+                }
             }
         };
         fetchData();

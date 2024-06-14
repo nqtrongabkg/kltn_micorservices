@@ -60,7 +60,7 @@ const CategoryAdd = () => {
         <form onSubmit={handleFormSubmit}>
             <div className="content">
                 <section className="content-header my-2">
-                    <h1 className="d-inline">Thêm loại sản phẩm</h1>
+                    <h1 className="d-inline">Thêm danh mục</h1>
                     <div className="row mt-2 align-items-center">
                         <div className="col-md-12 text-end">
                             <Button variant="success" size="sm" href="/admin/category/index" className="ml-2">
@@ -74,11 +74,11 @@ const CategoryAdd = () => {
                         <div className="col-md-6">
                             <div className="mb-3">
                                 <label><strong>Tên loại(*)</strong></label>
-                                <input type="text" name="name" className="form-control" placeholder="Tên thương hiệu" value={name} onChange={e => setName(e.target.value)} />
+                                <input type="text" name="name" className="form-control" placeholder="Tên danh mục" value={name} onChange={e => setName(e.target.value)} />
                             </div>
                             <div className="mb-3">
                                 <label><strong>Mô tả</strong></label>
-                                <input type="text" name="description" className="form-control" placeholder="Mô tả thương hiệu" value={description} onChange={e => setDescription(e.target.value)} />
+                                <input type="text" name="description" className="form-control" placeholder="Mô tả danh mục" value={description} onChange={e => setDescription(e.target.value)} />
                             </div>
                         </div>
                         <div className="col-md-6">

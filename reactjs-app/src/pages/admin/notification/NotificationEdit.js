@@ -26,7 +26,11 @@ const NotificationEdit = () => {
                 setStatus(result.status);
                 setIserId(result.user.id)
             } catch (error) {
-                console.error('Error fetching notification:', error);
+                if (error.response && error.response.status === 503) {
+                    navigate('/admin/404');
+                } else {
+                    console.error("Error fetching data:", error);
+                }
             }
         })();
     }, [id]);

@@ -3,10 +3,12 @@ import TagService from '../../../services/TagService';
 import { FaArrowAltCircleLeft, FaTrash } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import { urlImageTag } from '../../../config';
+import { useNavigate } from 'react-router-dom';
 
 const TagTrash = () => {
     const [tags, setTags] = useState([]);
     const [reload, setReload] = useState(0);
+    const navigate = useNavigate();
 
     useEffect(() => {
         fetchTrashedtags();
@@ -17,8 +19,11 @@ const TagTrash = () => {
             const result = await TagService.getAll(); // Ensure this fetches trashed users
             setTags(result.filter(tag => tag.status === 2)); // Assuming status 2 is for trashed users
         } catch (error) {
-            console.error('Error fetching trashed users:', error);
-            toast.error('Đã xảy ra lỗi khi tải danh sách đã xóa.');
+            if (error.response && error.response.status === 503) {
+                navigate('/admin/404');
+            } else {
+                console.error("Error fetching data:", error);
+            }
         }
     };
 

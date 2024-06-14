@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import ProductGallaryService from '../../../services/ProductGallaryService';
 import UserService from '../../../services/UserService';
 import { toast } from 'react-toastify';
@@ -9,7 +9,7 @@ import { urlImageProductGallary } from '../../../config';
 
 const ProductGallaryIndex = () => {
     const { id } = useParams();
-
+    const navigate = useNavigate();
     const [gallaries, setGallaries] = useState([]);
     const [images, setImages] = useState([]);
 
@@ -22,7 +22,11 @@ const ProductGallaryIndex = () => {
                 }
                 setGallaries(result);
             } catch (error) {
-                console.error('Error fetching:', error);
+                if (error.response && error.response.status === 503) {
+                    navigate('/site-admin/404');
+                } else {
+                    console.error("Error fetching data:", error);
+                }
             }
         };
         fetchData();

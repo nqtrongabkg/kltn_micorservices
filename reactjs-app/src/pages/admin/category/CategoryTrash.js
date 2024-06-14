@@ -3,10 +3,12 @@ import CategoryService from '../../../services/CategoryService';
 import { FaArrowAltCircleLeft, FaTrash } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import { urlImageCategory } from '../../../config';
+import { useNavigate } from 'react-router-dom';
 
 const CategoryTrash = () => {
     const [categories, setCategories] = useState([]);
     const [reload, setReload] = useState(0);
+    const navigate = useNavigate();
 
     useEffect(() => {
         fetchTrashedCategories();
@@ -17,8 +19,11 @@ const CategoryTrash = () => {
             const result = await CategoryService.getAll(); // Ensure this fetches trashed users
             setCategories(result.filter(category => category.status === 2)); // Assuming status 2 is for trashed users
         } catch (error) {
-            console.error('Error fetching trashed users:', error);
-            toast.error('Đã xảy ra lỗi khi tải danh sách đã xóa.');
+            if (error.response && error.response.status === 503) {
+                navigate('/admin/404');
+            } else {
+                console.error("Error fetching data:", error);
+            }
         }
     };
 

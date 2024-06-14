@@ -25,7 +25,11 @@ const FavoriteProduct = () => {
                     setFavorites(getFavorites);
                 }
             } catch (error) {
-                console.error('Error fetching favorites:', error);
+                if (error.response && error.response.status === 503) {
+                    navigate('/404');
+                } else {
+                    console.error("Error fetching data:", error);
+                }
             }
         };
 
@@ -45,7 +49,11 @@ const FavoriteProduct = () => {
                 const products = await Promise.all(productPromises);
                 setProducts(products);
             } catch (error) {
-                console.error('Error fetching products:', error);
+                if (error.response && error.response.status === 503) {
+                    navigate('/404');
+                } else {
+                    console.error("Error fetching data:", error);
+                }
             }
         };
 

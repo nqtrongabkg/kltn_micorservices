@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import BrandService from '../../../services/BrandService';
 import { FaToggleOn, FaTrash, FaEdit, FaToggleOff } from 'react-icons/fa';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { urlImageBrand } from '../../../config';
 import Pagination from '../../site/homeComponents/productComponents/Pagination';
@@ -12,6 +12,7 @@ const BrandIndex = () => {
     const [totalPages, setTotalPages] = useState(0);
     const [reload, setReload] = useState(0);
     const itemsPerPage = 10; // Số lượng thương hiệu mỗi trang
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchBrands = async () => {
@@ -22,7 +23,11 @@ const BrandIndex = () => {
                 setTotalPages(Math.ceil(sortedBrands.length / itemsPerPage));
                 setBrands(sortedBrands);
             } catch (error) {
-                console.error("Error fetching brands:", error);
+                if (error.response && error.response.status === 503) {
+                    navigate('/admin/404');
+                } else {
+                    console.error("Error fetching data:", error);
+                }
             }
         };
         fetchBrands();

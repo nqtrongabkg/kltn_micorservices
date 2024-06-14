@@ -12,6 +12,7 @@ import '../../assets/styles/newProduct.css';
 import Pagination from './homeComponents/productComponents/Pagination';
 
 const ProductOfShop = () => {
+    const navigate = useNavigate();
     const { id } = useParams();
     const [allProducts, setAllProducts] = useState([]);
     const [user, setUser] = useState(null);
@@ -42,7 +43,11 @@ const ProductOfShop = () => {
                 // Scroll to top when products are fetched (page changes)
                 window.scrollTo(0, 0);
             } catch (error) {
-                console.error("Error fetching products:", error);
+                if (error.response && error.response.status === 503) {
+                    navigate('/404');
+                } else {
+                    console.error("Error fetching data:", error);
+                }
             }
         };
         fetchProducts();

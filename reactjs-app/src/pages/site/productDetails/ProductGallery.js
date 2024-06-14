@@ -77,7 +77,11 @@ const ProductGallery = () => {
                     }
                 }
             } catch (error) {
-                console.error('Failed to fetch data:', error);
+                if (error.response && error.response.status === 503) {
+                    navigate('/404');
+                } else {
+                    console.error("Error fetching data:", error);
+                }
             }
         };
 

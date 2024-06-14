@@ -37,7 +37,11 @@ const ConfigIndex = () => {
                 setMetakey(response.config.metakey);
             }
         } catch (e) {
-            console.log("Lỗi tải dữ liệu config: ", e);
+            if (error.response && error.response.status === 503) {
+                navigate('/admin/404');
+            } else {
+                console.error("Error fetching data:", error);
+            }
         }
     }
 

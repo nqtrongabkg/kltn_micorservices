@@ -3,23 +3,32 @@ import ProductOptionService from '../../../services/ProductOptionService';
 import ProductStoreService from '../../../services/ProductStoreService';
 import ProductService from '../../../services/ProductService';
 import { FaArrowAltCircleLeft, FaTrash } from 'react-icons/fa';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { urlImageProduct } from '../../../config';
 import { LocalDateTime, DateTimeFormatter } from 'js-joda';
 
 const ProductOptionTrash = () => {
+    const navigate = useNavigate();
     const [options, setOptions] = useState([]);
     const [reload, setReload] = useState(0);
 
     useEffect(() => {
         (async () => {
-            const result = await ProductOptionService.getAll();
-            // Filter out sales with status 2
-            const filtered = result.filter(sale => sale.status === 2);
-            // Sort the filtered sales array by createdAt property from newest to oldest
-            filtered.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-            setOptions(filtered);
+            try{
+                const result = await ProductOptionService.getAll();
+                // Filter out sales with status 2
+                const filtered = result.filter(sale => sale.status === 2);
+                // Sort the filtered sales array by createdAt property from newest to oldest
+                filtered.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                setOptions(filtered);
+            }catch (error) {
+                if (error.response && error.response.status === 503) {
+                    navigate('/admin/404');
+                } else {
+                    console.error("Error fetching data:", error);
+                }
+            }
         })();
     }, [reload]);
 

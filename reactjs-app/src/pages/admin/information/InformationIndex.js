@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import InformationService from '../../../services/InformationService';
 import { FaToggleOn, FaTrash, FaEdit, FaToggleOff } from 'react-icons/fa';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { urlImageInformation } from '../../../config';
 
 const InformationIndex = () => {
     const [informations, SetInformations] = useState([]);
     const [reload, setReload] = useState(0);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchData = async () => {
@@ -19,7 +20,11 @@ const InformationIndex = () => {
                 const sortedData = result.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
                 SetInformations(sortedData);
             } catch (error) {
-                console.error("Error fetching:", error);
+                if (error.response && error.response.status === 503) {
+                    navigate('/admin/404');
+                } else {
+                    console.error("Error fetching data:", error);
+                }
             }
         };
         fetchData();

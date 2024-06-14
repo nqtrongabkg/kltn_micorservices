@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import TagService from '../../../services/TagService';
 import { FaToggleOn, FaTrash, FaEdit, FaToggleOff } from 'react-icons/fa';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { urlImageTag } from '../../../config';
 import Pagination from '../../site/homeComponents/productComponents/Pagination';
@@ -12,6 +12,7 @@ const TagIndex = () => {
     const [totalPages, setTotalPages] = useState(0);
     const [reload, setReload] = useState(0);
     const itemsPerPage = 10; // Số lượng nhãn mỗi trang
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchTags = async () => {
@@ -22,7 +23,11 @@ const TagIndex = () => {
                 setTotalPages(Math.ceil(sortedTags.length / itemsPerPage));
                 setTags(sortedTags);
             } catch (error) {
-                console.error("Error fetching:", error);
+                if (error.response && error.response.status === 503) {
+                    navigate('/admin/404');
+                } else {
+                    console.error("Error fetching data:", error);
+                }
             }
         };
         fetchTags();

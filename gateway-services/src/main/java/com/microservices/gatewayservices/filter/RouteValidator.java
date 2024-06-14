@@ -29,6 +29,7 @@ public class RouteValidator {
         "/product-services/api/brands/get-by-id/**",
         "/product-services/api/brands/get-all",
         "/product-services/api/brands/get-by-user/**",
+        "/product-services/api/brands/search/**",
 
         "/product-services/api/categories/get-by-id/**",
         "/product-services/api/categories/get-all",

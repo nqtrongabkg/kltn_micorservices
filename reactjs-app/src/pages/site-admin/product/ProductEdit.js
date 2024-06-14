@@ -26,11 +26,10 @@ const ProductEdit = () => {
     const [brandId, setBrandId] = useState("");
     const [brands, setBrands] = useState([]);
     const [categories, setCategories] = useState([]);
-    const [currentCategories, setCurrentCategories] = useState([])
-    // const [oldCategories, setOldCategories] = useState([])
+    const [currentCategories, setCurrentCategories] = useState([]);
+    const [oldCategories, setOldCategories] = useState([]);
     const [tags, setTags] = useState([]);
     const [currentTags, setCurrentTags] = useState([]);
-    // const [oldTags, setOldTags] = useState([]);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -47,16 +46,15 @@ const ProductEdit = () => {
                 setCategories(filteredCategories);
 
                 const getCurrentCategories = await ProductCategoryService.getByProductId(id);
-                setCurrentCategories(getCurrentCategories);
-                // setOldCategories(getCurrentCategories);
+                setCurrentCategories(getCurrentCategories.map(category => category.categoryId));
+                setOldCategories(getCurrentCategories.map(category => category.categoryId));
 
                 const tagResponse = await TagService.getAll();
                 const filteredTags = tagResponse.filter(tag => tag.status === 1 || tag.status === 3);
                 setTags(filteredTags);
 
                 const getCurrentTags = await ProductTagService.getByProductId(id);
-                setCurrentTags(getCurrentTags);
-                // setOldTags(getCurrentTags);
+                setCurrentTags(getCurrentTags.map(tag => tag.tagId));
 
                 setName(productData.name);
                 setPrice(productData.price);
@@ -68,21 +66,16 @@ const ProductEdit = () => {
                 setStringImageDefault(productData.image);
                 setBrandId(productData.brandId);
 
-                // Create arrays of selected tag and category IDs
-                const selectedCategoryIds = getCurrentCategories.map(category => category.categoryId);
-                const selectedTagIds = getCurrentTags.map(tag => tag.tagId);
-
-                // Update currentCategories and currentTags with selected IDs
-                setCurrentCategories(selectedCategoryIds);
-                setCurrentTags(selectedTagIds);
             } catch (error) {
-                toast.error("Failed to fetch data.");
+                if (error.response && error.response.status === 503) {
+                    navigate('/site-admin/404');
+                } else {
+                    console.error("Error fetching data:", error);
+                }
             }
         };
         fetchData();
     }, [id]);
-
-
 
     // Xử lý sự kiện khi thay đổi chọn tag và category
     const handleTagChange = (tagId, checked) => {
@@ -117,6 +110,15 @@ const ProductEdit = () => {
                 tagIds: currentTags,
                 categoryIds: currentCategories,
             };
+
+            // Xác định các category mới được thêm
+            const newCategories = currentCategories.filter(categoryId => !oldCategories.includes(categoryId));
+            console.log('New categories:', newCategories);
+
+            // Gọi ProductService.addQtyToCategory cho từng category mới
+            for (const categoryId of newCategories) {
+                await ProductService.addQtyToCategory(categoryId);
+            }
 
             if(id){
                 await ProductCategoryService.deleteByProductId(id);
@@ -155,17 +157,15 @@ const ProductEdit = () => {
                     };
                     await ProductService.setImage(data);
                 }
+                
                 toast.success("User updated successfully!");
                 navigate("/site-admin/product/index", { replace: true });
-
-
 
             }
         } catch (error) {
             toast.error("Failed to update user.");
         }
     };
-
 
     return (
         <form onSubmit={handleSubmit}>
@@ -221,42 +221,51 @@ const ProductEdit = () => {
                                             </option>
                                         ))}
                                     </select>
-
                                 )}
                             </div>
 
                             {/* Categories */}
                             <div className="mb-3">
                                 <label><strong>Danh mục</strong></label>
-                                {categories.map((category) => (
-                                    <div key={category.id}>
-                                        <input
-                                            type="checkbox"
-                                            id={category.id}
-                                            value={category.id}
-                                            checked={currentCategories.includes(category.id)}
-                                            onChange={(e) => handleCategoryChange(category.id, e.target.checked)}
-                                        />
-                                        <label htmlFor={category.id}>{category.name}</label>
-                                    </div>
-                                ))}
+                                <div className="form-check">
+                                    {categories.map((category) => (
+                                        <div key={category.id} className="form-check">
+                                            <input
+                                                className="form-check-input"
+                                                type="checkbox"
+                                                id={category.id}
+                                                value={category.id}
+                                                checked={currentCategories.includes(category.id)}
+                                                onChange={(e) => handleCategoryChange(category.id, e.target.checked)}
+                                            />
+                                            <label className="form-check-label" htmlFor={category.id}>
+                                                {category.name}
+                                            </label>
+                                        </div>
+                                    ))}
+                                </div>
                             </div>
 
                             {/* Tags */}
                             <div className="mb-3">
                                 <label><strong>Tags</strong></label>
-                                {tags.map((tag) => (
-                                    <div key={tag.id}>
-                                        <input
-                                            type="checkbox"
-                                            id={tag.id}
-                                            value={tag.id}
-                                            checked={currentTags.includes(tag.id)}
-                                            onChange={(e) => handleTagChange(tag.id, e.target.checked)}
-                                        />
-                                        <label htmlFor={tag.id}>{tag.name}</label>
-                                    </div>
-                                ))}
+                                <div className="form-check">
+                                    {tags.map((tag) => (
+                                        <div key={tag.id} className="form-check">
+                                            <input
+                                                className="form-check-input"
+                                                type="checkbox"
+                                                id={tag.id}
+                                                value={tag.id}
+                                                checked={currentTags.includes(tag.id)}
+                                                onChange={(e) => handleTagChange(tag.id, e.target.checked)}
+                                            />
+                                            <label className="form-check-label" htmlFor={tag.id}>
+                                                {tag.name}
+                                            </label>
+                                        </div>
+                                    ))}
+                                </div>
                             </div>
 
                             <div className="mb-3">

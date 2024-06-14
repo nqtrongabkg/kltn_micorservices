@@ -2,10 +2,12 @@ import React, { useEffect, useState } from 'react';
 import NotificationService from '../../../services/NotificationService';
 import { FaTrash, FaArrowAltCircleLeft } from 'react-icons/fa';
 import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
 
 const NotificationTrash = () => {
     const [notifications, setNotifications] = useState([]);
     const [reload, setReload] = useState(0);
+    const navigate = useNavigate();
 
     useEffect(() => {
         fetchTrashedNotifications();
@@ -16,8 +18,11 @@ const NotificationTrash = () => {
             const result = await NotificationService.getAll();
             setNotifications(result.filter(notification => notification.status === 2)); // Filter trashed notifications
         } catch (error) {
-            console.error('Error fetching trashed notifications:', error);
-            toast.error('Đã xảy ra lỗi khi tải danh sách các thông báo đã xóa.');
+            if (error.response && error.response.status === 503) {
+                navigate('/admin/404');
+            } else {
+                console.error("Error fetching data:", error);
+            }
         }
     };
 

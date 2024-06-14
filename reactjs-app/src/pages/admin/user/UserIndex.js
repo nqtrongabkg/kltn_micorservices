@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import UserService from '../../../services/UserService';
 import { FaToggleOn, FaTrash, FaEdit, FaToggleOff } from 'react-icons/fa';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { IoIosNotifications } from "react-icons/io";
 import { urlImageUser } from '../../../config';
 import Pagination from '../../site/homeComponents/productComponents/Pagination';
 
 const UserIndex = () => {
+    const navigate = useNavigate();
     const [users, setUsers] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [usersPerPage] = useState(10); // Số lượng người dùng trên mỗi trang
@@ -23,7 +24,11 @@ const UserIndex = () => {
                 const sortedUsers = result.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
                 setUsers(sortedUsers);
             } catch (error) {
-                console.error("Error fetching users:", error);
+                if (error.response && error.response.status === 503) {
+                    navigate('/admin/404');
+                } else {
+                    console.error("Error fetching data:", error);
+                }
             }
         };
         fetchUsers();
