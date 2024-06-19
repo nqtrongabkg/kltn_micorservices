@@ -51,7 +51,7 @@ const ProductOfShop = () => {
             }
         };
         fetchProducts();
-    }, [id, page, size]);
+    }, [id, navigate, page, size]);
 
     const handlePageChange = (newPage) => {
         setPage(newPage);

@@ -1,18 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import ProductGallaryService from '../../../services/ProductGallaryService';
 import UserService from '../../../services/UserService';
 import { toast } from 'react-toastify';
 import { Button } from 'react-bootstrap';
 import { FaSave, FaTrash } from 'react-icons/fa';
 import { urlImageProductGallary } from '../../../config';
-import { useNavigate } from 'react-router-dom';
 
 const ProductGallaryIndex = () => {
     const { id } = useParams();
     const navigate = useNavigate();
     const [gallaries, setGallaries] = useState([]);
-    const [image, setImage] = useState(null);
+    const [images, setImages] = useState([]);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -24,14 +23,15 @@ const ProductGallaryIndex = () => {
                 setGallaries(result);
             } catch (error) {
                 if (error.response && error.response.status === 503) {
-                    navigate('/admin/404');
+                    navigate('/site-admin/404');
+                    console.error("Error fetching data:", error);
                 } else {
                     console.error("Error fetching data:", error);
                 }
             }
         };
         fetchData();
-    }, [id]);
+    }, [id, navigate]);
 
     const handleFormSubmit = async (e) => {
         e.preventDefault();
@@ -44,10 +44,10 @@ const ProductGallaryIndex = () => {
         };
 
         try {
-            const result = await ProductGallaryService.create(gallaryRequest);
-            console.log("gallary added: ", result);
-            if (result) {
-                if (image !== null) {
+            for (let image of images) {
+                const result = await ProductGallaryService.create(gallaryRequest);
+                console.log("gallary added: ", result);
+                if (result) {
                     const imageString = await UserService.saveImage(result.id, path, image);
                     if (imageString !== null) {
                         const data = {
@@ -58,20 +58,20 @@ const ProductGallaryIndex = () => {
                         await ProductGallaryService.setImage(data);
                     }
                 }
-                toast.success("Thêm thành công");
-                // Refresh the list after adding new image
-                const updatedGallaries = await ProductGallaryService.getByProductId(id);
-                setGallaries(updatedGallaries);
-                // Reset image to null after successful submission
-                setImage(null);
             }
+            toast.success("Thêm thành công");
+            // Refresh the list after adding new images
+            const updatedGallaries = await ProductGallaryService.getByProductId(id);
+            setGallaries(updatedGallaries);
+            // Reset images to empty after successful submission
+            setImages([]);
         } catch (error) {
             toast.error("Thêm loại thất bại!");
         }
     };
 
     const handleImageChange = (e) => {
-        setImage(e.target.files[0]);
+        setImages([...e.target.files]);
     };
 
     const handleRemoveImage = async (gallaryId) => {
@@ -110,7 +110,7 @@ const ProductGallaryIndex = () => {
                     <div className="container">
                         <div className="row">
                             {gallaries.map(gallary => (
-                                <div className="col-md-2 mb-4 text-center" key={gallary.id}> {/* Changed col-md-4 to col-md-2 */}
+                                <div className="col-md-2 mb-4 text-center" key={gallary.id}>
                                     <div className="gallery-image-container mb-2 p-3 border" style={{ maxWidth: '100%', margin: 'auto' }}>
                                         <img src={urlImageProductGallary + gallary.image} alt="Product" className="img-fluid" style={{ maxHeight: '150px' }} />
                                     </div>
@@ -122,17 +122,14 @@ const ProductGallaryIndex = () => {
                         </div>
                         <div className="row">
                             <div className="col-12">
-                                <input type="file" onChange={handleImageChange} accept="image/*" className="form-control mb-2" />
-                                <Button type="submit" variant="success" size="sm" disabled={!image}>
+                                <input type="file" onChange={handleImageChange} accept="image/*" className="form-control mb-2" multiple />
+                                <Button type="submit" variant="success" size="sm" disabled={images.length === 0}>
                                     <FaSave /> Lưu [Thêm]
                                 </Button>
                             </div>
                         </div>
                     </div>
                 </section>
-
-
-
             </div>
         </form>
     );

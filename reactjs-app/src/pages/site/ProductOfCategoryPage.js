@@ -17,7 +17,7 @@ const ProductOfCategoryPage = () => {
     const [categories, setCategories] = useState([]);
     const { id } = useParams();
     const [currentPage, setCurrentPage] = useState(1);
-    const [itemsPerPage] = useState(9);
+    const [itemsPerPage] = useState(8);
     const [filters, setFilters] = useState({
         priceRange: { min: 0, max: 10000 },
         ratings: []
@@ -67,7 +67,7 @@ const ProductOfCategoryPage = () => {
         fetchCategories();
         fetchProducts();
         window.scrollTo(0, 0); // Scroll to top when id changes
-    }, [id]);
+    }, [id, navigate]);
 
     const handlePriceRangeFilterChange = (value) => {
         setFilters(prevFilters => ({

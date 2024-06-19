@@ -34,7 +34,7 @@ const FavoriteProduct = () => {
         };
 
         fetchFavorites();
-    }, [user.userId]);
+    }, [navigate, user.userId]);
 
     useEffect(() => {
         const fetchProducts = async () => {
@@ -60,7 +60,7 @@ const FavoriteProduct = () => {
         if (favorites.length > 0) {
             fetchProducts();
         }
-    }, [favorites]);
+    }, [favorites, navigate]);
 
     const handlePageChange = (pageNumber) => {
         setCurrentPage(pageNumber);

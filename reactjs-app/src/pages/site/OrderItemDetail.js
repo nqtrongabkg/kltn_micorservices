@@ -46,7 +46,7 @@ const OrderItemDetail = () => {
             console.log("item id:", id);
             fetchData();
         }
-    }, [id]);
+    }, [id, navigate]);
 
     function formatDateToLocalDate(datetimeString) {
         const date = new Date(datetimeString);
@@ -118,7 +118,7 @@ const OrderItemDetail = () => {
                                 <ul id="progressbar-2" className="d-flex justify-content-between mx-0 mt-0 mb-5 px-0 pt-0 pb-2" style={{ width: '100%' }}>
                                     <li className={`step0 text-center ${item && item.status >= 1 ? 'active' : ''}`} id="step1" />
                                     <li className={`step0 text-center ${item && item.status >= 3 ? 'active' : ''}`} id="step2" />
-                                    <li className={`step0 text-muted text-end ${item && item.status >= 3 ? 'active' : ''}`} id="step3" />
+                                    <li className={`step0 text-center ${item && item.status >= 3 ? 'active' : ''}`} id="step3" />
                                 </ul>
 
                                 <div className="d-flex justify-content-between">

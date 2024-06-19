@@ -32,7 +32,7 @@ const CartItem = ({ item, reload, setReload }) => {
         if (item) {
             fetchProduct();
         }
-    }, [item]);
+    }, [item, navigate]);
 
     if (!item || !product) {
         return <div>Loading...</div>; // Hiển thị thông báo hoặc hiệu ứng tải dữ liệu
@@ -144,7 +144,7 @@ const Cart = () => {
 
         handleSuccessfulPayment();
         fetchCartItems();
-    }, [user.userId, reload, cart, location.search]);
+    }, [user.userId, reload, cart, location.search, navigate]);
 
     const submitOrderInCartPay = async (amount) => {
         try {

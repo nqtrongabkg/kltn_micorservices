@@ -33,7 +33,7 @@ const ProductIndex = () => {
             };
         };
         fetchProducts();
-    }, [page, size, reload]);
+    }, [page, size, reload, navigate]);
 
     useEffect(() => {
         const fetchBrandNames = async () => {

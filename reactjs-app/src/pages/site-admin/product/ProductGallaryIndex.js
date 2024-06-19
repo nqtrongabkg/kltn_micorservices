@@ -24,13 +24,14 @@ const ProductGallaryIndex = () => {
             } catch (error) {
                 if (error.response && error.response.status === 503) {
                     navigate('/site-admin/404');
+                    console.error("Error fetching data:", error);
                 } else {
                     console.error("Error fetching data:", error);
                 }
             }
         };
         fetchData();
-    }, [id]);
+    }, [id, navigate]);
 
     const handleFormSubmit = async (e) => {
         e.preventDefault();

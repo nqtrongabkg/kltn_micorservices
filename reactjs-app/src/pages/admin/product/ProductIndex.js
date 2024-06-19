@@ -32,7 +32,7 @@ const ProductIndex = () => {
             }
         };
         fetchProducts();
-    }, [currentPage, itemsPerPage, reload]);
+    }, [currentPage, itemsPerPage, navigate, reload]);
 
     useEffect(() => {
         const fetchBrandNames = async () => {
@@ -63,7 +63,7 @@ const ProductIndex = () => {
 
     const handleStatus = async (id, currentStatus) => {
         try {
-            await ProductService.switchStatus(id);
+            await ProductService.sitchStatus(id);
             setReload(Date.now());
             toast.success("Thành công");
         } catch (error) {
@@ -138,7 +138,7 @@ const ProductIndex = () => {
                                                 <Link to={'/admin/product/option-add/' + product.id} className="px-1">
                                                     <FaHandLizard size={24} />
                                                 </Link>
-                                                <Link to={'/admin/product/gallery-index/' + product.id} className="px-1">
+                                                <Link to={'/admin/product/gallary-index/' + product.id} className="px-1">
                                                     <MdOutlineCollections size={24} />
                                                 </Link>
                                                 <button

@@ -49,7 +49,7 @@ const UserManager = () => {
             }
         };
         fetchData();
-    }, [user.userId]);
+    }, [navigate, user.userId]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();

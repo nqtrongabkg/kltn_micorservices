@@ -26,6 +26,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -142,7 +143,6 @@ public class ProductServiceImpl implements ProductService {
                 .collect(Collectors.toList());
     }
 
-
     @Override
     public ProductResponse update(UUID id, ProductRequest productRequest) {
         Product existingProduct = productRepository.findById(id).orElse(null);
@@ -227,14 +227,15 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Page<ProductResponse> findByUser(UUID userId, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
         Page<Product> productPage = productRepository.findByCreatedBy(userId, pageable);
         return productPage.map(this::mapProductToResponse);
     }
 
     @Override
     public Page<ProductResponse> getPage(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
+        // Thêm sắp xếp theo ngày tạo mới nhất giảm dần
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
         Page<Product> productPage = productRepository.findAll(pageable);
         return productPage.map(this::mapProductToResponse);
     }
