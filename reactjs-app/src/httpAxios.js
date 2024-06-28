@@ -19,7 +19,7 @@ httpAxios.interceptors.request.use(config => {
       config.headers.Authorization = `Bearer ${token}`;
     }
   }
-  console.log(config.headers.Authorization);
+  // console.log(config.headers.Authorization);
   return config;
 });
 

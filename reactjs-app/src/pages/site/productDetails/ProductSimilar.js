@@ -18,7 +18,7 @@ const ProductSimilar = () => {
 
     useEffect(() => {
         (async () => {
-            console.log("Product ID of ProductSimilar = ", id);
+            // console.log("Product ID of ProductSimilar = ", id);
             if (id) {
                 const getProductCategory = await ProductCategoryService.getByProductId(id);
                 if (getProductCategory) {

@@ -20,16 +20,16 @@ const OrderItemDetail = () => {
             try {
                 const result = await OrderItemService.getById(id);
                 if (result) {
-                    console.log('item in OrderItemDetail:', result);
+                    // console.log('item in OrderItemDetail:', result);
                     setItem(result);
                     const getProduct = await ProductService.getById(result.productId);
                     if (getProduct) {
-                        console.log("product: ", getProduct);
+                        // console.log("product: ", getProduct);
                         setProduct(getProduct);
                     }
                     const orderResult = await OrderService.getById(result.orderId);
                     if (orderResult) {
-                        console.log("order in detail item:", orderResult);
+                        // console.log("order in detail item:", orderResult);
                         setOrder(orderResult);
                     }
                 }
@@ -43,7 +43,7 @@ const OrderItemDetail = () => {
         };
 
         if (id) {
-            console.log("item id:", id);
+            // console.log("item id:", id);
             fetchData();
         }
     }, [id, navigate]);
@@ -62,7 +62,7 @@ const OrderItemDetail = () => {
         if (item && item.status >= 3) {
             try {
                 // await OrderItemService.complete(item.id);
-                console.log("item complete:",item)
+                // console.log("item complete:",item);
                 navigate(`/create-feedback`, { state: { orderItemId: item.id, productId: item.productId } });
             } catch (error) {
                 console.error('Error handle:', error);

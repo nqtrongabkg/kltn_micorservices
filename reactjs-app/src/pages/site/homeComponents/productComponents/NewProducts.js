@@ -20,7 +20,14 @@ const NewProducts = () => {
         (async () => {
             try {
                 const result = await ProductService.getAll();
-                const sortedProducts = result.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    
+                // Lọc sản phẩm có trạng thái khác 2
+                const filteredProducts = result.filter(product => product.status !== 2);
+    
+                // Sắp xếp sản phẩm theo ngày tạo mới nhất giảm dần
+                const sortedProducts = filteredProducts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    
+                // Lấy thông tin giảm giá cho từng sản phẩm
                 const productsWithSale = await Promise.all(sortedProducts.map(async (product) => {
                     const saleInfoList = await ProductSaleService.getByProduct(product.id);
                     if (saleInfoList && saleInfoList.length > 0) {
@@ -31,19 +38,19 @@ const NewProducts = () => {
                     }
                     return product;
                 }));
+    
                 setAllProducts(productsWithSale);
                 setDisplayedProducts(productsWithSale.slice(0, itemsToShow));
-            }catch (error) {
+            } catch (error) {
                 if (error.response && error.response.status === 503) {
                     navigate('/404');
                 } else {
                     console.error("Error fetching data:", error);
                 }
             }
-            
         })();
-    }, [itemsToShow]);
-
+    }, [itemsToShow, navigate]);
+    
     const handleLoadMore = () => {
         setItemsToShow(prev => prev + 12);
     };

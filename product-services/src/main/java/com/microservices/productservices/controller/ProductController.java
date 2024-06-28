@@ -120,4 +120,10 @@ public class ProductController {
         Page<ProductResponse> products = productService.findByUser(userId, page, size);
         return ResponseEntity.ok(products);
     }
+
+    @GetMapping("/find-all-by-user/{userId}")
+    public ResponseEntity<List<ProductResponse>> findAllByUser(@PathVariable UUID userId) {
+        List<ProductResponse> products = productService.findAllByUser(userId);
+        return ResponseEntity.ok(products);
+    }
 }

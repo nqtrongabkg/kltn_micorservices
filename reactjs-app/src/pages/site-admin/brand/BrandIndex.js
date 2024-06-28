@@ -35,7 +35,7 @@ const BrandIndex = () => {
             }
         };
         fetchBrands();
-    }, [reload]);
+    }, [navigate, reload]);
 
     const HandTrash = async (id) => {
         await BrandService.trash(id);

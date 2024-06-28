@@ -10,7 +10,7 @@ import userimage from '../../assets/images/logo/user.jpg';
 
 const MyUser = () => {
     const user = JSON.parse(sessionStorage.getItem('user'));
-    console.log("user token in profile", user);
+    // console.log("user token in profile", user);
 
     const navigate = useNavigate();
 
@@ -24,13 +24,13 @@ const MyUser = () => {
             try {
                 const resultUserInfo = await UserService.getUserById(user.userId);
                 if (resultUserInfo) {
-                    console.log('user information in MyUser:', resultUserInfo);
+                    // console.log('user information in MyUser:', resultUserInfo);
                     setUserInfo(resultUserInfo);
                 }
                 const resultOrders = await OrderService.getByUser(user.userId);
                 if (resultOrders) {
                     resultOrders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-                    console.log('orders in MyUser:', resultOrders);
+                    // console.log('orders in MyUser:', resultOrders);
                     setOrders(resultOrders);
                 }
             } catch (error) {
@@ -45,7 +45,7 @@ const MyUser = () => {
         if (user.userId) {
             fetchData();
         }
-    }, [user.userId]);
+    }, [navigate, user.userId]);
 
     const formatPrice = (price) => {
         return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");

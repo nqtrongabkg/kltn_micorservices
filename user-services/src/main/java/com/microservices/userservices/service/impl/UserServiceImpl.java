@@ -15,6 +15,7 @@ import com.microservices.userservices.service.UserService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -45,23 +46,27 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserResponse create(UserRequest userRequest, MultipartFile avatar) {
-        User user = new User();
-        mapRequestToEntity(userRequest, user);
-        user.setCreatedAt(LocalDateTime.now());
-
-        // Hash password
-        user.setPassword(passwordEncoder.encode(userRequest.getPassword()));
-
-        // Save avatar if provided
-        if (avatar != null) {
-            String avatarFileName = saveAvatar(avatar);
-            user.setAvatar(avatarFileName);
-        }
-
-        User savedUser = userRepository.save(user);
-        return mapEntityToResponse(savedUser);
+@Transactional
+public UserResponse create(UserRequest userRequest, MultipartFile avatar) {
+    if (userRepository.findByUserName(userRequest.getUserName()).isPresent()) {
+        throw new CustomException("User name already exists", "USER_EXISTS");
     }
+    User user = new User();
+    mapRequestToEntity(userRequest, user);
+    user.setCreatedAt(LocalDateTime.now());
+
+    // Hash password
+    user.setPassword(passwordEncoder.encode(userRequest.getPassword()));
+
+    // Save avatar if provided
+    if (avatar != null) {
+        String avatarFileName = saveAvatar(avatar);
+        user.setAvatar(avatarFileName);
+    }
+
+    User savedUser = userRepository.save(user);
+    return mapEntityToResponse(savedUser);
+}
 
     @Override
     public void setImage(UUID id, String image){

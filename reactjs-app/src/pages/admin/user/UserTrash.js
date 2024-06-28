@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import UserService from '../../../services/UserService';
+import ProductService from '../../../services/ProductService';
+import BrandService from '../../../services/BrandService';
 import { FaArrowAltCircleLeft, FaTrash } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
@@ -29,14 +31,29 @@ const UserTrash = () => {
 
     const restoreUser = async (id) => {
         try {
+            // Lấy tất cả các sản phẩm của người dùng
+            const products = await ProductService.getAllByUser(id);
+            const brands = await BrandService.getByUserId(id);
+    
+            // Khôi phục từng sản phẩm
+            for (const product of products) {
+                await ProductService.sitchStatus(product.id);
+            }
+
+            for (const brand of brands){
+                await BrandService.sitchStatus(brand.id);
+            }
+    
+            // Khôi phục người dùng
             await UserService.sitchStatus(id);
+    
             setReload(Date.now());
             toast.success('Khôi phục thành công');
         } catch (error) {
-            console.error('Error restoring user:', error);
-            toast.error('Đã xảy ra lỗi khi khôi phục người dùng.');
+            console.error('Error restoring user or products:', error);
+            toast.error('Đã xảy ra lỗi khi khôi phục người dùng hoặc sản phẩm.');
         }
-    };
+    };    
 
     const deleteUser = async (id) => {
         try {

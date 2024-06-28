@@ -234,10 +234,17 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Page<ProductResponse> getPage(int page, int size) {
-        // Thêm sắp xếp theo ngày tạo mới nhất giảm dần
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
-        Page<Product> productPage = productRepository.findAll(pageable);
+        Page<Product> productPage = productRepository.findByStatusNot(2, pageable);
         return productPage.map(this::mapProductToResponse);
+    }
+
+    @Override
+    public List<ProductResponse> findAllByUser(UUID userId) {
+        List<Product> products = productRepository.findByCreatedBy(userId);
+        return products.stream()
+                .map(this::mapProductToResponse)
+                .collect(Collectors.toList());
     }
 
     private ProductResponse mapProductToResponse(Product product) {

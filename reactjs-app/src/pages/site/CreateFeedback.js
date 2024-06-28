@@ -25,7 +25,7 @@ const CreateFeedback = () => {
             createdBy: JSON.parse(sessionStorage.getItem('user'))?.userId,
             detail,
         };
-    
+
         const path = {
             path: "feedbacks"
         };
@@ -33,11 +33,12 @@ const CreateFeedback = () => {
         try {
             const result = await FeedbackService.create(request);
             if (result) {
-                console.log("feedback add is: ", result.id);
-                if(image !== null){
+                console.log("feedback data is: ", request);
+                console.log("feedback add is: ", result);
+                if (image !== null) {
                     const imageString = await UserService.saveImage(result.id, path, image)
-                    console.log("string image save feedback : ", imageString); 
-                    if(imageString !== null){
+                    // console.log("string image save feedback : ", imageString); 
+                    if (imageString !== null) {
                         const data = {
                             id: result.id,
                             image: imageString
@@ -47,7 +48,7 @@ const CreateFeedback = () => {
                     }
                 }
                 await ProductService.resetEvaluate(productId);
-                console.log("brand added = ", result);
+                console.log("reset evalueate = ", result);
                 navigate("/my-user", { replace: true });
             }
         } catch (error) {
@@ -77,16 +78,22 @@ const CreateFeedback = () => {
                         <div className="form-group mb-3">
                             <label className="form-label">Đánh giá</label>
                             <div className="star-rating">
-                                {[1, 2, 3, 4, 5].map(star => (
+                                {[5, 4, 3, 2, 1].map(star => (
                                     <React.Fragment key={star}>
                                         <input
                                             type="radio"
                                             id={`star${star}`}
                                             name="evaluate"
-                                            value={star}
+                                            value={`${star}`}
                                             checked={evaluate === star}
-                                            onChange={(e) => setEvaluate(parseInt(e.target.value))}
+                                            onChange={(e) => {
+                                                const selectedStar = parseInt(e.target.value, 10);
+                                                console.log("Selected evaluate:", selectedStar);
+                                                setEvaluate(selectedStar);
+                                            }}
                                         />
+
+
                                         <label htmlFor={`star${star}`}>&#9733;</label>
                                     </React.Fragment>
                                 ))}

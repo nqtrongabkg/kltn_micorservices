@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import UserService from '../../../services/UserService';
+import ProductService from '../../../services/ProductService';
+import BrandService from '../../../services/BrandService';
 import { FaToggleOn, FaTrash, FaEdit, FaToggleOff } from 'react-icons/fa';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -32,7 +34,7 @@ const UserIndex = () => {
             }
         };
         fetchUsers();
-    }, [reload]);
+    }, [navigate, reload]);
 
     // Lấy index của người dùng đầu tiên trên trang hiện tại
     const indexOfLastUser = currentPage * usersPerPage;
@@ -42,11 +44,26 @@ const UserIndex = () => {
     const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
     const HandTrash = async (id) => {
-        await UserService.trash(id);
-        setReload(Date.now());
-        toast.success("Chuyển vào thùng rác");
-    };
+        try {
+            const products = await ProductService.getAllByUser(id);
+            const brands = await BrandService.getByUserId(id);
+    
+            for (const product of products) {
+                await ProductService.trash(product.id);
+            }
 
+            for (const brand of brands){
+                await BrandService.trash(brand.id);
+            }
+    
+            await UserService.trash(id);
+            setReload(Date.now());
+            toast.success("Chuyển vào thùng rác");
+        } catch (error) {
+            console.error("Error trashing products or user:", error);
+            toast.error("Có lỗi xảy ra khi chuyển vào thùng rác");
+        }
+    };
     const handleStatus = async (id, currentStatus) => {
         try {
             await UserService.sitchStatus(id);

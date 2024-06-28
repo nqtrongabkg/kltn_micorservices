@@ -32,7 +32,7 @@ const Sale = () => {
             }
             
         })();
-    }, [itemsToShow]);
+    }, [itemsToShow, navigate]);
 
     const handleLoadMore = () => {
         setItemsToShow(prev => prev + 12);

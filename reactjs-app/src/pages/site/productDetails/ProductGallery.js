@@ -86,7 +86,7 @@ const ProductGallery = () => {
         };
 
         fetchData();
-    }, [id]);
+    }, [id, navigate]);
 
     if (product === null) {
         return <div>Loading...</div>;
@@ -126,46 +126,62 @@ const ProductGallery = () => {
     };
 
     const handleAddToCartClick = async () => {
-        const user = JSON.parse(sessionStorage.getItem('user'));
-        if (!user) {
-            navigate("/login", { state: { redirectTo: `/product-detail/${id}` } });
-            return;
-        }
-
-        if (!stockAvailability[optionValueId]) { // Check if the selected option value is out of stock
-            toast.error("Sản phẩm bạn chọn hiện tại hết hàng.");
-            return;
-        }
-
-        const cart = await OrderService.getCart(user.userId);
-        const totalPrice = quantity * priceToDisplay;
-        if (cart) {
-            const dataCreate = {
-                orderId: cart.id,
-                productId: id,
-                optionValueId: optionValueId,
-                quantity,
-                totalPrice,
-                status: 1,
-            };
-
-            const addedOrderItem = await OrderItemService.create(dataCreate);
-            if (addedOrderItem) {
-                const dataUpdateCart = {
-                    userId: cart.userId,
-                    totalPrice: cart.totalPrice + totalPrice,
-                    deliveryAddress: cart.deliveryAddress,
-                    deliveryPhone: cart.deliveryPhone,
-                    deliveryName: cart.deliveryName,
-                    status: cart.status,
+        try {
+            const user = JSON.parse(sessionStorage.getItem('user'));
+            if (!user) {
+                navigate("/login", { state: { redirectTo: `/product-detail/${id}` } });
+                return;
+            }
+    
+            if (!stockAvailability[optionValueId]) { // Check if the selected option value is out of stock
+                toast.error("Sản phẩm bạn chọn hiện tại hết hàng.");
+                return;
+            }
+    
+            // Kiểm tra số lượng trong kho so với số lượng mua
+            const qtyStore = await ProductStoreService.getByOptionValue(optionValueId);
+            if (qtyStore.quantity < quantity) {
+                toast.error(`Số lượng sản phẩm chỉ còn ${qtyStore.quantity}`);
+                return;
+            }
+    
+            const cart = await OrderService.getCart(user.userId);
+            const totalPrice = quantity * priceToDisplay;
+            if (cart) {
+                const dataCreate = {
+                    orderId: cart.id,
+                    productId: id,
+                    optionValueId: optionValueId,
+                    quantity,
+                    totalPrice,
+                    status: 1,
                 };
-                await OrderService.update(cart.id, dataUpdateCart);
-                toast.success("Thêm vào giỏ hàng thành công");
+    
+                const addedOrderItem = await OrderItemService.create(dataCreate);
+                if (addedOrderItem) {
+                    const dataUpdateCart = {
+                        userId: cart.userId,
+                        totalPrice: cart.totalPrice + totalPrice,
+                        deliveryAddress: cart.deliveryAddress,
+                        deliveryPhone: cart.deliveryPhone,
+                        deliveryName: cart.deliveryName,
+                        status: cart.status,
+                    };
+                    await OrderService.update(cart.id, dataUpdateCart);
+                    toast.success("Thêm vào giỏ hàng thành công");
+                } else {
+                    toast.error("Không thể thêm vào giỏ hàng");
+                }
+            }
+        } catch (error) {
+            if (error.response && error.response.status === 503) {
+                navigate('/404');
             } else {
-                toast.error("Không thể thêm vào giỏ hàng");
+                console.error("Error fetching data:", error);
             }
         }
     };
+    
 
     const ThumbnailsCarousel = ({ galleries, handleThumbnailClick }) => {
         const [visibleStart, setVisibleStart] = useState(0);

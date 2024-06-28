@@ -35,6 +35,8 @@ public interface ProductService {
 
     Page<ProductResponse> findByUser(UUID userId, int page, int size);
 
+    List<ProductResponse> findAllByUser(UUID userId);
+
     Page<ProductResponse> getPage(int page, int size);
     
 }

@@ -75,7 +75,7 @@ const UserManager = () => {
                     await UserService.deleteImage(deleteImage);
                 }
             }
-            console.log("data update user:", userData);
+            // console.log("data update user:", userData);
             const result = await UserService.update(user.userId, userData);
             if (result) {
                 if (avatar !== null) {

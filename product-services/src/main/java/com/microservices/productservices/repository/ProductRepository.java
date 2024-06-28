@@ -18,4 +18,6 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
     List<Product> findByCreatedBy(UUID id);
 
     Page<Product> findByCreatedBy(UUID userId, Pageable pageable);
+
+    Page<Product> findByStatusNot(int i, Pageable pageable);
 }

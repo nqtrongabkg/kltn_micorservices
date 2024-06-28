@@ -39,7 +39,7 @@ const RegisterUser = () => {
             }
         } catch (error) {
             console.error("Error registering user:", error);
-            toast.error("Đăng ký thất bại, vui lòng thử lại.");
+            toast.error("Đăng ký thất bại, Tên đăng nhập đã tồn tại!");
         }
     };
 

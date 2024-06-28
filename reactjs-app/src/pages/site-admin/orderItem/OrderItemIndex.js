@@ -60,7 +60,7 @@ const OrderItemIndex = () => {
         };
 
         fetchOrderItems();
-    }, [reload, currentPage]);
+    }, [reload, currentPage, navigate]);
 
     const handlePageChange = (pageNumber) => {
         setCurrentPage(pageNumber);
