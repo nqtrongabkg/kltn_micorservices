@@ -34,8 +34,6 @@ public class UserController {
         this.userService = userService;
     }
 
-    
-
     @PostMapping("/create")
     public ResponseEntity<UserResponse> createUser(
             @RequestPart("userRequest") UserRequest userRequest,
